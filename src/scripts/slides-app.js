@@ -1,7 +1,7 @@
 import Reveal from 'reveal.js';
 import { createWebGLBackground } from './webgl-background.js';
 import { createMotionController } from './motion-controller.js';
-import { PRESENTATION_STEPS_CONFIG, SLIDE5_SCENES } from '../content/presentation-data.js';
+import { PRESENTATION_STEPS_CONFIG, SLIDE3_ZONES, SLIDE5_SCENES } from '../content/presentation-data.js';
 
 export async function initPresentationApp() {
   const canvas = document.getElementById('webgl-canvas');
@@ -15,20 +15,40 @@ export async function initPresentationApp() {
   let timerInterval = null;
   let timerRunning = false;
 
-  // Compute total global steps across Landing (-1) and Slides 0..5
-  const totalGlobalSteps = PRESENTATION_STEPS_CONFIG.reduce((acc, s) => acc + s.steps.length, 0);
+  // Compute flat sequence registry across Landing (-1) and Slides 0..5
+  const flatSteps = [];
+  PRESENTATION_STEPS_CONFIG.forEach((conf) => {
+    conf.steps.forEach((st) => {
+      flatSteps.push({
+        sequenceIndex: flatSteps.length,
+        slideIndex: conf.slideIndex,
+        slideId: conf.slideId,
+        stepIndex: st.stepIndex,
+        stepId: st.id,
+        label: st.label
+      });
+    });
+  });
+  const totalGlobalSteps = flatSteps.length;
 
-  // SINGLE SOURCE OF TRUTH: GLOBAL PRESENTATION STATE MACHINE
+  // SINGLE SOURCE OF TRUTH: V4 GLOBAL PRESENTATION STATE ENGINE
   const state = {
+    currentSequenceIndex: 0,
+    currentSlideId: 'landing',
+    currentStepId: 'landing-step-1',
     slideIndex: -1, // -1 = Landing Page, 0..5 = Slide 01..06
     stepIndex: 0,
+    isAnimating: false,
     isTransitioning: false,
+    isOverviewOpen: false,
+    isLightboxOpen: false,
+    presentationMode: 'presentation',
     mode: 'presentation',
     overlay: null
   };
 
   function getSlideConfig(slideIdx) {
-    return PRESENTATION_STEPS_CONFIG.find(c => c.slideIndex === slideIdx) || PRESENTATION_STEPS_CONFIG[0];
+    return PRESENTATION_STEPS_CONFIG.find((c) => c.slideIndex === slideIdx) || PRESENTATION_STEPS_CONFIG[0];
   }
 
   function getGlobalStepNumber(slideIdx, stepIdx) {
@@ -65,25 +85,41 @@ export async function initPresentationApp() {
   await deck.initialize();
   window.Reveal = deck;
 
-  // Preload all curated Slide 05 exhibition photos for instant 0ms scene switching
-  SLIDE5_SCENES.forEach(sc => {
-    if (sc.hero?.src) {
-      const pHero = new Image();
-      pHero.src = sc.hero.src;
-    }
-    (sc.sidePhotos || []).forEach(sp => {
-      if (sp.src) {
-        const pSide = new Image();
-        pSide.src = sp.src;
-      }
+  // Preload all curated Slide 03, Slide 05 & Slide 06 images for instant 0ms scene switching
+  const preloadUrls = new Set([
+    './assets/optimized/poster-full.jpg',
+    './assets/optimized/crop-teacher.jpg',
+    './assets/optimized/crop-teacher-code.jpg',
+    './assets/curated/curated-16-co-lieu-20-11-flowers.jpg',
+    './assets/curated/curated-18-co-lieu-aibot-rose.jpg'
+  ]);
+  SLIDE3_ZONES.forEach((z) => {
+    if (z.cropSrc) preloadUrls.add(z.cropSrc);
+  });
+  SLIDE5_SCENES.forEach((sc) => {
+    if (sc.hero?.src) preloadUrls.add(sc.hero.src);
+    (sc.sidePhotos || []).forEach((sp) => {
+      if (sp.src) preloadUrls.add(sp.src);
     });
+  });
+  preloadUrls.forEach((src) => {
+    const img = new Image();
+    img.src = src;
   });
 
   // Sync when user clicks a slide in Reveal Overview Mode
-  deck.on('slidechanged', event => {
+  deck.on('slidechanged', (event) => {
     if (state.slideIndex !== -1 && event.indexh !== state.slideIndex && !state.isTransitioning) {
       goToState(event.indexh, 0);
     }
+  });
+  deck.on('overviewshown', () => {
+    state.isOverviewOpen = true;
+    state.presentationMode = 'overview';
+  });
+  deck.on('overviewhidden', () => {
+    state.isOverviewOpen = false;
+    state.presentationMode = 'presentation';
   });
 
   // Core State Transition Executor
@@ -93,8 +129,14 @@ export async function initPresentationApp() {
     const prevSlideIndex = state.slideIndex;
     const isSlideChange = prevSlideIndex !== targetSlideIndex;
 
+    const stepObj = conf.steps[clampedStep] || conf.steps[0];
+    const seqIdx = getGlobalStepNumber(targetSlideIndex, clampedStep) - 1;
+
     state.slideIndex = targetSlideIndex;
     state.stepIndex = clampedStep;
+    state.currentSequenceIndex = Math.max(0, seqIdx);
+    state.currentSlideId = conf.slideId;
+    state.currentStepId = stepObj.id;
 
     const landingEl = document.getElementById('landing-page');
 
@@ -109,7 +151,8 @@ export async function initPresentationApp() {
           deck.slide(targetSlideIndex);
         }
         webgl.setSlideMood(targetSlideIndex);
-        const slideEl = document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
+        const slideEl =
+          document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
         motion.applyStep(targetSlideIndex, clampedStep, slideEl);
       }
 
@@ -119,13 +162,31 @@ export async function initPresentationApp() {
 
     if (isSlideChange && !isReducedMotion) {
       state.isTransitioning = true;
+      state.isAnimating = true;
       applyVisuals();
       setTimeout(() => {
         state.isTransitioning = false;
+        state.isAnimating = false;
       }, 45);
     } else {
       applyVisuals();
     }
+    return state;
+  }
+
+  function goToStep(idOrIndex, optionalStepIndex) {
+    if (typeof optionalStepIndex === 'number') {
+      return goToState(idOrIndex, optionalStepIndex);
+    }
+    if (typeof idOrIndex === 'number') {
+      const target = flatSteps[Math.max(0, Math.min(idOrIndex, flatSteps.length - 1))];
+      if (target) return goToState(target.slideIndex, target.stepIndex);
+    }
+    if (typeof idOrIndex === 'string') {
+      const byStepId = flatSteps.find((s) => s.stepId === idOrIndex || s.slideId === idOrIndex);
+      if (byStepId) return goToState(byStepId.slideIndex, byStepId.stepIndex);
+    }
+    return state;
   }
 
   // Unified NEXT Step (PowerPoint-like sequential navigation)
@@ -145,12 +206,12 @@ export async function initPresentationApp() {
     } else if (state.slideIndex < 5) {
       goToState(state.slideIndex + 1, 0);
     }
-    // At Slide 06 Step 4 (Final Hold State), pressing Next holds steady and does NOT loop
+    // At Final Hold State (Slide 06 last step), pressing Next holds steady and does NOT loop
     return state;
   }
 
   // Unified PREVIOUS Step (PowerPoint-like reverse navigation)
-  function prevStep() {
+  function previousStep() {
     if (hasActiveModal()) {
       handleEscape();
       return state;
@@ -169,6 +230,7 @@ export async function initPresentationApp() {
     }
     return state;
   }
+  const prevStep = previousStep;
 
   function replayCurrentStep() {
     goToState(state.slideIndex, state.stepIndex);
@@ -249,12 +311,15 @@ export async function initPresentationApp() {
   // Expose State & Control APIs on window for automated Playwright verification
   window.PresentationState = state;
   window.nextStep = nextStep;
-  window.prevStep = prevStep;
+  window.previousStep = previousStep;
+  window.prevStep = previousStep;
+  window.goToStep = goToStep;
   window.goToState = goToState;
+  window.replayCurrentStep = replayCurrentStep;
   window.enterPresentation = () => goToState(0, 0);
   window.showLandingPage = () => goToState(-1, 0);
-  window.switchSlide5Scene = idx => goToState(4, idx);
-  window.setSlide6Mode = mode => goToState(5, mode === 'finale' ? 4 : 0);
+  window.switchSlide5Scene = (idx) => goToState(4, idx);
+  window.setSlide6Mode = (mode) => goToState(5, mode === 'finale' ? 5 : 0);
 
   // Initial Boot at Landing Step 0
   goToState(-1, 0);
@@ -264,7 +329,7 @@ export async function initPresentationApp() {
   // ===========================================================================
   let lastKeyTimestamp = 0;
 
-  window.addEventListener('keydown', e => {
+  window.addEventListener('keydown', (e) => {
     const now = performance.now();
     // Prevent rapid key-repeat flooding while allowing responsive single presses
     if (e.repeat && now - lastKeyTimestamp < 75) {
@@ -282,13 +347,13 @@ export async function initPresentationApp() {
       }
     } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
       e.preventDefault();
-      prevStep();
+      previousStep();
     } else if (e.key === 'Home') {
       e.preventDefault();
       goToState(-1, 0);
     } else if (e.key === 'End') {
       e.preventDefault();
-      goToState(5, 4);
+      goToState(5, 5);
     } else if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
       replayCurrentStep();
@@ -511,6 +576,8 @@ export async function initPresentationApp() {
     document.getElementById('help-modal-overlay')?.classList.remove('active');
     document.getElementById('notes-drawer')?.classList.remove('active');
     document.getElementById('hud-notes')?.classList.remove('active');
+    state.isLightboxOpen = false;
+    state.overlay = null;
     if (deck.isOverview()) deck.toggleOverview(false);
   }
 
@@ -522,11 +589,15 @@ export async function initPresentationApp() {
       img.src = src;
       if (cap) cap.textContent = caption;
       modal.classList.add('active');
+      state.isLightboxOpen = true;
+      state.overlay = 'lightbox';
     }
   }
 
   function closeLightbox() {
     document.getElementById('lightbox-modal')?.classList.remove('active');
+    state.isLightboxOpen = false;
+    state.overlay = null;
   }
 
   function initReplaceablePhotos() {

@@ -416,59 +416,60 @@
 
           <div class="slide-body">
             <div class="slide3-grid">
-              <!-- Left: Expansive Dual Camera Stage -->
-              <div class="slide3-visual-stage">
-                <div class="poster-camera-viewport" title="Khung camera di chuyển theo mạch tác phẩm gốc">
+              <!-- Left: Single High-Resolution Master Artwork Camera Stage + Focal Lens Inset -->
+              <div class="slide3-master-stage" id="slide3-master-stage">
+                <div class="poster-camera-viewport" title="Khung camera nghệ thuật di chuyển qua 4 vùng trọng tâm của poster gốc">
                   <img id="slide3-camera-target" src="./assets/optimized/poster-full.jpg" alt="Toàn cảnh poster Nét vẽ tri ân">
-                  <svg class="viewport-overlay-svg" viewBox="0 0 300 685" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path class="svg-draw-path" d="M85 495 Q 165 465, 185 380 T 255 125" stroke="#F0CC85" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round"/>
-                    <circle cx="155" cy="445" r="5" fill="#F0CC85"/>
-                    <circle cx="205" cy="295" r="5" fill="#F0CC85"/>
-                    <circle cx="255" cy="125" r="6" fill="#F8F1E3"/>
+                  <svg class="viewport-overlay-svg" id="slide3-camera-svg" viewBox="0 0 600 685" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="svg-draw-path" d="M145 520 Q 280 480, 345 365 T 470 120" stroke="#F0CC85" stroke-width="2.5" stroke-dasharray="7 5" stroke-linecap="round"/>
+                    <circle cx="265" cy="465" r="6" fill="#F0CC85"/>
+                    <circle cx="355" cy="315" r="6" fill="#F0CC85"/>
+                    <circle cx="470" cy="120" r="7" fill="#F8F1E3"/>
                   </svg>
                 </div>
 
-                <div class="focal-detail-panel">
-                  <div class="focal-detail-img-wrap" data-lightbox-src="./assets/optimized/crop-book-boat.jpg" data-lightbox-caption="Cận cảnh quyển sách mở hóa con thuyền tri thức và hai sinh viên cùng hướng về phía trước">
-                    <img id="slide3-detail-crop" src="./assets/optimized/crop-book-boat.jpg" alt="Hai sinh viên ngồi trên con thuyền sách hướng về tương lai">
+                <!-- Floating High-Res Focal Detail Lens (Auto-fades on Step 4 Full Panorama) -->
+                <div class="focal-lens-inset" id="slide3-focal-inset" data-lightbox-src="./assets/optimized/crop-book-boat.jpg" data-lightbox-caption="Cận cảnh chi tiết nghệ thuật trong tác phẩm Nét vẽ tri ân">
+                  <div class="focal-lens-header">
+                    <span>✦ ỐNG KÍNH CẬN CẢNH TÁC PHẨM</span>
+                    <span>Click phóng to</span>
                   </div>
-                  <div class="focal-detail-info">
-                    <h4 id="slide3-detail-caption">Bước 01 / 04 · Quyển Sách Hóa Con Thuyền & Hai Sinh Viên</h4>
-                    <p id="slide3-detail-sub">Hai sinh viên (một nam mang ba lô, một nữ quàng khăn đỏ) ngồi trên con thuyền sách mở rộng giữa tầng mây, cùng hướng về tương lai.</p>
+                  <div class="focal-lens-img-wrap">
+                    <img id="slide3-detail-crop" src="./assets/optimized/crop-book-boat.jpg" alt="Cận cảnh chi tiết tác phẩm Nét vẽ tri ân">
                   </div>
                 </div>
               </div>
 
-              <!-- Right: Clean Interactive Storyboard Breakdown -->
+              <!-- Right: Focused Editorial Spotlight & 4-Step Progress Bar -->
               <div class="slide3-narrative-col">
-                <div class="eyebrow-tag anim-item">CHƯƠNG II · HÀNH TRÌNH VƯƠN KHƠI</div>
-                <h2 class="display-serif-title split-title" style="font-size: 40px;">TRI THỨC LÀ ĐIỂM KHỞI ĐẦU. KHÁT VỌNG LÀ HƯỚNG ĐI.</h2>
-
-                <div class="editorial-quote-card anim-item">
-                  <p>“Thầy cô trao cho chúng em tri thức. Và tri thức trở thành con thuyền đưa chúng em tới tương lai.”</p>
+                <div>
+                  <div class="eyebrow-tag anim-item">CHƯƠNG II · HÀNH TRÌNH VƯƠN KHƠI</div>
+                  <h2 class="display-serif-title split-title" style="font-size: 42px; margin-bottom: 10px;">TRI THỨC LÀ ĐIỂM KHỞI ĐẦU. KHÁT VỌNG LÀ HƯỚNG ĐI.</h2>
                 </div>
 
-                <div class="zone-tabs-row anim-item">
-                  <button type="button" class="zone-tab-btn active" data-slide3-zone="0">01. Con thuyền sách & 2 sinh viên</button>
-                  <button type="button" class="zone-tab-btn" data-slide3-zone="1">02. Cầu thang sách & Bàn tay sẻ chia</button>
-                  <button type="button" class="zone-tab-btn" data-slide3-zone="2">03. Laptop, AI & Bình minh</button>
-                  <button type="button" class="zone-tab-btn" data-slide3-zone="3">04. Toàn cảnh tác phẩm</button>
+                <!-- Dynamic Active Scene Spotlight Card (Shows ONLY the active scene's deep narrative) -->
+                <div class="slide3-spotlight-card" id="slide3-active-spotlight">
+                  <div class="spotlight-step-badge" id="slide3-step-badge">CẢNH 01 / 04 · CON THUYỀN TRI THỨC</div>
+                  <h3 class="spotlight-scene-title" id="slide3-detail-caption">Quyển Sách Mở Hóa Con Thuyền & Hai Sinh Viên Đồng Hành</h3>
+                  <blockquote class="spotlight-scene-quote" id="slide3-detail-quote">
+                    “Mỗi trang sách thầy cô mở ra là một cánh buồm nâng bước ước mơ.”
+                  </blockquote>
+                  <p class="spotlight-scene-desc" id="slide3-detail-sub">
+                    Từ nét sáng trên tay người thầy, quyển sách rộng mở mang dáng dấp con thuyền tri thức và đôi cánh khát vọng. Trên thuyền, hai sinh viên — một nam đeo ba lô hành trang, một nữ quàng khăn đỏ nhiệt huyết — cùng hướng ánh nhìn về chân trời phía trước.
+                  </p>
+                  <div class="spotlight-highlight-pill" id="slide3-detail-tag">
+                    ✦ Điểm nhấn: Con thuyền sách mở rộng giữa tầng mây & hai sinh viên nam – nữ
+                  </div>
                 </div>
 
-                <div class="symbolism-list">
-                  <div class="symbol-item anim-item" data-slide3-zone="0">
-                    <h5>✦ Quyển Sách Hóa Con Thuyền & Hai Sinh Viên Ngồi Trên Thuyền</h5>
-                    <p>Quyển sách mở mang dáng dấp con thuyền tri thức và đôi cánh khát vọng. Trên thuyền, <strong>hai sinh viên một nam và một nữ</strong> mang ba lô cùng dải khăn đỏ nhiệt huyết đang ngồi nhìn về phía trước.</p>
-                  </div>
-
-                  <div class="symbol-item anim-item" data-slide3-zone="1">
-                    <h5>✦ Cầu Thang Sách & Bàn Tay Nâng Đỡ Đồng Hành</h5>
-                    <p>Từ trang sách mở ra những bậc thang chồng sách vươn cao. Hình ảnh <strong>một sinh viên đưa tay hỗ trợ sinh viên khác</strong> bước lên thể hiện sự gắn kết, dìu dắt nhau trưởng thành.</p>
-                  </div>
-
-                  <div class="symbol-item anim-item" data-slide3-zone="2">
-                    <h5>✦ Laptop <code>def future()</code>, Vi Mạch AI, Cloud & Chân Trời Bình Minh</h5>
-                    <p>Đoạn mã <code>learn() · create() · contribute() · return better_world()</code> cùng mạch AI và ánh bình minh đô thị khẳng định: tri thức là để sáng tạo và cống hiến.</p>
+                <!-- Bottom 4-Scene Step Progress Indicators -->
+                <div class="slide3-progress-dock">
+                  <div class="dock-label">TIẾN TRÌNH 4 CẢNH TRONG POSTER (BẤM [TIẾP ›] ĐỂ ĐI TUẦN TỰ):</div>
+                  <div class="zone-tabs-row anim-item">
+                    <button type="button" class="zone-tab-btn active" data-slide3-zone="0">01. Quyển sách & 2 sinh viên</button>
+                    <button type="button" class="zone-tab-btn" data-slide3-zone="1">02. Cầu thang & Bàn tay nâng đỡ</button>
+                    <button type="button" class="zone-tab-btn" data-slide3-zone="2">03. AI, laptop & Bình minh</button>
+                    <button type="button" class="zone-tab-btn" data-slide3-zone="3">04. Toàn cảnh tác phẩm</button>
                   </div>
                 </div>
               </div>
@@ -476,7 +477,7 @@
           </div>
 
           <footer class="slide-footer">
-            <div>Bấm <strong>[Tiếp ›]</strong> để lần lượt đi qua đủ 4 bước camera trước khi sang Slide 04</div>
+            <div>Bấm <strong>[Tiếp ›]</strong> hoặc phím <strong>[→]</strong> để camera đi qua lần lượt 4 cảnh trước khi sang Slide 04</div>
             <div>Code tương lai: <strong>def future(): learn() · create() · contribute() · return better_world()</strong></div>
           </footer>
         </div>
@@ -535,70 +536,75 @@
 
                 <div class="five-criteria-stage">
                   <div class="criteria-pillar-card" data-criterion-idx="0">
+                    <span class="pillar-step-num">TIÊU CHÍ 01</span>
                     <div class="pillar-icon-ring">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                     </div>
                     <h5>Đạo đức tốt</h5>
-                    <p>Sống có trách nhiệm, có nhân cách.</p>
+                    <p>Sống có trách nhiệm, có nhân cách và lòng tôn sư trọng đạo.</p>
                   </div>
 
                   <div class="criteria-pillar-card" data-criterion-idx="1">
+                    <span class="pillar-step-num">TIÊU CHÍ 02</span>
                     <div class="pillar-icon-ring">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                     </div>
                     <h5>Học tập tốt</h5>
-                    <p>Không ngừng học hỏi, phát triển chuyên môn.</p>
+                    <p>Không ngừng học hỏi, nghiên cứu khoa học và làm chủ công nghệ.</p>
                   </div>
 
                   <div class="criteria-pillar-card" data-criterion-idx="2">
+                    <span class="pillar-step-num">TIÊU CHÍ 03</span>
                     <div class="pillar-icon-ring">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
                     <h5>Thể lực tốt</h5>
-                    <p>Giữ sức khỏe, rèn luyện sự bền bỉ.</p>
+                    <p>Giữ sức khỏe, rèn luyện sự dẻo dai và bền bỉ trên đường dài.</p>
                   </div>
 
                   <div class="criteria-pillar-card" data-criterion-idx="3">
+                    <span class="pillar-step-num">TIÊU CHÍ 04</span>
                     <div class="pillar-icon-ring">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
                     <h5>Tình nguyện tốt</h5>
-                    <p>Sống biết sẻ chia, đóng góp cộng đồng.</p>
+                    <p>Sống biết sẻ chia, đóng góp sức trẻ cho cộng đồng xã hội.</p>
                   </div>
 
                   <div class="criteria-pillar-card" data-criterion-idx="4">
+                    <span class="pillar-step-num">TIÊU CHÍ 05</span>
                     <div class="pillar-icon-ring">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     </div>
                     <h5>Hội nhập tốt</h5>
-                    <p>Chủ động mở rộng tầm nhìn và khả năng kết nối.</p>
+                    <p>Chủ động trau dồi ngoại ngữ, kỹ năng số và mở rộng kết nối.</p>
                   </div>
                 </div>
               </div>
 
-              <!-- Step 7: Solemn Culmination Bar -->
+              <!-- Step 7: Solemn Culmination Bar (Framed as a tribute gift to teachers) -->
               <div class="milestone-culmination-bar anim-item">
                 <div class="culmination-headline">
                   <span style="color: var(--gold-champagne); font-size: 22px;">✦</span>
                   <span class="milestone-title">“02 NĂM LIÊN TIẾP — SINH VIÊN 5 TỐT”</span>
-                  <span class="milestone-note">Đạt danh hiệu Sinh viên 5 tốt ở các cấp — trái ngọt của lòng biết ơn và sự kiên trì rèn luyện.</span>
+                  <span class="milestone-note">Minh chứng cho hành trình nỗ lực không ngừng từ sự dìu dắt của thầy cô và nguồn cảm hứng từ các anh chị đi trước.</span>
                 </div>
                 <button type="button" class="hud-btn" id="btn-goto-slide5" style="background: var(--gold-champagne); color: var(--navy-deep); font-weight: 700; padding: 0 18px; height: 36px;">
-                  Xem hành trình bằng ảnh thật →
+                  Tiếp tục hành trình ảnh thật →
                 </button>
               </div>
             </div>
           </div>
 
           <footer class="slide-footer">
-            <div>Bấm <strong>[Tiếp ›]</strong> để lần lượt thắp sáng từng tiêu chí và dấu mốc 02 năm liên tiếp Sinh viên 5 tốt</div>
+            <div>Bấm <strong>[Tiếp ›]</strong> để lần lượt thắp sáng từng tiêu chí và dấu mốc minh chứng trưởng thành dâng tặng thầy cô</div>
             <div>5 tiêu chí: <strong>Đạo đức tốt · Học tập tốt · Thể lực tốt · Tình nguyện tốt · Hội nhập tốt</strong></div>
           </footer>
         </div>
       </section>
 
       <!-- ===================================================================
-           SLIDE 05 — HÀNH TRÌNH THỰC TẾ (5 Sequential Photo Scenes)
+           SLIDE 05 — HÀNH TRÌNH THỰC TẾ (5 Sequential Teacher & Student Photo Scenes)
            =================================================================== -->
       <section data-slide-id="slide-5">
         <div class="slide-frame theme-ivory">
@@ -610,8 +616,8 @@
                 <img src="./assets/optimized/logo-khoa-cntt.png" alt="Logo Khoa CNTT" class="logo-khoa">
               </div>
               <div class="brand-text">
-                <span class="brand-title">TRIỂN LÃM HÌNH ẢNH HÀNH TRÌNH THỰC TẾ TẠI DNTU</span>
-                <span class="brand-sub">5 CẢNH CHUYỆN THẬT: NGÀY ĐẦU · HỌC HỎI · NỖ LỰC · THÀNH QUẢ 5 TỐT · BIẾT ƠN 20/11</span>
+                <span class="brand-title">HÀNH TRÌNH THỰC TẾ BÊN THẦY CÔ & MÁI TRƯỜNG DNTU</span>
+                <span class="brand-sub">5 CẢNH CHUYỆN THẬT: NGÀY ĐẦU & CÔ LIỆU · HỌC HỎI · NỖ LỰC · THÀNH QUẢ 5 TỐT · BIẾT ƠN 20/11</span>
               </div>
             </div>
             <div class="slide-header-right">
@@ -626,11 +632,8 @@
             <div class="slide5-container">
               <div class="slide5-top-bar">
                 <div>
-                  <div class="eyebrow-tag anim-item" id="s5-scene-eyebrow">CẢNH 01 / 05 — NHỮNG NGÀY ĐẦU DƯỚI MÁI TRƯỜNG DNTU</div>
-                  <h2 class="display-serif-title split-title" style="font-size: 40px; margin-bottom: 4px;">TỪ ƯỚC MƠ ĐẾN HÀNH TRÌNH THỰC TẾ</h2>
-                  <p class="anim-item" style="font-family: var(--font-serif); font-style: italic; font-size: 20.5px; font-weight: 700; color: var(--dntu-red); margin: 0;">
-                    “Điều em từng ngưỡng mộ đã trở thành động lực để em không ngừng cố gắng.”
-                  </p>
+                  <div class="eyebrow-tag anim-item" id="s5-scene-eyebrow">CẢNH 01 / 05 — NHỮNG NGÀY ĐẦU & SỰ DÌU DẮT ẤM ÁP CỦA CÔ LIỆU</div>
+                  <h2 class="display-serif-title split-title" id="s5-scene-headline" style="font-size: 38px; margin-bottom: 2px;">Từ Bỡ Ngỡ Thuở Nhập Học Đến Sự Tự Tin Nhờ Điểm Tựa Thầy Cô</h2>
                 </div>
 
                 <div class="scene-timeline-nav anim-item" role="tablist" aria-label="5 Cảnh hành trình hình ảnh thực tế">
@@ -646,12 +649,12 @@
                 <div class="exhibition-hero-card">
                   <button type="button" class="slot-replace-btn">Thay ảnh</button>
                   <div class="exhibition-hero-img-wrap">
-                    <img id="s5-hero-img" src="./assets/curated/curated-01-dntu-podium.jpg" data-replace-key="s5_hero" alt="Tự Tin Đứng Trước Hội Trường Đại Học Công Nghệ Đồng Nai">
+                    <img id="s5-hero-img" src="./assets/curated/curated-17-co-lieu-smile-dntu.jpg" data-replace-key="s5_hero" alt="Nụ Cười Hiền Hậu & Tiếng Vỗ Tay Khích Lệ Của Cô Liệu Trên Giảng Đường DNTU">
                   </div>
                   <div class="exhibition-hero-caption">
-                    <span class="exhibition-badge" id="s5-hero-badge">GIẢNG ĐƯỜNG DNTU · TRƯỞNG THÀNH</span>
-                    <h4 id="s5-hero-title">Tự Tin Đứng Trước Hội Trường Đại Học Công Nghệ Đồng Nai</h4>
-                    <p id="s5-hero-caption">Khoảnh khắc đứng bên bục phát biểu mang biểu trưng DNTU — nơi những lời động viên đầu tiên của thầy cô đã mở ra hành trình vươn xa.</p>
+                    <span class="exhibition-badge" id="s5-hero-badge">CÔ LIỆU · NGƯỜI THẦY TRUYỀN LỬA NHỮNG NGÀY ĐẦU</span>
+                    <h4 id="s5-hero-title">Nụ Cười Hiền Hậu & Tiếng Vỗ Tay Khích Lệ Của Cô Liệu Trên Giảng Đường DNTU</h4>
+                    <p id="s5-hero-caption">Khoảnh khắc cô Liệu mỉm cười ấm áp và vỗ tay động viên sinh viên trong giờ học tại DNTU — điểm tựa tinh thần giúp người học trò vượt qua sự rụt rè thuở mới bước vào đại học.</p>
                   </div>
                 </div>
 
@@ -659,24 +662,24 @@
                   <div class="exhibition-side-card">
                     <button type="button" class="slot-replace-btn">Thay ảnh</button>
                     <div class="exhibition-side-img-wrap">
-                      <img id="s5-side1-img" src="./assets/curated/curated-02-hoc-tap-nhom.jpg" data-replace-key="s5_side1" alt="Cùng Bạn Bè Thảo Luận Bên Chiếc Laptop">
+                      <img id="s5-side1-img" src="./assets/curated/curated-01-dntu-podium.jpg" data-replace-key="s5_side1" alt="Tự Tin Đứng Trước Hội Trường Đại Học Công Nghệ Đồng Nai">
                     </div>
                     <div class="exhibition-side-info">
-                      <span class="side-badge" id="s5-side1-badge">HỌC TẬP & ĐỒNG HÀNH</span>
-                      <h5 id="s5-side1-title">Cùng Bạn Bè Thảo Luận Bên Chiếc Laptop</h5>
-                      <p id="s5-side1-caption">Tinh thần sẻ chia, cùng nhau học tập và giải quyết bài toán công nghệ tại giảng đường DNTU.</p>
+                      <span class="side-badge" id="s5-side1-badge">GIẢNG ĐƯỜNG DNTU · TỰ TIN</span>
+                      <h5 id="s5-side1-title">Tự Tin Đứng Trước Hội Trường Đại Học Công Nghệ Đồng Nai</h5>
+                      <p id="s5-side1-caption">Từ những lời động viên đầu tiên của cô Liệu và thầy cô, người sinh viên dần trưởng thành trên bục phát biểu DNTU.</p>
                     </div>
                   </div>
 
                   <div class="exhibition-side-card">
                     <button type="button" class="slot-replace-btn">Thay ảnh</button>
                     <div class="exhibition-side-img-wrap">
-                      <img id="s5-side2-img" src="./assets/curated/curated-04-startup-dntu.jpg" data-replace-key="s5_side2" alt="Hòa Mình Vào Các Sự Kiện Học Thuật Nhà Trường">
+                      <img id="s5-side2-img" src="./assets/curated/curated-02-hoc-tap-nhom.jpg" data-replace-key="s5_side2" alt="Cùng Bạn Bè Thảo Luận Chuyên Môn Bên Chiếc Laptop">
                     </div>
                     <div class="exhibition-side-info">
-                      <span class="side-badge" id="s5-side2-badge">MÔI TRƯỜNG HỌC THUẬT</span>
-                      <h5 id="s5-side2-title">Hòa Mình Vào Các Sự Kiện Học Thuật Nhà Trường</h5>
-                      <p id="s5-side2-caption">Những chương trình, cuộc thi tại Hội trường A – DNTU giúp sinh viên mở rộng tầm nhìn từ năm nhất.</p>
+                      <span class="side-badge" id="s5-side2-badge">HỌC TẬP & ĐỒNG HÀNH</span>
+                      <h5 id="s5-side2-title">Cùng Bạn Bè Thảo Luận Chuyên Môn Bên Chiếc Laptop</h5>
+                      <p id="s5-side2-caption">Tinh thần sẻ chia, cùng nhau học tập và giải quyết bài toán công nghệ tại giảng đường Khoa CNTT.</p>
                     </div>
                   </div>
                 </div>
@@ -685,14 +688,14 @@
           </div>
 
           <footer class="slide-footer">
-            <div>Bấm <strong>[Tiếp ›]</strong> để lần lượt đi qua đủ 5 cảnh hồi ức bằng ảnh thật · Click vào ảnh bất kỳ để phóng to</div>
-            <div>Minh chứng thực tế: <strong>Quách Khoa Đức · Khoa CNTT – DNTU</strong></div>
+            <div>Bấm <strong>[Tiếp ›]</strong> để đi qua lần lượt 5 cảnh ảnh thật gắn kết thầy trò · Click vào ảnh bất kỳ để phóng to</div>
+            <div>Hành trình tri ân: <strong>Cô Liệu & Quý thầy cô Khoa Công nghệ thông tin – DNTU</strong></div>
           </footer>
         </div>
       </section>
 
       <!-- ===================================================================
-           SLIDE 06 — THE GRAND FINALE (5 Sequential Steps)
+           SLIDE 06 — TEACHER-CENTERED GRAND FINALE (6 Seamless Sequential Steps)
            =================================================================== -->
       <section data-slide-id="slide-6">
         <div class="slide-frame">
@@ -704,14 +707,14 @@
                 <img src="./assets/optimized/logo-khoa-cntt.png" alt="Logo Khoa CNTT" class="logo-khoa">
               </div>
               <div class="brand-text">
-                <span class="brand-title">LỜI TRI ÂN & HÀNH TRÌNH TIẾP NỐI</span>
-                <span class="brand-sub">KÍNH TẶNG QUÝ THẦY CÔ NHÂN NGÀY NHÀ GIÁO VIỆT NAM 20/11</span>
+                <span class="brand-title">LỜI TRI ÂN THẦY CÔ & HÀNH TRÌNH TIẾP NỐI</span>
+                <span class="brand-sub">KÍNH DÂNG CÔ LIỆU & QUÝ THẦY CÔ KHOA CNTT – DNTU NHÂN NGÀY NHÀ GIÁO VIỆT NAM 20/11</span>
               </div>
             </div>
             <div class="slide-header-right">
               <div class="chapter-pill">
                 <span class="dot"></span>
-                <span>SLIDE 06 / 06 · TIẾP NỐI</span>
+                <span>SLIDE 06 / 06 · TRI ÂN & TIẾP NỐI</span>
               </div>
             </div>
           </header>
@@ -719,26 +722,27 @@
           <div class="slide-body">
             <div class="slide6-stage-wrapper">
 
-              <!-- PART A (Steps 1, 2, 3): GRATITUDE, PORTRAIT & 20/11 FLORAL TRIBUTE -->
+              <!-- STAGE 1 (Steps 1..4): TEACHER-CENTERED GRATITUDE, 20/11 FLORAL GIFT & CONTINUITY BRIDGE -->
               <div id="slide6-tribute-view">
                 <div class="gratitude-left-col">
-                  <div class="eyebrow-tag anim-item">CHƯƠNG CUỐI · TẤM LÒNG NGƯỜI HỌC TRÒ</div>
+                  <div class="eyebrow-tag anim-item">CHƯƠNG CUỐI · TÔN SƯ TRỌNG ĐẠO & LÒNG BIẾT ƠN</div>
                   <h2 class="gratitude-main-title split-title">CẢM ƠN THẦY CÔ</h2>
                   <div class="gratitude-sub-quote anim-item">“Vì đã trao cho chúng em những nét vẽ đầu tiên.”</div>
 
-                  <div class="gratitude-letter-card anim-item">
+                  <!-- Step 2 (stepIndex = 1): Sequential Teacher Gratitude Ribbons -->
+                  <div class="gratitude-letter-card" id="s6-tribute-list">
                     <div class="gratitude-pillars-list">
                       <div class="gratitude-pillar-item">
-                        <strong>Tri ân cô Liệu</strong>
-                        <span>Cảm ơn cô đã tận tình dìu dắt, hướng dẫn và trao cho em niềm tin từ những ngày đầu bỡ ngỡ bước vào giảng đường.</span>
+                        <strong>Kính tri ân Cô Liệu</strong>
+                        <span>Cảm ơn cô đã tận tình dìu dắt, hướng dẫn và trao cho em niềm tin ấm áp từ những ngày đầu còn nhiều bỡ ngỡ nơi giảng đường.</span>
                       </div>
                       <div class="gratitude-pillar-item">
-                        <strong>Tri ân Khoa CNTT</strong>
-                        <span>Cảm ơn quý thầy cô Khoa Công nghệ thông tin đã truyền dạy tri thức, kỹ năng và tạo cơ hội để sinh viên phát triển.</span>
+                        <strong>Tri ân Quý thầy cô Khoa CNTT</strong>
+                        <span>Cảm ơn quý thầy cô Khoa Công nghệ thông tin đã truyền dạy tri thức, thắp lửa đam mê công nghệ và nâng bước chúng em trưởng thành.</span>
                       </div>
                       <div class="gratitude-pillar-item">
                         <strong>Tri ân Mái trường DNTU</strong>
-                        <span>Cảm ơn quý thầy cô Trường Đại học Công nghệ Đồng Nai đã kiến tạo môi trường học tập nhân văn và giàu khát vọng.</span>
+                        <span>Cảm ơn Trường Đại học Công nghệ Đồng Nai đã kiến tạo môi trường học tập nhân văn, nơi ước mơ sinh viên được chắp cánh.</span>
                       </div>
                     </div>
 
@@ -747,48 +751,73 @@
                     </div>
                   </div>
 
-                  <!-- Step 3: Mature, Solemn 20/11 Floral Tribute Bouquet & Ribbon -->
+                  <!-- Step 3 (stepIndex = 2): Artistic 20/11 Floral Tribute Bouquet & Silk Ribbon -->
                   <div class="slide6-floral-tribute-box" id="slide6-floral-tribute">
-                    <svg width="95" height="62" viewBox="0 0 95 62" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10 50 C 32 36, 62 56, 86 42" stroke="#AD1F29" stroke-width="3" stroke-linecap="round"/>
-                      <path d="M12 52 C 35 42, 60 52, 84 45" stroke="#F0CC85" stroke-width="1.5" stroke-linecap="round"/>
-                      <g transform="translate(34, 28)">
-                        <circle cx="0" cy="0" r="12" fill="#F4B8C4" stroke="#F8F1E3" stroke-width="1.2"/>
-                        <circle cx="0" cy="0" r="4" fill="#AD1F29"/>
+                    <svg class="s6-floral-gift-svg" width="130" height="76" viewBox="0 0 130 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path class="s6-floral-stem" d="M8 62 C 38 42, 78 66, 122 46" stroke="#AD1F29" stroke-width="3.2" stroke-linecap="round"/>
+                      <path class="s6-floral-ribbon" d="M12 66 C 45 50, 82 62, 118 52" stroke="#F0CC85" stroke-width="1.8" stroke-linecap="round"/>
+                      <g class="s6-bloom-1" transform="translate(42, 34)">
+                        <circle cx="0" cy="0" r="15" fill="#F4B8C4" stroke="#F8F1E3" stroke-width="1.3"/>
+                        <circle cx="0" cy="0" r="6" fill="#AD1F29"/>
                       </g>
-                      <g transform="translate(56, 24)">
-                        <circle cx="0" cy="0" r="14" fill="#F7E0AE" stroke="#F0CC85" stroke-width="1.2"/>
-                        <circle cx="0" cy="0" r="5" fill="#D4A853"/>
+                      <g class="s6-bloom-2" transform="translate(68, 28)">
+                        <circle cx="0" cy="0" r="17" fill="#F7E0AE" stroke="#F0CC85" stroke-width="1.4"/>
+                        <circle cx="0" cy="0" r="6.5" fill="#D4A853"/>
+                      </g>
+                      <g class="s6-bloom-3" transform="translate(92, 36)">
+                        <circle cx="0" cy="0" r="13" fill="#F4B8C4" stroke="#F0CC85" stroke-width="1.2"/>
+                        <circle cx="0" cy="0" r="4.5" fill="#AD1F29"/>
                       </g>
                     </svg>
                     <div class="floral-tribute-copy">
-                      <strong>Đóa Hoa Tri Ân Ngày Nhà Giáo Việt Nam 20/11</strong>
-                      <span>Những cánh hoa và nét sáng tri thức hội tụ, mở ra toàn cảnh bức tranh nguyên bản ở bước tiếp theo.</span>
+                      <strong>Những Đóa Hoa Tri Ân Kính Dâng Thầy Cô 20/11</strong>
+                      <span>Từ nét sáng của người thầy, những cánh hoa tri ân nở rộ và hội tụ thành món quà lòng biết ơn gửi tới quý thầy cô.</span>
                     </div>
-                    <button type="button" id="btn-trigger-finale" class="btn-explore-journey" style="width: auto; padding: 10px 20px; font-size: 12.5px; flex-shrink: 0;">
-                      <span>✦ Mở Toàn Cảnh Poster</span>
-                      <span>→</span>
-                    </button>
+                  </div>
+
+                  <!-- Step 4 (stepIndex = 3): Cinematic Light Bridge Transition C -> D -->
+                  <div class="slide6-light-bridge-bar" id="slide6-light-bridge">
+                    <span class="bridge-sparkle">✦</span>
+                    <span><strong>Ánh sáng tri thức tiếp nối:</strong> Từ người thầy → quyển sách → con thuyền → bậc thang trưởng thành. Bấm <strong>[Tiếp ›]</strong> để hé lộ trọn vẹn tác phẩm nguyên bản.</span>
                   </div>
                 </div>
 
-                <!-- Right Column: Real Studio Portrait of Quách Khoa Đức -->
-                <div class="portrait-right-col">
-                  <div class="author-portrait-frame anim-item">
-                    <button type="button" class="slot-replace-btn">Thay ảnh chân dung</button>
-                    <img src="./assets/curated/curated-14-portrait-quach-khoa-duc.jpg" data-replace-key="author_portrait" alt="Chân dung sinh viên Quách Khoa Đức – Khoa Công nghệ thông tin DNTU" class="author-portrait-img">
-                    <div class="author-portrait-caption">
-                      <strong>Quách Khoa Đức</strong>
-                      <span>Sinh viên Khoa Công nghệ thông tin – Trường Đại học Công nghệ Đồng Nai (DNTU)</span>
+                <!-- Right Column: TEACHER-CENTERED VISUAL TRIBUTE SHOWCASE (Replaces Personal Portrait!) -->
+                <div class="teacher-tribute-right-col" id="slide6-teacher-visual-stage">
+                  <!-- Left Tall Card: Original Poster Teacher Figure & Guiding Light -->
+                  <div class="teacher-tribute-art-card" data-lightbox-src="./assets/optimized/crop-teacher.jpg" data-lightbox-caption="Hình tượng người giảng viên trong tà áo dài trắng và bó hoa tri ân trên poster nguyên bản">
+                    <img src="./assets/optimized/crop-teacher.jpg" alt="Hình tượng người giảng viên trong tà áo dài trắng và bó hoa tri ân" class="teacher-tribute-art-img">
+                    <div class="teacher-tribute-overlay-badge">
+                      <strong>Hình Tượng Người Thầy Khai Mở</strong>
+                      <span>Nét sáng đầu tiên từ bảng xanh <code>print("Hello, DNTU")</code></span>
+                    </div>
+                  </div>
+
+                  <!-- Right Stack: Real Classroom 20/11 Tribute Photos with Cô Liệu -->
+                  <div class="teacher-tribute-real-stack">
+                    <div class="teacher-real-photo-card" data-lightbox-src="./assets/curated/curated-16-co-lieu-20-11-flowers.jpg" data-lightbox-caption="Khoảnh khắc trao tặng bó hoa tri ân 20/11 tới cô Liệu ngay tại lớp học DNTU">
+                      <img src="./assets/curated/curated-16-co-lieu-20-11-flowers.jpg" alt="Cô Liệu ôm bó hoa tri ân 20/11 bên Quách Khoa Đức và tập thể sinh viên tại giảng đường DNTU">
+                      <div class="teacher-real-caption">
+                        <strong>Hoa Tri Ân Dâng Tặng Cô Liệu</strong>
+                        <span>Kỷ niệm 20/11 ấm áp bên cô Liệu và tập thể lớp tại DNTU</span>
+                      </div>
+                    </div>
+
+                    <div class="teacher-real-photo-card" data-lightbox-src="./assets/curated/curated-18-co-lieu-aibot-rose.jpg" data-lightbox-caption="Cô Liệu trong tà áo dài cầm hoa hồng 20/11 tại Trung tâm AIBOT – Trường Đại học Công nghệ Đồng Nai">
+                      <img src="./assets/curated/curated-18-co-lieu-aibot-rose.jpg" alt="Cô Liệu trong tà áo dài cầm hoa hồng 20/11 tại Trung tâm AIBOT – DNTU" style="object-position: center 20%;">
+                      <div class="teacher-real-caption">
+                        <strong>Người Giảng Viên & Chân Trời Công Nghệ</strong>
+                        <span>Cô Liệu trong tà áo dài cầm hoa tri ân tại AIBOT Center – DNTU</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- PART B (Steps 4 & 5): FULL POSTER REVEAL & FINAL HOLD STATE (POSTER_FULLY_VISIBLE = TRUE) -->
+              <!-- STAGE 2 (Steps 5 & 6): FULL UNCROPPED POSTER REVEAL & FINAL HOLD STATE (POSTER_FULLY_VISIBLE = TRUE) -->
               <div id="slide6-finale-view" aria-label="Cảnh kết hiển thị trọn vẹn toàn bộ Poster gốc">
                 <div class="finale-left-wing">
-                  <div class="eyebrow-tag">CẢNH KẾT TRỌN VẸN · TÁC PHẨM NGUYÊN BẢN</div>
+                  <div class="eyebrow-tag">CẢNH KẾT TRIỂN LÃM · TÁC PHẨM NGUYÊN BẢN TRỌN VẸN</div>
                   <h3 class="display-serif-title" style="font-size: 46px; margin-bottom: 4px;">NÉT VẼ TRI ÂN</h3>
                   <div style="font-size: 15px; font-weight: 700; letter-spacing: 0.14em; color: var(--gold-champagne); margin-bottom: 10px;">
                     MỘT DÒNG CODE – VẠN CHÂN TRỜI
@@ -798,13 +827,10 @@
                       “Từng bậc tri thức thầy trao,<br>
                       Thành đường em bước vươn cao chân trời.”
                     </p>
-                    <span style="font-size: 13px; color: var(--ivory-muted); display: block;">
+                    <span style="font-size: 14px; line-height: 1.52; color: var(--ivory-warm); display: block;">
                       “Thầy cô không vẽ sẵn tương lai cho chúng em. Thầy cô trao những nét vẽ đầu tiên, để chúng em đủ tự tin tự vẽ nên chân trời của mình.”
                     </span>
                   </div>
-                  <button type="button" id="btn-back-tribute" class="hud-btn" style="width: fit-content; border-color: var(--gold-border); padding: 0 16px; height: 34px;">
-                    ← Quay lại Lời tri ân & Chân dung
-                  </button>
                 </div>
 
                 <!-- Center Stage: 100% UNCROPPED FULL POSTER IN FINAL HOLD STATE -->
@@ -817,16 +843,19 @@
                 <div class="finale-right-wing">
                   <div class="finale-poem-card" id="finale-hold-badge">
                     <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: var(--gold-champagne); margin-bottom: 8px;">THÔNG ĐIỆP KẾT TINH · FINAL HOLD STATE</div>
-                    <div class="finale-closing-statement" style="margin-bottom: 12px;">
+                    <div class="finale-closing-statement" style="margin-bottom: 10px;">
                       TRI THỨC TRAO ĐI,<br>TƯƠNG LAI TIẾP NỐI.
                     </div>
-                    <p style="font-size: 17.5px; line-height: 1.5; color: var(--ivory-warm); margin: 0;">
+                    <div class="finale-2011-greeting">
+                      CẢM ƠN QUÝ THẦY CÔ – CHÚC MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11.
+                    </div>
+                    <p style="font-size: 16.5px; line-height: 1.48; color: var(--ivory-warm); margin: 10px 0 0 0;">
                       “Bởi món quà ý nghĩa nhất mà người học trò có thể dành tặng thầy cô không chỉ là thành tích hôm nay, mà còn là cách mình sống và cống hiến trong những ngày mai.”
                     </p>
                   </div>
 
                   <div style="font-size: 13.5px; color: var(--ivory-muted); padding-left: 4px;">
-                    Tác giả: <strong style="color: var(--gold-champagne);">Quách Khoa Đức</strong> · Khoa Công nghệ thông tin – DNTU
+                    Tác phẩm dự thi của sinh viên: <strong style="color: var(--gold-champagne);">Quách Khoa Đức</strong> · Khoa Công nghệ thông tin – DNTU
                   </div>
                 </div>
               </div>
@@ -835,7 +864,7 @@
           </div>
 
           <footer class="slide-footer">
-            <div>Trân trọng cảm ơn <strong>Ban Giám khảo, Quý Thầy Cô và các bạn sinh viên</strong> đã lắng nghe!</div>
+            <div>Trân trọng cảm ơn <strong>Ban Giám khảo, Cô Liệu, Quý Thầy Cô Khoa CNTT – DNTU và các bạn sinh viên</strong> đã lắng nghe!</div>
             <div>Thông điệp kết: <strong>TRI THỨC TRAO ĐI, TƯƠNG LAI TIẾP NỐI.</strong></div>
           </footer>
         </div>
@@ -851,7 +880,7 @@
     <button type="button" class="hud-btn" id="hud-landing" title="Về Trang mở đầu 20/11 (Phím Home)">✦ 20/11</button>
     <span class="hud-sep"></span>
     <button type="button" class="hud-btn" id="hud-prev" title="Bước trước (Phím ← hoặc PageUp)">‹ Trước</button>
-    <div class="hud-slide-indicator" id="hud-indicator">MỞ ĐẦU 20/11 · BƯỚC 01 / 06</div>
+    <div class="hud-slide-indicator" id="hud-indicator">MỞ ĐẦU 20/11 · BƯỚC 01 / 05</div>
     <button type="button" class="hud-btn" id="hud-next" title="Bước tiếp theo (Phím → hoặc Space)">Tiếp ›</button>
     <span class="hud-sep"></span>
     <button type="button" class="hud-btn" id="hud-replay" title="Phát lại bước hiện tại (Phím R)">↻ Replay</button>

@@ -973,36 +973,40 @@ html, body {
 }
 
 /* ==========================================================================
-   SLIDE 03 — CON THUYỀN TRI THỨC & CHÂN TRỜI AI
+   SLIDE 03 — CON THUYỀN TRI THỨC & CHÂN TRỜI AI (V4 SINGLE MASTER CANVAS)
    ========================================================================== */
 .slide3-grid {
   display: grid;
-  grid-template-columns: 1.16fr 0.84fr;
-  gap: 34px;
+  grid-template-columns: 1.06fr 0.94fr;
+  gap: 36px;
   width: 100%;
   height: 100%;
   align-items: center;
 }
 
-.slide3-visual-stage {
-  display: grid;
-  grid-template-columns: 0.42fr 0.58fr;
-  gap: 14px;
+.slide3-master-stage {
+  position: relative;
   height: 685px;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid var(--gold-champagne);
+  background: var(--navy-deep);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.55);
 }
 
 .poster-camera-viewport {
   position: relative;
-  border-radius: 18px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  border: 1.5px solid var(--gold-border);
-  background: var(--navy-deep);
+  background: radial-gradient(circle at 50% 45%, #163058 0%, #091526 100%);
 }
 
 .poster-camera-viewport img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   will-change: transform;
 }
@@ -1015,66 +1019,151 @@ html, body {
   pointer-events: none;
 }
 
-.focal-detail-panel {
+/* Floating High-Res Focal Detail Lens at Bottom-Right of Master Stage */
+.focal-lens-inset {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 325px;
+  height: 242px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid var(--gold-champagne);
+  background: rgba(9, 21, 38, 0.96);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.78);
   display: flex;
   flex-direction: column;
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1.5px solid var(--gold-champagne);
-  background: rgba(11, 25, 46, 0.9);
+  cursor: pointer;
+  z-index: 6;
 }
 
-.focal-detail-img-wrap {
+.focal-lens-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--navy-academic);
+  border-bottom: 1px solid rgba(240, 204, 133, 0.35);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold-champagne);
+}
+
+.focal-lens-img-wrap {
   position: relative;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
-  background: var(--navy-deep);
-  cursor: pointer;
 }
 
-.focal-detail-img-wrap img {
+.focal-lens-img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.focal-detail-info {
-  padding: 14px 18px;
-  background: var(--ivory-warm);
-  color: var(--navy-academic);
+.slide3-narrative-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 685px;
 }
 
-.focal-detail-info h4 {
+.slide3-spotlight-card {
+  background: linear-gradient(145deg, #FBF7EF 0%, #F4E9D4 100%);
+  color: var(--navy-academic);
+  border: 2px solid var(--gold-champagne);
+  border-radius: 20px;
+  padding: 26px 30px;
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.38);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spotlight-step-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--dntu-red);
+  color: var(--ivory-warm);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.spotlight-scene-title {
   font-family: var(--font-serif);
-  font-size: 21px;
+  font-size: 31px;
+  line-height: 1.18;
   font-weight: 700;
   color: var(--navy-academic);
-  margin: 0 0 4px 0;
+  margin: 0;
 }
 
-.focal-detail-info p {
-  font-size: 13.5px;
-  line-height: 1.48;
-  color: #334155;
+.spotlight-scene-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.42;
+  font-weight: 700;
+  color: var(--dntu-red);
   margin: 0;
+  padding-left: 14px;
+  border-left: 3.5px solid var(--dntu-red);
+}
+
+.spotlight-scene-desc {
+  font-size: 15px;
+  line-height: 1.56;
+  color: #1E293B;
+  margin: 0;
+}
+
+.spotlight-highlight-pill {
+  background: rgba(25, 54, 95, 0.08);
+  border: 1px solid rgba(25, 54, 95, 0.18);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--navy-academic);
+}
+
+.slide3-progress-dock {
+  background: rgba(11, 25, 46, 0.72);
+  border: 1px solid rgba(240, 204, 133, 0.3);
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.dock-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold-champagne);
+  margin-bottom: 8px;
 }
 
 .zone-tabs-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-bottom: 12px;
+  margin: 0;
 }
 
 .zone-tab-btn {
-  background: rgba(11, 25, 46, 0.72);
+  background: rgba(16, 36, 66, 0.85);
   border: 1px solid rgba(240, 204, 133, 0.28);
   color: var(--ivory-muted);
-  padding: 9px 12px;
+  padding: 10px 14px;
   border-radius: 10px;
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -1087,39 +1176,6 @@ html, body {
   border-color: var(--gold-champagne);
   color: var(--navy-deep);
   font-weight: 700;
-}
-
-.symbolism-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.symbol-item {
-  background: rgba(11, 25, 46, 0.65);
-  border: 1px solid rgba(248, 241, 227, 0.14);
-  border-radius: 12px;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-.symbol-item:hover {
-  border-color: var(--gold-champagne);
-}
-
-.symbol-item h5 {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--gold-champagne);
-  margin: 0 0 3px 0;
-}
-
-.symbol-item p {
-  font-size: 13.2px;
-  line-height: 1.48;
-  color: var(--ivory-muted);
-  margin: 0;
 }
 
 /* ==========================================================================
@@ -1184,7 +1240,7 @@ html, body {
 
 .criteria-connector-svg {
   position: absolute;
-  top: 48px;
+  top: 62px;
   left: 8%;
   width: 84%;
   height: 8px;
@@ -1206,13 +1262,23 @@ html, body {
   color: var(--navy-academic);
   border: 1.5px solid var(--gold-champagne);
   border-radius: 18px;
-  padding: 20px 16px;
+  padding: 18px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
   transition: transform 0.35s var(--ease-cinematic), box-shadow 0.35s var(--ease-cinematic), border-color 0.35s;
+}
+
+.pillar-step-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--dntu-red);
+  margin-bottom: 8px;
+  display: block;
 }
 
 .criteria-pillar-card.criteria-active {
@@ -1289,7 +1355,7 @@ html, body {
 }
 
 /* ==========================================================================
-   SLIDE 05 — PREMIUM 5-SCENE PHOTO STORYTELLING EXHIBITION (WARM IVORY)
+   SLIDE 05 — V4 TEACHER & STUDENT PHOTO EXHIBITION (BALANCED, ZERO WHITESPACE)
    ========================================================================== */
 .slide5-container {
   display: flex;
@@ -1297,23 +1363,24 @@ html, body {
   width: 100%;
   height: 100%;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .slide5-top-bar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 20px;
 }
 
 .scene-timeline-nav {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   background: rgba(25, 54, 95, 0.08);
   padding: 5px;
   border-radius: 999px;
   border: 1px solid rgba(25, 54, 95, 0.16);
+  flex-shrink: 0;
 }
 
 .scene-step-btn {
@@ -1323,7 +1390,7 @@ html, body {
   padding: 8px 16px;
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.25s;
@@ -1339,12 +1406,12 @@ html, body {
   box-shadow: 0 4px 12px rgba(25, 54, 95, 0.25);
 }
 
-/* Exhibition Stage: Left Hero + Right Asymmetric Stack */
+/* Expanded Exhibition Stage: 575px tall -> eliminates empty top gap */
 .exhibition-stage-grid {
   display: grid;
-  grid-template-columns: 1.22fr 0.78fr;
+  grid-template-columns: 1.15fr 0.85fr;
   gap: 20px;
-  height: 500px;
+  height: 575px;
   min-height: 0;
   width: 100%;
 }
@@ -1357,7 +1424,7 @@ html, body {
   overflow: hidden;
   background: var(--navy-deep);
   border: 2px solid var(--navy-academic);
-  box-shadow: 0 18px 42px rgba(25, 54, 95, 0.2);
+  box-shadow: 0 18px 42px rgba(25, 54, 95, 0.22);
   display: flex;
   flex-direction: column;
   transition: border-color 0.35s, box-shadow 0.35s;
@@ -1383,7 +1450,7 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  object-position: center 22%;
   display: block;
   transition: transform 0.6s var(--ease-cinematic);
 }
@@ -1393,34 +1460,34 @@ html, body {
 }
 
 .exhibition-hero-caption {
-  padding: 12px 20px;
+  padding: 14px 22px;
   background: var(--navy-academic);
   color: var(--ivory-warm);
-  border-top: 1.5px solid var(--gold-champagne);
+  border-top: 2px solid var(--gold-champagne);
   flex-shrink: 0;
 }
 
 .exhibition-badge {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold-champagne);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .exhibition-hero-caption h4 {
   font-family: var(--font-serif);
-  font-size: 21.5px;
+  font-size: 23px;
   font-weight: 700;
   color: var(--ivory-warm);
-  margin: 0 0 3px 0;
+  margin: 0 0 4px 0;
 }
 
 .exhibition-hero-caption p {
-  font-size: 13px;
-  line-height: 1.44;
+  font-size: 13.8px;
+  line-height: 1.46;
   color: var(--ivory-muted);
   margin: 0;
 }
@@ -1428,7 +1495,7 @@ html, body {
 .exhibition-side-col {
   display: grid;
   grid-template-rows: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
   height: 100%;
   min-height: 0;
 }
@@ -1437,13 +1504,13 @@ html, body {
   position: relative;
   height: 100%;
   min-height: 0;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   background: #FFFFFF;
-  border: 1.5px solid rgba(25, 54, 95, 0.2);
+  border: 1.5px solid rgba(25, 54, 95, 0.22);
   box-shadow: 0 12px 28px rgba(25, 54, 95, 0.12);
   display: grid;
-  grid-template-columns: 0.46fr 0.54fr;
+  grid-template-columns: 0.50fr 0.50fr;
 }
 
 .exhibition-side-img-wrap {
@@ -1451,15 +1518,15 @@ html, body {
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  background: #0F2342;
+  background: #102442;
   cursor: pointer;
 }
 
 .exhibition-side-img-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  background: #0F2342;
+  object-fit: cover;
+  object-position: center 20%;
   display: block;
   transition: transform 0.5s var(--ease-cinematic);
 }
@@ -1469,7 +1536,7 @@ html, body {
 }
 
 .exhibition-side-info {
-  padding: 16px 18px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1477,27 +1544,27 @@ html, body {
 }
 
 .exhibition-side-info .side-badge {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--dntu-red);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .exhibition-side-info h5 {
   font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.24;
   color: var(--navy-academic);
   margin: 0 0 6px 0;
 }
 
 .exhibition-side-info p {
-  font-size: 13px;
-  line-height: 1.48;
-  color: #475569;
+  font-size: 13.8px;
+  line-height: 1.5;
+  color: #334155;
   margin: 0;
 }
 
@@ -1523,7 +1590,7 @@ body.edit-mode .slot-replace-btn {
 }
 
 /* ==========================================================================
-   SLIDE 06 — PART A (LỜI TRI ÂN) & PART B (FINAL FULL POSTER REVEAL)
+   SLIDE 06 — V4 TEACHER-CENTERED GRAND FINALE (6 SEQUENTIAL STEPS)
    ========================================================================== */
 .slide6-stage-wrapper {
   position: relative;
@@ -1531,11 +1598,11 @@ body.edit-mode .slot-replace-btn {
   height: 100%;
 }
 
-/* Part A: Tribute & Real Personal Portrait */
+/* Stage 1 (Steps 1..4): Teacher Tribute, 20/11 Floral Gift & Continuity Bridge */
 #slide6-tribute-view {
   display: grid;
-  grid-template-columns: 1.22fr 0.78fr;
-  gap: 42px;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 36px;
   width: 100%;
   height: 100%;
   align-items: center;
@@ -1547,8 +1614,8 @@ body.edit-mode .slot-replace-btn {
 
 .gratitude-main-title {
   font-family: var(--font-serif);
-  font-size: 56px;
-  line-height: 1.05;
+  font-size: 54px;
+  line-height: 1.04;
   font-weight: 700;
   color: var(--ivory-warm);
   margin: 0 0 4px 0;
@@ -1557,9 +1624,9 @@ body.edit-mode .slot-replace-btn {
 .gratitude-sub-quote {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 23px;
+  font-size: 22.5px;
   color: var(--gold-champagne);
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
 }
 
 .gratitude-letter-card {
@@ -1567,15 +1634,15 @@ body.edit-mode .slot-replace-btn {
   color: var(--navy-academic);
   border: 1.5px solid var(--gold-champagne);
   border-radius: 18px;
-  padding: 16px 22px;
-  margin-bottom: 14px;
+  padding: 14px 20px;
+  margin-bottom: 12px;
 }
 
 .gratitude-pillars-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .gratitude-pillar-item {
@@ -1583,7 +1650,7 @@ body.edit-mode .slot-replace-btn {
   border: 1px solid rgba(25, 54, 95, 0.14);
   border-top: 3px solid var(--navy-academic);
   border-radius: 12px;
-  padding: 11px 14px;
+  padding: 10px 14px;
 }
 
 .gratitude-pillar-item strong {
@@ -1594,7 +1661,7 @@ body.edit-mode .slot-replace-btn {
 }
 
 .gratitude-pillar-item span {
-  font-size: 13px;
+  font-size: 12.8px;
   line-height: 1.46;
   color: #334155;
   display: block;
@@ -1603,13 +1670,13 @@ body.edit-mode .slot-replace-btn {
 .final-closing-quote {
   background: linear-gradient(90deg, rgba(25, 54, 95, 0.08) 0%, rgba(240, 204, 133, 0.28) 100%);
   border-left: 4px solid var(--dntu-red);
-  padding: 11px 16px;
+  padding: 10px 16px;
   border-radius: 0 12px 12px 0;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 19.5px;
+  font-size: 19px;
   font-weight: 700;
-  line-height: 1.42;
+  line-height: 1.4;
   color: var(--navy-academic);
 }
 
@@ -1617,12 +1684,12 @@ body.edit-mode .slot-replace-btn {
 .slide6-floral-tribute-box {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 14px;
-  background: linear-gradient(135deg, rgba(25, 54, 95, 0.78) 0%, rgba(16, 36, 66, 0.92) 100%);
+  background: linear-gradient(135deg, rgba(25, 54, 95, 0.82) 0%, rgba(16, 36, 66, 0.94) 100%);
   border: 1.5px solid var(--gold-champagne);
   border-radius: 16px;
   padding: 10px 18px;
+  margin-bottom: 10px;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
 }
 
@@ -1636,62 +1703,118 @@ body.edit-mode .slot-replace-btn {
 .floral-tribute-copy strong {
   display: block;
   color: var(--gold-champagne);
+  font-size: 14.5px;
+  margin-bottom: 2px;
+}
+
+/* Step 4: Continuity Light Bridge Bar */
+.slide6-light-bridge-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(173, 31, 41, 0.85) 0%, rgba(25, 54, 95, 0.92) 100%);
+  border: 1px solid var(--gold-champagne);
+  color: var(--ivory-warm);
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.slide6-light-bridge-bar strong {
+  color: var(--gold-champagne);
+}
+
+/* Right Column: Teacher-Centered Visual Tribute Showcase (Replaces Personal Portrait!) */
+.teacher-tribute-right-col {
+  height: 685px;
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 14px;
+}
+
+.teacher-tribute-art-card {
+  position: relative;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid var(--gold-champagne);
+  background: var(--navy-deep);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.52);
+  cursor: pointer;
+}
+
+.teacher-tribute-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left bottom;
+  display: block;
+}
+
+.teacher-tribute-overlay-badge {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  padding: 18px 14px 12px;
+  background: linear-gradient(to top, rgba(9, 21, 38, 0.96) 0%, rgba(9, 21, 38, 0.72) 68%, transparent 100%);
+  color: var(--ivory-muted);
+  font-size: 12px;
+}
+
+.teacher-tribute-overlay-badge strong {
+  display: block;
+  color: var(--gold-champagne);
   font-size: 14px;
   margin-bottom: 2px;
 }
 
-.portrait-right-col {
-  height: 680px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.teacher-tribute-real-stack {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+  height: 100%;
+  min-height: 0;
 }
 
-.author-portrait-frame {
+.teacher-real-photo-card {
   position: relative;
-  flex: 1;
+  height: 100%;
   min-height: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   overflow: hidden;
   border: 2px solid var(--gold-champagne);
-  background: #FFFFFF;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
-  display: flex;
-  flex-direction: column;
-}
-
-.author-portrait-img {
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-  object-fit: contain;
-  object-position: center bottom;
-  background: linear-gradient(180deg, #F8F1E3 0%, #EADBC0 100%);
-  display: block;
+  background: var(--navy-deep);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
   cursor: pointer;
 }
 
-.author-portrait-caption {
-  padding: 12px 18px;
-  background: var(--navy-academic);
-  color: var(--ivory-warm);
-  border-top: 1.5px solid var(--gold-champagne);
-  text-align: center;
-}
-
-.author-portrait-caption strong {
-  font-family: var(--font-serif);
-  font-size: 22px;
-  color: var(--gold-champagne);
+.teacher-real-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
   display: block;
 }
 
-.author-portrait-caption span {
-  font-size: 12.5px;
+.teacher-real-caption {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  padding: 16px 14px 10px;
+  background: linear-gradient(to top, rgba(9, 21, 38, 0.95) 0%, rgba(9, 21, 38, 0.72) 68%, transparent 100%);
   color: var(--ivory-muted);
+  font-size: 11.8px;
 }
 
-/* Part B: FINAL FULL POSTER REVEAL (POSTER_FULLY_VISIBLE = TRUE) */
+.teacher-real-caption strong {
+  display: block;
+  color: var(--gold-champagne);
+  font-size: 13.5px;
+  margin-bottom: 2px;
+}
+
+/* Stage 2 (Steps 5 & 6): FINAL FULL POSTER REVEAL (POSTER_FULLY_VISIBLE = TRUE) */
 #slide6-finale-view {
   display: none;
   grid-template-columns: 1fr auto 1fr;
@@ -1746,10 +1869,10 @@ body.edit-mode .slot-replace-btn {
 }
 
 .finale-poem-card {
-  background: rgba(11, 25, 46, 0.72);
-  border: 1px solid var(--gold-border);
-  border-radius: 16px;
-  padding: 20px 24px;
+  background: rgba(11, 25, 46, 0.78);
+  border: 1.5px solid var(--gold-border);
+  border-radius: 18px;
+  padding: 22px 26px;
 }
 
 .finale-poem-card p {
@@ -1767,6 +1890,19 @@ body.edit-mode .slot-replace-btn {
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--ivory-warm);
+  text-transform: uppercase;
+}
+
+.finale-2011-greeting {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(173, 31, 41, 0.92) 0%, rgba(140, 22, 31, 0.96) 100%);
+  border: 1px solid var(--gold-champagne);
+  color: var(--gold-bright);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 

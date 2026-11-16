@@ -236,5 +236,70 @@
     "outputWidth": 1200,
     "outputHeight": 1789,
     "aspectRatio": 0.67
+  },
+  {
+    "id": "IMG_CO_LIEU_01",
+    "src": "Chụp cùng cô Liệu(1).HEIC",
+    "out": "curated-15-dntu-creative-fest-teachers.jpg",
+    "group": "Nhóm 1 & 2 — Quý thầy cô Khoa CNTT & Sinh viên DNTU",
+    "chapterIndex": 1,
+    "slide": "Slide 05 (Cảnh 2) & Slide 06",
+    "role": "Hero Scene 2 — Tập thể Giảng viên Khoa CNTT & Sinh viên đạt giải",
+    "title": "Quý Thầy Cô Khoa CNTT Cùng Sinh Viên Tại DNTU Creative Fest 2026",
+    "caption": "Cô Liệu và tập thể quý thầy cô Khoa Công nghệ thông tin chụp ảnh kỷ niệm cùng Quách Khoa Đức và các bạn sinh viên đạt giải thưởng học thuật – sáng tạo.",
+    "tag": "THẦY CÔ KHOA CNTT · DNTU",
+    "optimizedUrl": "./assets/curated/curated-15-dntu-creative-fest-teachers.jpg"
+  },
+  {
+    "id": "IMG_CO_LIEU_02",
+    "src": "Chụp cùng cô Liệu(2).HEIC",
+    "out": "curated-16-co-lieu-20-11-flowers.jpg",
+    "group": "Nhóm 6 — Tri ân Cô Liệu & Ngày Nhà giáo Việt Nam 20/11",
+    "chapterIndex": 4,
+    "slide": "Slide 05 (Cảnh 5) & Slide 06 (Cảnh Tri Ân Trung Tâm)",
+    "role": "Teacher Tribute Hero — Trao hoa tri ân Cô Liệu tại giảng đường",
+    "title": "Khoảnh Khắc Tri Ân Cô Liệu Cùng Tập Thể Sinh Viên Tại Giảng Đường DNTU",
+    "caption": "Cô Liệu trong tà áo dài truyền thống ôm bó hoa tri ân 20/11 bên cạnh Quách Khoa Đức và các bạn sinh viên — hình ảnh thật đầy xúc động về tình thầy trò dưới mái trường DNTU.",
+    "tag": "TRI ÂN CÔ LIỆU · 20/11",
+    "optimizedUrl": "./assets/curated/curated-16-co-lieu-20-11-flowers.jpg"
+  },
+  {
+    "id": "IMG_CO_LIEU_03",
+    "src": "Chụp cùng cô Liệu.HEIC",
+    "out": "curated-17-co-lieu-smile-dntu.jpg",
+    "group": "Nhóm 1 — Nụ cười và sự khích lệ của Cô Liệu những ngày đầu",
+    "chapterIndex": 0,
+    "slide": "Slide 02 & Slide 05 (Cảnh 1)",
+    "role": "Hero Scene 1 — Sự khích lệ ấm áp của Cô Liệu trên giảng đường",
+    "title": "Nụ Cười Hiền Hậu & Tiếng Vỗ Tay Khích Lệ Của Cô Liệu Tại Giảng Đường DNTU",
+    "caption": "Khoảnh khắc cô Liệu mỉm cười ấm áp và vỗ tay động viên sinh viên trong giờ học tại DNTU — điểm tựa tinh thần giúp người học trò vượt qua sự bỡ ngỡ thuở ban đầu.",
+    "tag": "CÔ LIỆU · NGƯỜI THẦY TRUYỀN LỬA",
+    "optimizedUrl": "./assets/curated/curated-17-co-lieu-smile-dntu.jpg"
+  },
+  {
+    "id": "MOV_CO_LIEU_AIBOT",
+    "src": "Cô Liệu.MOV",
+    "out": "curated-18-co-lieu-aibot-rose.jpg",
+    "group": "Nhóm 6 — Cô Liệu & Biểu trưng Công nghệ AIBOT DNTU",
+    "chapterIndex": 5,
+    "slide": "Slide 05 (Cảnh 5) & Slide 06",
+    "role": "Teacher & Technology Tribute — Cô Liệu cầm hoa hồng 20/11 tại AIBOT Center DNTU",
+    "title": "Cô Liệu Trong Tà Áo Dài Cầm Hoa Tri Ân Tại Trung Tâm AIBOT – DNTU",
+    "caption": "Sự giao thoa tuyệt đẹp giữa vẻ đẹp truyền thống của người giảng viên Việt Nam và không gian công nghệ AI hiện đại tại Trường Đại học Công nghệ Đồng Nai.",
+    "tag": "CÔ LIỆU · AIBOT CENTER DNTU",
+    "optimizedUrl": "./assets/curated/curated-18-co-lieu-aibot-rose.jpg"
+  },
+  {
+    "id": "MOV_CO_NGOC_AIBOT",
+    "src": "Phỏng vấn cô Ngọc AIBOT.MOV",
+    "out": "curated-19-co-ngoc-aibot.jpg",
+    "group": "Nhóm 6 — Quý cô giáo Khoa CNTT dịp 20/11",
+    "chapterIndex": 5,
+    "slide": "Slide 06",
+    "role": "Teacher Tribute Supporting — Cô Ngọc trong tà áo dài trắng cầm hoa hồng 20/11 tại AIBOT Center",
+    "title": "Hình Ảnh Người Cô Giáo Khoa CNTT Trong Tà Áo Dài Trắng Dịp 20/11",
+    "caption": "Khoảnh khắc cô Ngọc trong tà áo dài trắng cầm cành hoa hồng tại Trung tâm AIBOT – DNTU, gợi nhắc trực tiếp đến hình tượng người giảng viên áo dài trắng trên poster.",
+    "tag": "QUÝ THẦY CÔ KHOA CNTT · 20/11",
+    "optimizedUrl": "./assets/curated/curated-19-co-ngoc-aibot.jpg"
   }
 ]
