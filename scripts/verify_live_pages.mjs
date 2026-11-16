@@ -63,7 +63,15 @@ async function verifyLiveGitHubPages() {
   // Verify Slide 05 Curated Photos on Live Site
   for (let sc = 0; sc < 5; sc++) {
     await page.locator(`[data-slide5-scene="${sc}"]`).click();
-    await page.waitForTimeout(550);
+    await page.waitForTimeout(300);
+    await page.waitForFunction(
+      () => {
+        const img = document.getElementById('s5-hero-img');
+        return img && img.complete && img.naturalWidth > 500;
+      },
+      { timeout: 15000 }
+    );
+    await page.waitForTimeout(300);
     const heroW = await page.locator('#s5-hero-img').evaluate(i => i.naturalWidth);
     console.log(`  Live Slide 05 Scene ${sc + 1} hero naturalWidth:`, heroW);
     if (heroW < 500) throw new Error(`Slide 05 Scene ${sc + 1} hero photo failed on live site`);

@@ -144,6 +144,20 @@ export async function initPresentationApp() {
     if (e.target.id === 'lightbox-modal') closeLightbox();
   });
 
+  // Preload all curated Slide 05 exhibition photos for instant 0ms scene switching
+  SLIDE5_SCENES.forEach(sc => {
+    if (sc.hero?.src) {
+      const preloadHero = new Image();
+      preloadHero.src = sc.hero.src;
+    }
+    (sc.sidePhotos || []).forEach(sp => {
+      if (sp.src) {
+        const preloadSide = new Image();
+        preloadSide.src = sp.src;
+      }
+    });
+  });
+
   initReplaceablePhotos();
 
   function enterPresentation() {
