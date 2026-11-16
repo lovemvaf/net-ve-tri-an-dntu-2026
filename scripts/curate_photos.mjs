@@ -1,0 +1,235 @@
+import sharp from 'sharp';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const CURATED_LIST = [
+  // Chapter 1: Những ngày đầu & Môi trường DNTU
+  {
+    id: 'IMG_074',
+    src: 'anhchoslide5va6/584964352_122168211464469455_5853144525231124956_n.jpg',
+    out: 'curated-01-dntu-podium.jpg',
+    group: 'Nhóm 1 — Ngày đầu & Môi trường DNTU',
+    chapterIndex: 0,
+    slide: 'Slide 05 (Cảnh 1) & Slide 06',
+    role: 'Hero Scene 1 — Trưởng thành dưới mái trường DNTU',
+    title: 'Từ Bỡ Ngỡ Ngày Đầu Đến Tự Tin Trên Giảng Đường DNTU',
+    caption: 'Khoảnh khắc đứng bên bục phát biểu mang biểu trưng DNTU — nơi những lời động viên đầu tiên của thầy cô đã giúp người sinh viên vượt qua sự rụt rè thuở mới nhập học.',
+    tag: 'CẢNH 01 · KHỞI ĐẦU TẠI DNTU',
+    width: 1600
+  },
+  {
+    id: 'IMG_069',
+    src: 'anhchoslide5va6/584157806_122097685053127890_62662325217752284_n.jpg',
+    out: 'curated-02-hoc-tap-nhom.jpg',
+    group: 'Nhóm 2 & 3 — Học tập và Hoạt động tại DNTU',
+    chapterIndex: 0,
+    slide: 'Slide 05 (Cảnh 1)',
+    role: 'Supporting Image Scene 1 — Học tập & Đồng hành',
+    title: 'Cùng Bạn Bè Học Tập & Thảo Luận Chuyên Môn',
+    caption: 'Những giờ cùng bạn bè thảo luận, làm việc nhóm bên chiếc laptop trong màu áo xanh sinh viên Trường Đại học Công nghệ Đồng Nai.',
+    tag: 'ĐỒNG HÀNH · HỌC TẬP',
+    width: 1400
+  },
+
+  // Chapter 2: Học hỏi, Nghiên cứu khoa học & Sáng tạo công nghệ
+  {
+    id: 'IMG_102',
+    src: 'anhchoslide5va6/IMG_0755.jpg',
+    out: 'curated-03-edtech-research.jpg',
+    group: 'Nhóm 3 — Học tập và phát triển chuyên môn',
+    chapterIndex: 1,
+    slide: 'Slide 05 (Cảnh 2)',
+    role: 'Hero Scene 2 — Thuyết trình nghiên cứu công nghệ & giáo dục',
+    title: 'Thuyết Trình Nghiên Cứu Giải Pháp Công Nghệ & Giáo Dục Số',
+    caption: 'Trình bày đề tài nghiên cứu về thu hẹp khoảng cách giáo dục và giải pháp EdTech trước hội trường — biến kiến thức thầy cô trao truyền thành giải pháp thực tiễn.',
+    tag: 'CẢNH 02 · HỌC HỎI & NGHIÊN CỨU',
+    width: 1600
+  },
+  {
+    id: 'IMG_268',
+    src: 'anhchoslide5va6/z7876105451317_13cd36c3b5e90be3db9ee5ab55d7cb53.jpg',
+    out: 'curated-04-startup-dntu.jpg',
+    group: 'Nhóm 2 & 3 — Hoạt động học thuật & Đổi mới sáng tạo DNTU',
+    chapterIndex: 1,
+    slide: 'Slide 05 (Cảnh 2)',
+    role: 'Supporting Image Scene 2 — Chung kết Startup Sinh viên DNTU',
+    title: 'Dấu Ấn Tại Cuộc Thi Startup Sinh Viên DNTU Gắn Với NCKH',
+    caption: 'Ghi nhận tại Vòng Chung kết Cuộc thi Startup Sinh viên DNTU gắn với Nghiên cứu khoa học và Đổi mới sáng tạo tại Hội trường A – DNTU.',
+    tag: 'NGHIÊN CỨU KHOA HỌC · DNTU',
+    width: 1200
+  },
+  {
+    id: 'IMG_007',
+    src: 'anhchoslide5va6/1787292115888_1648471895268381055_g6826588954985874723_e1f6030a8a87612dad00b7c1bf107fbe.jpeg',
+    out: 'curated-05-asean-ai-hackathon.jpg',
+    group: 'Nhóm 3 & 4 — Công nghệ AI & Hội nhập quốc tế',
+    chapterIndex: 1,
+    slide: 'Slide 05 (Cảnh 2)',
+    role: 'Supporting Image Scene 2 — ASEAN AI+ Hackathon Grand Finale',
+    title: 'Hội Nhập Quốc Tế Tại Chung Kết ASEAN AI+ Hackathon',
+    caption: 'Cùng đồng đội mang hình ảnh sinh viên DNTU đến sân chơi trí tuệ nhân tạo khu vực ASEAN AI+ Hackathon.',
+    tag: 'CÔNG NGHỆ AI · HỘI NHẬP',
+    width: 1400
+  },
+
+  // Chapter 3: Nỗ lực rèn luyện, Tình nguyện & Cống hiến cộng đồng
+  {
+    id: 'IMG_107',
+    src: 'anhchoslide5va6/IMG_1539.JPG',
+    out: 'curated-06-tiep-suc-mua-thi.jpg',
+    group: 'Nhóm 4 — Rèn luyện và cống hiến cộng đồng',
+    chapterIndex: 2,
+    slide: 'Slide 05 (Cảnh 3)',
+    role: 'Hero Scene 3 — Chiến dịch Tình nguyện Tiếp sức mùa thi',
+    title: 'Sẻ Chia Sức Trẻ Trong Chiến Dịch Tiếp Sức Mùa Thi',
+    caption: 'Khoác lên mình màu áo xanh tình nguyện DNTU, đồng hành và tiếp thêm động lực cho các sĩ tử trong chương trình Tiếp sức mùa thi.',
+    tag: 'CẢNH 03 · TÌNH NGUYỆN & RÈN LUYỆN',
+    width: 1600
+  },
+  {
+    id: 'IMG_086',
+    src: 'anhchoslide5va6/616832927_874857021953061_8974286581111808064_n.jpg',
+    out: 'curated-07-thien-nguyen.jpg',
+    group: 'Nhóm 4 — Tình nguyện vì cộng đồng',
+    chapterIndex: 2,
+    slide: 'Slide 05 (Cảnh 3)',
+    role: 'Supporting Image Scene 3 — Thiện nguyện vì cộng đồng',
+    title: 'Trao Gửi Yêu Thương Trong Các Hoạt Động Thiện Nguyện',
+    caption: 'Những chuyến thăm hỏi, trao quà sẻ chia cùng bệnh nhi và cộng đồng — bài học về trách nhiệm xã hội và lòng nhân ái.',
+    tag: 'SẺ CHIA · CỘNG ĐỒNG',
+    width: 1400
+  },
+  {
+    id: 'IMG_090',
+    src: 'anhchoslide5va6/657455515_930418906396872_4411864164748983440_n.jpg',
+    out: 'curated-08-hung-bien-tieng-anh.jpg',
+    group: 'Nhóm 4 — Hội nhập & Kỹ năng',
+    chapterIndex: 2,
+    slide: 'Slide 05 (Cảnh 3)',
+    role: 'Supporting Image Scene 3 — Cuộc thi Hùng biện Tiếng Anh',
+    title: 'Trau Dồi Bản Lĩnh Hội Nhập & Ngoại Ngữ',
+    caption: 'Tham gia và đạt giải tại Cuộc thi Hùng biện Tiếng Anh trong Sinh viên Đồng Nai — nỗ lực hoàn thiện tiêu chí Hội nhập tốt.',
+    tag: 'HỘI NHẬP · BẢN LĨNH',
+    width: 1400
+  },
+
+  // Chapter 4: Thành quả — Dấu mốc Sinh viên 5 tốt & Thủ lĩnh sinh viên
+  {
+    id: 'IMG_115',
+    src: 'anhchoslide5va6/IMG_5391.JPG',
+    out: 'curated-09-phong-trao-sv5tot.jpg',
+    group: 'Nhóm 5 — Sinh viên 5 tốt',
+    chapterIndex: 3,
+    slide: 'Slide 05 (Cảnh 4)',
+    role: 'Hero Scene 4 — Lan tỏa phong trào Sinh viên 5 tốt',
+    title: 'Từ Ngưỡng Mộ Đến Hành Trình Chinh Phục “Sinh Viên 5 Tốt”',
+    caption: 'Trực tiếp thuyết trình chuyên đề “Phát triển phong trào Sinh viên 5 tốt” tại sân chơi Bản lĩnh Sinh viên Đồng Nai sau hành trình bền bỉ phấn đấu.',
+    tag: 'CẢNH 04 · DẤU MỐC SINH VIÊN 5 TỐT',
+    width: 1600
+  },
+  {
+    id: 'IMG_081',
+    src: 'anhchoslide5va6/600343321_122154433886635365_8090883901719846594_n.jpg',
+    out: 'curated-10-vinh-danh-sv5tot.jpg',
+    group: 'Nhóm 5 — Sinh viên 5 tốt',
+    chapterIndex: 3,
+    slide: 'Slide 05 (Cảnh 4)',
+    role: 'Featured Recognition Card Scene 4 — Vinh danh Sinh viên 5 tốt',
+    title: 'Vinh Dự Đạt Danh Hiệu Sinh Viên 5 Tốt Các Cấp',
+    caption: 'Dấu mốc tự hào trên hành trình hai năm liên tiếp phấn đấu đạt danh hiệu Sinh viên 5 tốt — trái ngọt gửi tặng thầy cô và mái trường DNTU.',
+    tag: 'VINH DANH · SINH VIÊN 5 TỐT',
+    width: 1400
+  },
+  {
+    id: 'IMG_084',
+    src: 'anhchoslide5va6/611263258_1336353868530373_8051003664140621778_n.jpg',
+    out: 'curated-11-thu-linh-sinh-vien.jpg',
+    group: 'Nhóm 5 — Trưởng thành & Vinh danh',
+    chapterIndex: 3,
+    slide: 'Slide 05 (Cảnh 4)',
+    role: 'Supporting Image Scene 4 — Hành trình Thủ lĩnh Sinh viên',
+    title: 'Tuyên Dương Tại Hành Trình Thủ Lĩnh Sinh Viên Đồng Nai',
+    caption: 'Khoảnh khắc nhận giấy chứng nhận trên sân khấu — minh chứng cho sự trưởng thành từ những ngày đầu được thầy cô và các anh chị truyền lửa.',
+    tag: 'TRƯỞNG THÀNH · TIẾP BƯỚC',
+    width: 1400
+  },
+
+  // Chapter 5: Biết ơn & Tri ân 20/11
+  {
+    id: 'IMG_060',
+    src: 'anhchoslide5va6/582000848_122168211878469455_9120197670721082853_n.jpg',
+    out: 'curated-12-ton-su-trong-dao-20-11.jpg',
+    group: 'Nhóm 6 — Tri ân Ngày Nhà giáo Việt Nam 20/11',
+    chapterIndex: 4,
+    slide: 'Slide 05 (Cảnh 5)',
+    role: 'Hero Scene 5 — Tri ân 20/11 Tôn Sư Trọng Đạo',
+    title: 'Khoảnh Khắc Tri Ân Nhân Ngày Nhà Giáo Việt Nam 20/11',
+    caption: 'Tại lễ Chung kết và Trao giải cuộc thi chào mừng Ngày Nhà giáo Việt Nam 20/11 chủ đề “Tôn Sư Trọng Đạo” tại Trường Đại học Công nghệ Đồng Nai.',
+    tag: 'CẢNH 05 · TÔN SƯ TRỌNG ĐẠO 20/11',
+    width: 1600
+  },
+  {
+    id: 'IMG_072',
+    src: 'anhchoslide5va6/584523262_122168209970469455_1654158794986629365_n (1).jpg',
+    out: 'curated-13-tap-the-20-11.jpg',
+    group: 'Nhóm 6 — Tri ân thầy cô & tập thể DNTU',
+    chapterIndex: 4,
+    slide: 'Slide 05 (Cảnh 5)',
+    role: 'Supporting Image Scene 5 — Kỷ niệm bên thầy cô và bạn bè dịp 20/11',
+    title: 'Kỷ Niệm Đáng Nhớ Cùng Thầy Cô & Bạn Bè Dịp 20/11',
+    caption: 'Niềm vui và lòng biết ơn bên quý thầy cô cùng các bạn sinh viên DNTU trong chương trình kỷ niệm Ngày Nhà giáo Việt Nam 20/11.',
+    tag: 'TRI ÂN THẦY CÔ · 20/11',
+    width: 1400
+  },
+
+  // Group 7: Personal Portrait for Slide 06
+  {
+    id: 'IMG_124',
+    src: 'anhchoslide5va6/IMG_5524.JPG',
+    out: 'curated-14-portrait-quach-khoa-duc.jpg',
+    group: 'Nhóm 7 — Ảnh cá nhân cho Slide 06',
+    chapterIndex: 5,
+    slide: 'Slide 06 — Tri ân và Tiếp nối',
+    role: 'Author Portrait — Chân dung sinh viên Quách Khoa Đức',
+    title: 'Quách Khoa Đức — Sinh Viên Khoa Công Nghệ Thông Tin DNTU',
+    caption: 'Chân dung tác giả Quách Khoa Đức trong trang phục Hội Sinh viên Việt Nam – Trường Đại học Công nghệ Đồng Nai.',
+    tag: 'TÁC GIẢ · SINH VIÊN DNTU',
+    width: 1200
+  }
+];
+
+async function runCuration() {
+  const outDir = path.resolve('public/assets/curated');
+  await fs.mkdir(outDir, { recursive: true });
+
+  const manifest = [];
+  for (const item of CURATED_LIST) {
+    const destPath = path.join(outDir, item.out);
+    const info = await sharp(item.src)
+      .rotate()
+      .resize({ width: item.width, withoutEnlargement: true })
+      .jpeg({ quality: 90, mozjpeg: true })
+      .toFile(destPath);
+
+    manifest.push({
+      ...item,
+      optimizedUrl: `./assets/curated/${item.out}`,
+      outputWidth: info.width,
+      outputHeight: info.height,
+      aspectRatio: +(info.width / info.height).toFixed(2)
+    });
+    console.log(`[OK] Curated & optimized ${item.id} -> ${item.out} (${info.width}x${info.height})`);
+  }
+
+  await fs.writeFile(
+    path.resolve('src/content/photo-manifest.json'),
+    JSON.stringify(manifest, null, 2),
+    'utf8'
+  );
+  console.log('[OK] Saved src/content/photo-manifest.json');
+}
+
+runCuration().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

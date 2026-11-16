@@ -1,24 +1,146 @@
 /**
- * CENTRAL CONTENT & SPEAKER SCRIPT CONFIGURATION
+ * CENTRAL CONTENT, CURATED PHOTO SCENES & SPEAKER SCRIPT CONFIGURATION (V2)
  * Tác phẩm: NÉT VẼ TRI ÂN — MỘT DÒNG CODE, VẠN CHÂN TRỜI
  * Tác giả: Quách Khoa Đức | Khoa Công nghệ thông tin – Trường Đại học Công nghệ Đồng Nai (DNTU)
  */
 
-export const PRESENTATION_META = {
-  title: 'NÉT VẼ TRI ÂN',
-  subtitle: 'MỘT DÒNG CODE – VẠN CHÂN TRỜI',
-  occasion: 'Chào mừng Ngày Nhà giáo Việt Nam 20/11',
-  contest: 'Cuộc thi “Nét vẽ tri ân” – Khoa Công nghệ thông tin, Trường Đại học Công nghệ Đồng Nai (DNTU)',
-  author: 'Quách Khoa Đức',
-  faculty: 'Khoa Công nghệ thông tin',
-  university: 'Trường Đại học Công nghệ Đồng Nai (DNTU)',
-  targetDurationMinutes: '6 – 8 phút',
-  poem: {
-    line1: 'Từng bậc tri thức thầy trao,',
-    line2: 'Thành đường em bước vươn cao chân trời.',
-    closing: 'Tri thức trao đi, tương lai tiếp nối.'
+export const SLIDE5_SCENES = [
+  {
+    sceneIndex: 0,
+    tabLabel: 'Cảnh 1 · Ngày đầu DNTU',
+    eyebrow: 'CẢNH 01 / 05 — NHỮNG NGÀY ĐẦU DƯỚI MÁI TRƯỜNG DNTU',
+    headline: 'Từ Bỡ Ngỡ Thuở Nhập Học Đến Sự Tự Tin Trên Giảng Đường',
+    summary: 'Những ngày đầu bước vào Trường Đại học Công nghệ Đồng Nai, sự dìu dắt của thầy cô và tình cảm bạn bè đã giúp người sinh viên vượt qua rụt rè để hòa nhịp cùng môi trường đại học.',
+    hero: {
+      src: './assets/curated/curated-01-dntu-podium.jpg',
+      badge: 'GIẢNG ĐƯỜNG DNTU · TRƯỞNG THÀNH',
+      title: 'Tự Tin Đứng Trước Hội Trường Đại Học Công Nghệ Đồng Nai',
+      caption: 'Khoảnh khắc đứng bên bục phát biểu mang biểu trưng DNTU — nơi những lời động viên đầu tiên của thầy cô đã mở ra hành trình vươn xa.'
+    },
+    sidePhotos: [
+      {
+        src: './assets/curated/curated-02-hoc-tap-nhom.jpg',
+        badge: 'HỌC TẬP & ĐỒNG HÀNH',
+        title: 'Cùng Bạn Bè Thảo Luận Bên Chiếc Laptop',
+        caption: 'Tinh thần sẻ chia, cùng nhau học tập và giải quyết bài toán công nghệ tại giảng đường DNTU.'
+      },
+      {
+        src: './assets/curated/curated-04-startup-dntu.jpg',
+        badge: 'MÔI TRƯỜNG HỌC THUẬT',
+        title: 'Hòa Mình Vào Các Sự Kiện Học Thuật Nhà Trường',
+        caption: 'Những chương trình, cuộc thi tại Hội trường A – DNTU giúp sinh viên mở rộng tầm nhìn từ năm nhất.'
+      }
+    ]
+  },
+  {
+    sceneIndex: 1,
+    tabLabel: 'Cảnh 2 · Học hỏi & NCKH',
+    eyebrow: 'CẢNH 02 / 05 — HỌC TẬP, NGHIÊN CỨU & SÁNG TẠO CÔNG NGHỆ',
+    headline: 'Biến Kiến Thức Trên Trang Sách Thành Giải Pháp Thực Tiễn',
+    summary: 'Không dừng lại ở lý thuyết, hành trình tại Khoa CNTT là chuỗi ngày say mê nghiên cứu khoa học, phát triển dự án EdTech, khởi nghiệp sáng tạo và vươn ra sân chơi AI khu vực.',
+    hero: {
+      src: './assets/curated/curated-03-edtech-research.jpg',
+      badge: 'NGHIÊN CỨU KHOA HỌC · EDTECH',
+      title: 'Thuyết Trình Đề Tài Nghiên Cứu Giải Pháp Giáo Dục Số',
+      caption: 'Trình bày báo cáo nghiên cứu về thu hẹp khoảng cách giáo dục và ứng dụng công nghệ trước hội đồng tại DNTU.'
+    },
+    sidePhotos: [
+      {
+        src: './assets/curated/curated-05-asean-ai-hackathon.jpg',
+        badge: 'ASEAN AI+ HACKATHON 2026',
+        title: 'Cùng Đội Tuyển DNTU Tại Vòng Chung Kết ASEAN AI+',
+        caption: 'Mang tinh thần sinh viên Khoa CNTT – DNTU giao lưu, tranh tài tại sân chơi Trí tuệ nhân tạo khu vực ASEAN.'
+      },
+      {
+        src: './assets/curated/curated-04-startup-dntu.jpg',
+        badge: 'STARTUP SINH VIÊN DNTU',
+        title: 'Chung Kết Startup Sinh Viên Gắn Với Nghiên Cứu Khoa Học',
+        caption: 'Ghi nhận nỗ lực sáng tạo với các dự án công nghệ ứng dụng tại Hội trường A – DNTU.'
+      }
+    ]
+  },
+  {
+    sceneIndex: 2,
+    tabLabel: 'Cảnh 3 · Nỗ lực & Cống hiến',
+    eyebrow: 'CẢNH 03 / 05 — RÈN LUYỆN, TÌNH NGUYỆN & HỘI NHẬP',
+    headline: 'Sống Biết Sẻ Chia & Chủ Động Mở Rộng Khả Năng Kết Nối',
+    summary: 'Song hành cùng việc học là những mùa hè khoác áo xanh tình nguyện Tiếp sức mùa thi, những chuyến thiện nguyện ấm áp và nỗ lực trau dồi ngoại ngữ, kỹ năng hội nhập.',
+    hero: {
+      src: './assets/curated/curated-06-tiep-suc-mua-thi.jpg',
+      badge: 'CHIẾN DỊCH TIẾP SỨC MÙA THI',
+      title: 'Đồng Hành Cùng Sĩ Tử Trong Chiến Dịch Tiếp Sức Mùa Thi',
+      caption: 'Cùng tập thể sinh viên tình nguyện DNTU lan tỏa tinh thần “Hãy tự tin, chúng tôi đi cùng bạn”.'
+    },
+    sidePhotos: [
+      {
+        src: './assets/curated/curated-07-thien-nguyen.jpg',
+        badge: 'TÌNH NGUYỆN VÌ CỘNG ĐỒNG',
+        title: 'Thăm Hỏi & Trao Quà Sẻ Chia Cùng Bệnh Nhi',
+        caption: 'Những hoạt động thiện nguyện nuôi dưỡng lòng nhân ái và trách nhiệm của người sinh viên với xã hội.'
+      },
+      {
+        src: './assets/curated/curated-08-hung-bien-tieng-anh.jpg',
+        badge: 'HỘI NHẬP TỐT · NGOẠI NGỮ',
+        title: 'Cuộc Thi Hùng Biện Tiếng Anh Trong Sinh Viên Đồng Nai',
+        caption: 'Chủ động rèn luyện bản lĩnh ngoại ngữ và kỹ năng thuyết trình để sẵn sàng hội nhập.'
+      }
+    ]
+  },
+  {
+    sceneIndex: 3,
+    tabLabel: 'Cảnh 4 · Thành quả 5 Tốt',
+    eyebrow: 'CẢNH 04 / 05 — DẤU MỐC HAI NĂM LIÊN TIẾP SINH VIÊN 5 TỐT',
+    headline: 'Từ Sự Ngưỡng Mộ Đàn Anh Đi Trước Đến Trái Ngọt Của Sự Kiên Trì',
+    summary: 'Điều từng ngưỡng mộ ở các anh chị khóa trên đã trở thành động lực phấn đấu mỗi ngày, mang lại niềm vinh dự hai năm liên tiếp đạt danh hiệu Sinh viên 5 tốt ở các cấp.',
+    hero: {
+      src: './assets/curated/curated-09-phong-trao-sv5tot.jpg',
+      badge: 'PHONG TRÀO SINH VIÊN 5 TỐT',
+      title: 'Thuyết Trình Chuyên Đề Phát Triển Phong Trào Sinh Viên 5 Tốt',
+      caption: 'Chia sẻ và lan tỏa giá trị của hành trình rèn luyện 5 tiêu chí tại sân chơi Bản lĩnh Sinh viên Đồng Nai.'
+    },
+    sidePhotos: [
+      {
+        src: './assets/curated/curated-10-vinh-danh-sv5tot.jpg',
+        badge: 'VINH DANH SINH VIÊN 5 TỐT',
+        title: 'Ghi Nhận Danh Hiệu Sinh Viên 5 Tốt Các Cấp',
+        caption: 'Dấu ấn tự hào của Quách Khoa Đức – Trường Đại học Công nghệ Đồng Nai sau quá trình nỗ lực toàn diện.'
+      },
+      {
+        src: './assets/curated/curated-11-thu-linh-sinh-vien.jpg',
+        badge: 'HÀNH TRÌNH TIẾP BƯỚC',
+        title: 'Tuyên Dương Tại Hành Trình Thủ Lĩnh Sinh Viên Đồng Nai',
+        caption: 'Khoảnh khắc đón nhận giấy chứng nhận với tấm lòng biết ơn thầy cô và các anh chị đã truyền lửa.'
+      }
+    ]
+  },
+  {
+    sceneIndex: 4,
+    tabLabel: 'Cảnh 5 · Biết ơn 20/11',
+    eyebrow: 'CẢNH 05 / 05 — TÔN SƯ TRỌNG ĐẠO & KỶ NIỆM BÊN THẦY CÔ',
+    headline: 'Mọi Thành Quả Hôm Nay Đều Khởi Nguồn Từ Tình Thương Thầy Cô',
+    summary: 'Khép lại chuỗi hình ảnh thực tế là những khoảnh khắc tri ân nhân Ngày Nhà giáo Việt Nam 20/11 tại DNTU — nơi tình thầy trò và truyền thống Tôn sư trọng đạo luôn tỏa sáng.',
+    hero: {
+      src: './assets/curated/curated-12-ton-su-trong-dao-20-11.jpg',
+      badge: 'MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11',
+      title: 'Vinh Danh Tại Cuộc Thi 20/11 “Tôn Sư Trọng Đạo” – DNTU',
+      caption: 'Khoảnh khắc nhận giải thưởng tri ân Ngày Nhà giáo Việt Nam 20/11 trên sân khấu Trường Đại học Công nghệ Đồng Nai.'
+    },
+    sidePhotos: [
+      {
+        src: './assets/curated/curated-13-tap-the-20-11.jpg',
+        badge: 'TÌNH THẦY TRÒ DNTU',
+        title: 'Kỷ Niệm Ấm Áp Bên Quý Thầy Cô & Bạn Bè Dịp 20/11',
+        caption: 'Niềm tự hào và lòng biết ơn sâu sắc dưới mái nhà chung Khoa Công nghệ thông tin – DNTU.'
+      },
+      {
+        src: './assets/curated/curated-01-dntu-podium.jpg',
+        badge: 'TIẾP NỐI HÀNH TRÌNH',
+        title: 'Vững Bước Hướng Tới Tương Lai Từ Điểm Tựa DNTU',
+        caption: 'Tri thức thầy cô trao truyền sẽ mãi là hành trang trên mọi chặng đường phía trước.'
+      }
+    ]
   }
-};
+];
 
 export const SPEAKER_NOTES = [
   {
@@ -27,18 +149,16 @@ export const SPEAKER_NOTES = [
     estimatedTime: '01:00 – 01:15',
     nextSlideTitle: 'Slide 02: Nét vẽ đầu tiên – Người thầy & Cô Liệu',
     cues: [
-      'Mở đầu chậm rãi, trang trọng, ánh mắt hướng về Ban Giám khảo và quý thầy cô.',
+      'Sau khi bấm “Khám phá hành trình tri ân” từ màn hình mở đầu 20/11, mở lời trang trọng gửi tới Ban Giám khảo.',
       'Nhấn giọng ở câu thông điệp: “Có những bài học bắt đầu từ màn hình máy tính. Có những ước mơ bắt đầu từ một người thầy.”'
     ],
     script: `Kính thưa quý thầy cô, kính thưa Ban Giám khảo cùng toàn thể các bạn sinh viên thân mến.
 
-Em tên là Quách Khoa Đức, sinh viên Khoa Công nghệ thông tin – Trường Đại học Công nghệ Đồng Nai. Hôm nay, đến với cuộc thi “Nét vẽ tri ân” nhân kỷ niệm Ngày Nhà giáo Việt Nam 20/11, em xin phép được mang đến tác phẩm mang tên: “Nét vẽ tri ân — Một dòng code, vạn chân trời”.
+Em tên là Quách Khoa Đức, sinh viên Khoa Công nghệ thông tin – Trường Đại học Công nghệ Đồng Nai. Đến với cuộc thi “Nét vẽ tri ân” nhân kỷ niệm Ngày Nhà giáo Việt Nam 20/11, em xin phép được giới thiệu tác phẩm: “Nét vẽ tri ân — Một dòng code, vạn chân trời”.
 
-[Ngừng 2 giây — Hướng tay về poster trung tâm]
+[Ngừng 2 giây — Hướng tay về bức poster]
 
-Thưa thầy cô, với một sinh viên ngành Công nghệ thông tin như chúng em, thế giới thường bắt đầu từ những ký tự trên màn hình máy tính. Nhưng để một dòng code nhỏ bé có thể chạy được, để một sinh viên rụt rè ngày đầu nhập học có thể nhìn thấy bầu trời rộng mở phía trước — tất cả đều bắt đầu từ sự dìu dắt của người thầy.
-
-Tác phẩm này không chỉ là tấm lòng biết ơn của em gửi đến quý thầy cô nhân ngày 20/11, mà còn là câu chuyện thật về hành trình trưởng thành của chính em dưới mái trường DNTU: từ một lời động viên thuở ban đầu, đến khát vọng rèn luyện và hai năm liên tiếp chạm tới danh hiệu Sinh viên 5 tốt.`
+Thưa thầy cô, với sinh viên ngành Công nghệ thông tin chúng em, nhiều bài học bắt đầu từ những dòng lệnh trên màn hình máy tính. Nhưng để một dòng code nhỏ bé có thể mở ra cả một chân trời khát vọng, tất cả đều khởi nguồn từ sự dìu dắt của người thầy. Tác phẩm này vừa là tấm lòng tri ân ngày 20/11, vừa kể lại câu chuyện trưởng thành có thật của bản thân em dưới mái trường DNTU.`
   },
   {
     slideIndex: 1,
@@ -46,18 +166,14 @@ Tác phẩm này không chỉ là tấm lòng biết ơn của em gửi đến q
     estimatedTime: '01:15 – 01:30',
     nextSlideTitle: 'Slide 03: Từ trang sách đến chân trời',
     cues: [
-      'Giọng kể trầm ấm, chân thành khi nhắc về những ngày đầu bỡ ngỡ và sự dìu dắt của cô Liệu.',
-      'Chỉ vào chi tiết nét sáng từ tay giảng viên nối tới dòng lệnh print("Hello, DNTU").'
+      'Không gian chuyển sang sắc trắng kem ấm áp như trang vở và tà áo dài trắng.',
+      'Giọng kể chân thành khi nhắc về cô Liệu và quý thầy cô Khoa CNTT trong những ngày đầu bỡ ngỡ.'
     ],
-    script: `Khi nhìn vào góc trái của tác phẩm, quý thầy cô sẽ thấy hình tượng người giảng viên trong tà áo dài trắng thanh cao, bên cạnh là bó hoa tươi thắm và nét sáng lan tỏa từ đầu ngón tay chạm vào màn hình lập trình với dòng chữ quen thuộc: print("Hello, DNTU").
+    script: `Bước vào chương đầu tiên của tác phẩm, hình ảnh trung tâm ở góc trái poster là người giảng viên trong tà áo dài trắng, bên bục giảng có bó hoa tri ân và nét sáng từ bàn tay người thầy chạm vào màn hình lập trình với dòng chữ: print("Hello, DNTU").
 
-Hình tượng nghệ thuật ấy gợi nhắc trong em ký ức sâu sắc về những ngày đầu tiên bước chân vào giảng đường Đại học Công nghệ Đồng Nai. Khi ấy, mọi thứ với em đều mới mẻ và không ít bỡ ngỡ. Em từng tự hỏi liệu mình có đủ khả năng để theo đuổi con đường công nghệ đầy thử thách này hay không.
+Hình tượng nghệ thuật ấy gợi lại trong em ký ức rất thật về những ngày đầu mới bước vào DNTU. Khi ấy, trước môi trường đại học mới mẻ và những kiến thức lập trình đầy thử thách, em từng có lúc rụt rè và lo lắng.
 
-[Ngừng 1.5 giây — Giọng xúc động, chân thành]
-
-Chính trong khoảng thời gian đó, em đã may mắn nhận được sự dìu dắt, hướng dẫn và hỗ trợ tận tình từ cô Liệu, cùng sự đồng hành ấm áp của quý thầy cô trong Khoa Công nghệ thông tin. Cô và các thầy cô không chỉ dạy chúng em kiến thức chuyên môn, mà còn mở ra cho chúng em những chương trình, những hoạt động học thuật và cơ hội trải nghiệm thực tế để chúng em từng bước vượt qua sự tự ti.
-
-Đúng như tâm niệm mà em luôn khắc ghi: “Người thầy không chỉ trao kiến thức, mà còn trao cho sinh viên niềm tin vào chính mình.” Chính dòng lệnh Hello, DNTU đầu tiên được thắp sáng bởi niềm tin ấy đã trở thành nét vẽ khởi đầu cho cả hành trình phía sau.`
+Chính trong những ngày đầu ấy, sự dìu dắt, hướng dẫn tận tình và động viên của cô Liệu, cùng sự đồng hành của quý thầy cô Khoa Công nghệ thông tin và những chương trình học thuật của Khoa đã tiếp cho em sự tự tin. Bởi em nhận ra rằng: “Người thầy không chỉ trao kiến thức, mà còn trao cho sinh viên niềm tin vào chính mình.”`
   },
   {
     slideIndex: 2,
@@ -65,79 +181,71 @@ Chính trong khoảng thời gian đó, em đã may mắn nhận được sự d
     estimatedTime: '01:30 – 01:45',
     nextSlideTitle: 'Slide 04: Năm tiêu chí, một hành trình (Sinh viên 5 tốt)',
     cues: [
-      'Bấm chọn lần lượt 3 vùng điểm sáng (Con thuyền sách -> Cầu thang & bàn tay nâng đỡ -> Laptop, AI & Bình minh) theo nhịp nói.',
+      'Sử dụng các nút điểm sáng (01 -> 02 -> 03 -> Toàn cảnh) để camera di chuyển mượt qua từng chi tiết.',
       'Nhấn mạnh hình ảnh hai sinh viên nam – nữ ngồi trên con thuyền sách và đoạn code def future().'
     ],
-    script: `Từ ánh sáng khai mở của người thầy, mạch cảm xúc của bức tranh dẫn chúng ta đến trung tâm của tác phẩm — nơi chứa đựng thông điệp: “Thầy cô trao cho chúng em tri thức. Và tri thức trở thành con thuyền đưa chúng em tới tương lai.”
+    script: `Từ niềm tin mà thầy cô trao gửi, mạch tranh mở rộng ra vùng trung tâm với thông điệp: “Thầy cô trao cho chúng em tri thức. Và tri thức trở thành con thuyền đưa chúng em tới tương lai.”
 
-Ở đây, quyển sách mở rộng vừa mang dáng dấp của một con thuyền đang rẽ mây vươn khơi, vừa gợi liên tưởng đến đôi cánh của khát vọng. Ngồi trên con thuyền sách ấy là hai bạn sinh viên — một nam và một nữ với chiếc ba lô hành trang tuổi trẻ và dải khăn đỏ nhiệt huyết — cùng hướng ánh mắt về phía chân trời phía trước.
+Ở điểm sáng thứ nhất, quyển sách mở rộng hóa thành con thuyền tri thức — cũng là đôi cánh của khát vọng. Ngồi trên con thuyền sách ấy là hai bạn sinh viên, một nam mang ba lô hành trang tuổi trẻ và một nữ với dải khăn đỏ nhiệt huyết, cùng hướng ánh nhìn về phía trước.
 
-[Bấm chuyển sang Điểm sáng 02: Cầu thang sách & Bàn tay sẻ chia]
+[Chuyển sang Điểm sáng 02: Cầu thang sách & Bàn tay sẻ chia]
 
-Từ trang sách mở ra là những bậc thang tri thức được tạo nên từ từng chồng sách vững chãi. Trên hành trình đi lên ấy, chúng em không hề đơn độc. Hình ảnh người sinh viên đi trước ngoảnh lại, đưa bàn tay kéo người bạn phía sau cùng bước lên chính là vẻ đẹp của tình bạn, của truyền thống dìu dắt nhau giữa các thế hệ sinh viên Khoa CNTT DNTU.
+Nối tiếp con thuyền là những bậc thang được tạo từ từng chồng sách. Hình ảnh một bạn sinh viên đưa tay hỗ trợ bạn mình cùng bước lên thể hiện tinh thần đồng hành, dìu dắt nhau trưởng thành dưới mái trường DNTU.
 
-[Bấm chuyển sang Điểm sáng 03: Công nghệ, AI & Ánh bình minh]
+[Chuyển sang Điểm sáng 03: Laptop, AI & Bình minh]
 
-Và ở phía bên phải của con thuyền sách là chiếc laptop với hàm lập trình def future(): learn(), create(), contribute(), return better_world() — cùng các biểu tượng Trí tuệ nhân tạo AI, vi mạch số và điện toán đám mây hướng về ánh bình minh đô thị. Với em, thầy cô đã dạy rằng học công nghệ không chỉ để viết ra những đoạn mã chạy đúng, mà là để học hỏi, sáng tạo và đóng góp cho một thế giới tốt đẹp hơn.`
+Và ở phía bên phải là chiếc laptop với đoạn mã def future(): learn(), create(), contribute(), return better_world() cùng biểu tượng AI, điện toán đám mây và ánh bình minh đô thị — nhắc nhở chúng em rằng học công nghệ là để không ngừng học hỏi, sáng tạo và cống hiến.`
   },
   {
     slideIndex: 3,
     slideTitle: 'SLIDE 04 — NĂM TIÊU CHÍ, MỘT HÀNH TRÌNH',
     estimatedTime: '01:15 – 01:30',
-    nextSlideTitle: 'Slide 05: Hành trình thực tế (Photo Storytelling)',
+    nextSlideTitle: 'Slide 05: Từ ước mơ đến hành trình thực tế (Triển lãm ảnh)',
     cues: [
-      'Kể câu chuyện từ sự ngưỡng mộ các anh chị đi trước đến quyết tâm rèn luyện.',
-      'Giữ thái độ khiêm nhường, biết ơn khi nhắc đến dấu mốc 02 năm liên tiếp đạt Sinh viên 5 tốt.'
+      'Trình bày 5 tiêu chí như 5 mảnh ghép hoàn thiện bản thân.',
+      'Kể câu chuyện từ sự ngưỡng mộ các anh chị khóa trên đến dấu mốc 02 năm liên tiếp đạt Sinh viên 5 tốt với thái độ biết ơn, khiêm nhường.'
     ],
-    script: `Thưa quý thầy cô và Ban Giám khảo, dọc theo những bậc thang sách trong poster là năm biển chỉ dẫn tỏa sáng: Đạo đức tốt, Học tập tốt, Thể lực tốt, Tình nguyện tốt và Hội nhập tốt. Đây không phải là năm nấc thang phân cấp cao thấp, mà là năm mảnh ghép toàn diện của danh hiệu Sinh viên 5 tốt.
+    script: `Dọc theo cầu thang tri thức trong bức tranh là năm biển chỉ dẫn tỏa sáng: Đạo đức tốt, Học tập tốt, Thể lực tốt, Tình nguyện tốt và Hội nhập tốt.
 
-Hình ảnh này gắn liền với một kỷ niệm rất thật của bản thân em. Khi mới vào trường, trong những lần tham dự các sự kiện của Khoa Công nghệ thông tin và của Nhà trường, em đã được tận mắt chứng kiến các anh chị sinh viên khóa trên bước lên sân khấu nhận những giải thưởng cao quý, đặc biệt là danh hiệu Sinh viên 5 tốt.
+Với cá nhân em, hình ảnh năm tiêu chí này bắt nguồn từ một kỷ niệm đáng nhớ. Khi mới vào trường, trong những lần tham dự các sự kiện của Khoa CNTT và Nhà trường, nhìn các anh chị sinh viên xuất sắc được vinh danh trên sân khấu — đặc biệt với danh hiệu Sinh viên 5 tốt — em đã vô cùng ngưỡng mộ.
 
-Khoảnh khắc nhìn các anh chị tỏa sáng đã gieo vào lòng em một sự ngưỡng mộ lớn lao, đồng thời đánh thức trong em câu hỏi: “Liệu mình có thể cố gắng để trưởng thành được như các anh chị hay không?”
-
-[Ngừng 1.5 giây — Nhấn giọng vừa quyết tâm vừa biết ơn]
-
-Từ sự ngưỡng mộ ấy, được sự động viên của cô Liệu và các thầy cô trong Khoa, em bắt đầu lập kế hoạch cho chính mình: nghiêm túc hơn trong từng môn học, rèn luyện đạo đức, giữ gìn thể lực, tích cực tham gia các hoạt động tình nguyện vì cộng đồng và chủ động mở rộng kỹ năng hội nhập. Và sự nỗ lực bền bỉ ấy đã mang lại cho em niềm vinh dự vô cùng trân quý: hai năm liên tiếp đạt danh hiệu Sinh viên 5 tốt ở các cấp. Với em, danh hiệu ấy trước hết là lời báo công đầy biết ơn gửi đến thầy cô và các anh chị đã truyền lửa.`
+Chính sự ngưỡng mộ ấy đã thôi thúc em quyết tâm học tập, rèn luyện chuyên môn, giữ gìn sức khỏe, tích cực tham gia hoạt động tình nguyện và chủ động hội nhập. Nhờ sự định hướng của thầy cô và nỗ lực bền bỉ, em đã may mắn hai năm liên tiếp đạt danh hiệu Sinh viên 5 tốt ở các cấp.`
   },
   {
     slideIndex: 4,
-    slideTitle: 'SLIDE 05 — HÀNH TRÌNH THỰC TẾ',
-    estimatedTime: '01:00 – 01:15',
-    nextSlideTitle: 'Slide 06: Tri ân và Tiếp nối (Lời kết)',
+    slideTitle: 'SLIDE 05 — TỪ ƯỚC MƠ ĐẾN HÀNH TRÌNH THỰC TẾ',
+    estimatedTime: '01:15 – 01:30',
+    nextSlideTitle: 'Slide 06: Cảm ơn thầy cô & Toàn cảnh tác phẩm',
     cues: [
-      'Điểm qua 4 nhóm hình ảnh minh chứng cho quá trình học tập, hoạt động và trưởng thành.',
-      'Nhấn mạnh câu thông điệp: “Điều em từng ngưỡng mộ đã trở thành động lực để em không ngừng cố gắng.”'
+      'Điểm qua 5 cảnh triển lãm ảnh thật (Cảnh 1: Ngày đầu -> Cảnh 2: Học hỏi -> Cảnh 3: Nỗ lực -> Cảnh 4: Thành quả -> Cảnh 5: Biết ơn).',
+      'Nhấn giọng ở câu thông điệp: “Điều em từng ngưỡng mộ đã trở thành động lực để em không ngừng cố gắng.”'
     ],
-    script: `Bước sang Slide thứ năm — “Từ ước mơ đến hành trình thực tế”, đây là không gian lưu giữ những khoảnh khắc thật trên chặng đường đại học của em tại Khoa Công nghệ thông tin DNTU.
+    script: `Bước sang Slide thứ năm — “Từ ước mơ đến hành trình thực tế”, đây là những bức ảnh thật ghi lại chặng đường phấn đấu của em tại DNTU:
 
-Từ những ngày đầu tham gia các buổi sinh hoạt, hội thảo học thuật của Khoa; những giờ miệt mài bên bàn phím cùng bạn bè nghiên cứu chuyên môn; những ngày khoác lên mình màu áo tình nguyện sẻ chia cùng cộng đồng; cho đến khoảnh khắc vinh dự được xướng tên nhận danh hiệu Sinh viên 5 tốt trong hai năm liên tiếp.
+Từ những ngày đầu rèn luyện sự tự tin trên giảng đường và cùng bạn bè học tập; những buổi thuyết trình nghiên cứu khoa học, tham gia Startup DNTU và sân chơi ASEAN AI+ Hackathon; những mùa khoác áo xanh Tiếp sức mùa thi và thiện nguyện vì cộng đồng; cho đến khoảnh khắc vinh dự nhận danh hiệu Sinh viên 5 tốt và giải thưởng tri ân dịp 20/11 “Tôn Sư Trọng Đạo”.
 
-Mỗi bức ảnh ở đây đều nhắc em nhớ rằng: không có sự trưởng thành nào tự nhiên mà có. Điều em từng ngưỡng mộ ở các anh chị đi trước, nhờ có môi trường DNTU và sự dìu dắt của thầy cô, đã thực sự trở thành động lực để em kiên trì bước tiếp mỗi ngày.`
+Mỗi khoảnh khắc đều là minh chứng cho tâm niệm: “Điều em từng ngưỡng mộ đã trở thành động lực để em không ngừng cố gắng.”`
   },
   {
     slideIndex: 5,
-    slideTitle: 'SLIDE 06 — TRI ÂN VÀ TIẾP NỐI',
-    estimatedTime: '01:00 – 01:15',
-    nextSlideTitle: 'Hoàn tất bài thuyết trình',
+    slideTitle: 'SLIDE 06 — CẢM ƠN THẦY CÔ & TOÀN CẢNH TÁC PHẨM',
+    estimatedTime: '01:15 – 01:30',
+    nextSlideTitle: 'Cảnh kết: Toàn bộ Poster nguyên bản (Final Hold State)',
     cues: [
-      'Đọc chậm rãi hai câu thơ trong poster gốc.',
-      'Gửi lời cảm ơn trực tiếp đến cô Liệu, thầy cô Khoa CNTT và thầy cô Trường Đại học Công nghệ Đồng Nai.',
-      'Kết thúc sâu lắng bằng câu nói cuối cùng trên màn hình.'
+      'Phần A: Gửi lời cảm ơn tới cô Liệu, thầy cô Khoa CNTT và mái trường DNTU.',
+      'Bấm chuyển sang Phần B (Final Full Poster Reveal) để toàn bộ poster hiện lên trọn vẹn giữa màn hình khi đọc hai câu thơ và câu kết.'
     ],
-    script: `Để khép lại bài thuyết trình hôm nay, em xin được mượn hai câu thơ ở phần cuối của bức poster:
+    script: `Để khép lại bài thuyết trình, từ tận đáy lòng, em xin gửi lời cảm ơn sâu sắc nhất đến cô Liệu — người đã kiên nhẫn dìu dắt và trao cho em niềm tin từ những ngày đầu bỡ ngỡ. Em xin trân trọng cảm ơn quý thầy cô Khoa Công nghệ thông tin cùng quý thầy cô Trường Đại học Công nghệ Đồng Nai đã trao cho chúng em những nét vẽ đầu tiên.
+
+[Bấm mở Cảnh kết: Toàn cảnh Poster nguyên bản — Ngừng 2 giây để Ban Giám khảo ngắm trọn vẹn tác phẩm]
+
+Nhìn lại toàn bộ tác phẩm “Nét vẽ tri ân — Một dòng code, vạn chân trời”, em xin hứa sẽ tiếp tục học hỏi, sống có ích và cống hiến:
 
 “Từng bậc tri thức thầy trao,
 Thành đường em bước vươn cao chân trời.”
 
-[Ngừng 2 giây — Giọng lắng đọng, trang trọng]
-
-Từ tận đáy lòng mình, em xin gửi lời cảm ơn sâu sắc nhất đến cô Liệu — người đã kiên nhẫn dìu dắt và trao cho em niềm tin từ những ngày đầu bỡ ngỡ. Em xin trân trọng cảm ơn quý thầy cô Khoa Công nghệ thông tin cùng quý thầy cô Trường Đại học Công nghệ Đồng Nai đã tạo nên một môi trường học tập nhân văn, giàu cơ hội để chúng em được ước mơ, được thử sức và được trưởng thành.
-
-Chặng đường phía trước vẫn còn rất dài, và em xin hứa sẽ tiếp tục học hỏi không ngừng, giữ vững tinh thần của một Sinh viên 5 tốt để sống có ích và đóng góp nhiều hơn cho xã hội.
-
-Bởi em luôn tin rằng: “Món quà ý nghĩa nhất mà người học trò có thể dành tặng thầy cô không chỉ là thành tích hôm nay, mà còn là cách mình sống và cống hiến trong những ngày mai.”
+Bởi em tin rằng: “Món quà ý nghĩa nhất mà người học trò có thể dành tặng thầy cô không chỉ là thành tích hôm nay, mà còn là cách mình sống và cống hiến trong những ngày mai.”
 
 Tri thức trao đi, tương lai tiếp nối. Em xin kính chúc quý thầy cô và Ban Giám khảo thật nhiều sức khỏe, hạnh phúc nhân Ngày Nhà giáo Việt Nam 20/11. Em xin trân trọng cảm ơn!`
   }
 ];
-

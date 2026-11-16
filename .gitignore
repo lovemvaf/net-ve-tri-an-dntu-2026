@@ -1,7 +1,9 @@
 node_modules/
 .pnpm-store/
 .research/
+anhchoslide5va6/
 public/assets/originals/
+tests/screenshots/contact_sheets/
 dist/
 test-results/
 playwright-report/
