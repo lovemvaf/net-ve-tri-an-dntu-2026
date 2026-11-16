@@ -243,7 +243,13 @@ export async function initPresentationApp() {
     const indicator = document.getElementById('hud-indicator');
 
     if (indicator) {
-      indicator.textContent = `${conf.hudPrefix} · ${conf.stepWord} ${stepNum} / ${stepTotal}`;
+      if (state.slideIndex === -1) {
+        indicator.textContent = 'MỞ ĐẦU 20/11';
+      } else if (conf.steps.length === 1) {
+        indicator.textContent = conf.shortHud || conf.hudPrefix;
+      } else {
+        indicator.textContent = `${conf.shortHud || conf.hudPrefix} · ${conf.stepWord} ${stepNum} / ${stepTotal}`;
+      }
     }
 
     // Update Slide Header Badge if inside a slide
@@ -251,7 +257,10 @@ export async function initPresentationApp() {
       const slideEl = document.querySelector(`section[data-slide-id="slide-${state.slideIndex + 1}"]`);
       const badgeSpan = slideEl?.querySelector('.chapter-pill span:last-child');
       if (badgeSpan) {
-        badgeSpan.textContent = `${conf.hudPrefix} · ${conf.stepWord} ${stepNum}/${stepTotal}`;
+        badgeSpan.textContent =
+          conf.steps.length === 1
+            ? conf.hudPrefix
+            : `${conf.hudPrefix} · ${conf.stepWord} ${stepNum}/${stepTotal}`;
       }
     }
 
@@ -289,7 +298,7 @@ export async function initPresentationApp() {
       timeEl.textContent = `Thời lượng phần này: ${conf.estimatedTime}`;
     }
     if (cuesEl) {
-      cuesEl.innerHTML = `<div>• <strong>Chỉ dẫn bước hiện tại:</strong> ${stepObj.cue}</div>`;
+      cuesEl.innerHTML = `<div>• <strong>Chỉ dẫn:</strong> ${stepObj.cue}</div>`;
     }
     if (scriptEl) {
       scriptEl.textContent = stepObj.script;
@@ -298,12 +307,12 @@ export async function initPresentationApp() {
     // Compute next step label
     if (nextEl) {
       if (state.stepIndex < conf.steps.length - 1) {
-        nextEl.textContent = `Bước tiếp: ${conf.steps[state.stepIndex + 1].label}`;
+        nextEl.textContent = `Tiếp theo: ${conf.steps[state.stepIndex + 1].label}`;
       } else if (state.slideIndex < 5) {
         const nextConf = getSlideConfig(state.slideIndex + 1);
         nextEl.textContent = `Chuyển sang: ${nextConf.hudPrefix} — ${nextConf.steps[0].label}`;
       } else {
-        nextEl.textContent = `Trạng thái cuối: Cảnh kết Toàn bộ Poster (Final Hold State)`;
+        nextEl.textContent = `Trạng thái cuối: Cảnh kết Toàn bộ Poster (Final Hold)`;
       }
     }
   }
@@ -319,7 +328,7 @@ export async function initPresentationApp() {
   window.enterPresentation = () => goToState(0, 0);
   window.showLandingPage = () => goToState(-1, 0);
   window.switchSlide5Scene = (idx) => goToState(4, idx);
-  window.setSlide6Mode = (mode) => goToState(5, mode === 'finale' ? 5 : 0);
+  window.setSlide6Mode = (mode) => goToState(5, mode === 'finale' ? 1 : 0);
 
   // Initial Boot at Landing Step 0
   goToState(-1, 0);
@@ -353,7 +362,7 @@ export async function initPresentationApp() {
       goToState(-1, 0);
     } else if (e.key === 'End') {
       e.preventDefault();
-      goToState(5, 5);
+      goToState(5, 1);
     } else if (e.key === 'r' || e.key === 'R') {
       e.preventDefault();
       replayCurrentStep();
@@ -380,88 +389,82 @@ export async function initPresentationApp() {
   });
 
   // HUD & Interactive Buttons (All routed through Global State Machine!)
-  document.getElementById('hud-prev')?.addEventListener('click', e => {
+  document.getElementById('hud-prev')?.addEventListener('click', (e) => {
     e.stopPropagation();
-    prevStep();
+    previousStep();
   });
-  document.getElementById('hud-next')?.addEventListener('click', e => {
+  document.getElementById('hud-next')?.addEventListener('click', (e) => {
     e.stopPropagation();
     nextStep();
   });
-  document.getElementById('hud-landing')?.addEventListener('click', e => {
+  document.getElementById('hud-tools-toggle')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.toggle('active');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.hud-tools-wrapper')) {
+      document.getElementById('hud-tools-popover')?.classList.remove('active');
+    }
+  });
+  document.getElementById('hud-landing')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     goToState(-1, 0);
   });
-  document.getElementById('hud-replay')?.addEventListener('click', e => {
+  document.getElementById('hud-replay')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     replayCurrentStep();
   });
-  document.getElementById('hud-fullscreen')?.addEventListener('click', e => {
+  document.getElementById('hud-fullscreen')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     toggleFullscreen();
   });
-  document.getElementById('hud-overview')?.addEventListener('click', e => {
+  document.getElementById('hud-overview')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     if (state.slideIndex === -1) goToState(0, 0);
     deck.toggleOverview();
   });
-  document.getElementById('hud-notes')?.addEventListener('click', e => {
+  document.getElementById('hud-notes')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     toggleNotes();
   });
-  document.getElementById('hud-motion')?.addEventListener('click', e => {
+  document.getElementById('hud-motion')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     toggleReducedMotion();
   });
-  document.getElementById('hud-help')?.addEventListener('click', e => {
+  document.getElementById('hud-help')?.addEventListener('click', (e) => {
     e.stopPropagation();
+    document.getElementById('hud-tools-popover')?.classList.remove('active');
     toggleHelpModal();
   });
 
   // Landing CTA button -> Advances straight to Slide 01 Step 0 via State Machine
-  document.getElementById('btn-enter-journey')?.addEventListener('click', e => {
+  document.getElementById('btn-enter-journey')?.addEventListener('click', (e) => {
     e.stopPropagation();
     goToState(0, 0);
   });
 
   // Slide 03 Zone Buttons -> Routed through State Machine
-  document.querySelectorAll('[data-slide3-zone]').forEach(el => {
-    el.addEventListener('click', e => {
+  document.querySelectorAll('[data-slide3-zone]').forEach((el) => {
+    el.addEventListener('click', (e) => {
       e.stopPropagation();
       const zIdx = parseInt(el.getAttribute('data-slide3-zone'), 10);
       goToState(2, zIdx);
     });
   });
 
-  // Slide 04 Criteria Pillar Clicks & Goto Slide 05 Button
-  document.querySelectorAll('.criteria-pillar-card').forEach((card, idx) => {
-    card.addEventListener('click', e => {
-      e.stopPropagation();
-      goToState(3, idx + 1);
-    });
-  });
-  document.getElementById('btn-goto-slide5')?.addEventListener('click', e => {
-    e.stopPropagation();
-    goToState(4, 0);
-  });
-
   // Slide 05 Scene Tab Buttons -> Routed through State Machine
-  document.querySelectorAll('[data-slide5-scene]').forEach(btn => {
-    btn.addEventListener('click', e => {
+  document.querySelectorAll('[data-slide5-scene]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const sIdx = parseInt(btn.getAttribute('data-slide5-scene'), 10);
       goToState(4, sIdx);
     });
-  });
-
-  // Slide 06 Finale & Back Buttons -> Routed through State Machine
-  document.getElementById('btn-trigger-finale')?.addEventListener('click', e => {
-    e.stopPropagation();
-    goToState(5, 3);
-  });
-  document.getElementById('btn-back-tribute')?.addEventListener('click', e => {
-    e.stopPropagation();
-    goToState(5, 2);
   });
 
   // Presenter Timer Controls

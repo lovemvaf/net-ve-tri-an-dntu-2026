@@ -27,7 +27,7 @@ async function verifyPoster(page, selector) {
 
 async function verifyLiveGitHubPages() {
   const url = 'https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/';
-  console.log('Launching Chromium to verify live V4 URL:', url);
+  console.log('Launching Chromium to verify live V5 URL (13 States / 12 Clicks):', url);
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
 
@@ -43,57 +43,46 @@ async function verifyLiveGitHubPages() {
 
   await page.waitForSelector('#landing-page', { timeout: 15000 });
   await page.waitForSelector('.reveal.ready', { timeout: 15000 });
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(500);
 
-  // Verify V4 Initial HUD indicator (5 steps on Landing)
+  // 1. Verify V5 Initial HUD indicator (1 unified Landing state: MỞ ĐẦU 20/11)
   const initHud = await page.locator('#hud-indicator').textContent();
-  console.log('Live V4 Initial HUD Indicator:', initHud?.trim());
-  if (initHud?.trim() !== 'MỞ ĐẦU 20/11 · BƯỚC 01 / 05') {
-    throw new Error('Expected MỞ ĐẦU 20/11 · BƯỚC 01 / 05, got: ' + initHud);
+  console.log('Live V5 Initial HUD Indicator:', initHud?.trim());
+  if (initHud?.trim() !== 'MỞ ĐẦU 20/11') {
+    throw new Error('Expected MỞ ĐẦU 20/11 on Landing, got: ' + initHud);
   }
 
-  // Walk through all 5 steps of Landing Page (0..4)
-  for (let st = 0; st < 4; st++) {
-    await page.click('#hud-next');
-    await page.waitForTimeout(300);
-  }
-  const landingStep5Hud = await page.locator('#hud-indicator').textContent();
-  console.log('Live V4 Landing Step 5 HUD:', landingStep5Hud?.trim());
-
-  // Check Landing Page & POSTER_FULLY_VISIBLE
+  // Verify Landing Page Poster is immediately visible without extra clicks
   const landingCheck = await verifyPoster(page, '#landing-full-poster-img');
-  console.log('Live V4 Landing Page Poster Check:', JSON.stringify(landingCheck));
+  console.log('Live V5 Landing Page Poster Check:', JSON.stringify(landingCheck));
   if (!landingCheck.POSTER_FULLY_VISIBLE) {
     throw new Error('Landing page poster not fully visible on live site!');
   }
-  await page.screenshot({ path: 'test-results/v4-screenshots/live_v4_landing_complete.png' });
 
-  // Step through the remaining 29 steps across Slides 01..06 (3 + 4 + 4 + 7 + 5 + 6 = 29 steps)
-  await page.click('#hud-motion'); // Enable Lite Mode for fast live verification walk
-  for (let k = 0; k < 29; k++) {
+  // 2. Step through all 12 clicks (from State 0 Landing to State 12 Slide 06 Finale)
+  await page.keyboard.press('l'); // Lite mode for crisp live walk
+  for (let click = 1; click <= 12; click++) {
     await page.click('#hud-next');
     await page.waitForFunction(() => window.PresentationState && !window.PresentationState.isTransitioning);
+    const hud = await page.locator('#hud-indicator').textContent();
+    console.log(`  Click ${click}/12 -> HUD: ${hud?.trim()}`);
   }
 
   const finalHud = await page.locator('#hud-indicator').textContent();
-  console.log('Live V4 Final Step 34 HUD:', finalHud?.trim());
-  if (finalHud?.trim() !== 'SLIDE 06 / 06 · BƯỚC 06 / 06') {
-    throw new Error('Did not reach SLIDE 06 / 06 · BƯỚC 06 / 06 on live site; got: ' + finalHud);
+  if (finalHud?.trim() !== '06 / 06 · CẢNH 02 / 02') {
+    throw new Error('Did not reach 06 / 06 · CẢNH 02 / 02 after 12 clicks; got: ' + finalHud);
   }
 
   const finaleCheck = await verifyPoster(page, '#finale-full-poster-img');
-  console.log('Live V4 Slide 06 Finale Full Poster Check:', JSON.stringify(finaleCheck));
+  console.log('Live V5 Slide 06 Finale Full Poster Check:', JSON.stringify(finaleCheck));
   if (!finaleCheck.POSTER_FULLY_VISIBLE) {
     throw new Error('Slide 06 finale full poster not fully visible on live site!');
   }
-  await page.screenshot({ path: 'test-results/v4-screenshots/live_v4_slide6_finale_hold.png' });
 
-  // Verify Reverse Step Navigation on Live Site
-  await page.keyboard.press('ArrowLeft');
+  // 3. Verify Reverse Step Navigation on Live Site
   await page.keyboard.press('ArrowLeft');
   const revHud = await page.locator('#hud-indicator').textContent();
-  console.log('Live V4 Reverse 2 Steps HUD (Teacher Tribute Stage):', revHud?.trim());
-  await page.screenshot({ path: 'test-results/v4-screenshots/live_v4_slide6_teacher_tribute.png' });
+  console.log('Live V5 Reverse 1 Step HUD (Slide 06 Tribute):', revHud?.trim());
 
   console.log('Console/Page errors on live URL:', errors.length);
   if (errors.length > 0) console.log('Errors:', errors);

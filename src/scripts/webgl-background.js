@@ -6,7 +6,8 @@ export function createWebGLBackground(canvasElement) {
   let lightRaysMesh, lightRaysMaterial;
   let constellationLines;
   const isLowEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
-  const pointCount = isLowEnd ? 900 : 1800;
+  // V5 Optimization: Subtle, tasteful ambient particle count (reduced from 1800 to 160 for cleaner visuals & 60fps performance)
+  const pointCount = isLowEnd ? 80 : 160;
 
   let mouseX = 0, mouseY = 0;
   let targetCameraX = 0, currentCameraX = 0;
@@ -41,11 +42,11 @@ export function createWebGLBackground(canvasElement) {
       renderer = new THREE.WebGLRenderer({
         canvas: canvasElement,
         alpha: true,
-        antialias: !isLowEnd,
+        antialias: false,
         powerPreference: 'high-performance'
       });
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+      renderer.setPixelRatio(1);
     } catch (e) {
       console.warn('WebGL fallback to CSS atmosphere:', e);
       return;

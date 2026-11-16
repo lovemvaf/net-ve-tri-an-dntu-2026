@@ -27,7 +27,6 @@ export function createMotionController() {
     return isReducedMotion ? 0.01 : seconds;
   }
 
-  // Inter-slide Thematic Light Ribbon Sweep
   function playInterSlideTransition(fromSlide, toSlide, onMidpoint) {
     const overlay = document.getElementById('scene-transition-overlay');
     const pathEl = document.getElementById('transition-light-path');
@@ -53,25 +52,23 @@ export function createMotionController() {
 
       tl.to(pathEl, {
         strokeDashoffset: 0,
-        duration: 0.34,
+        duration: 0.32,
         ease: 'softInOut',
         onComplete: () => {
           onMidpoint?.();
         }
       }).to(overlay, {
         autoAlpha: 0,
-        duration: 0.24,
+        duration: 0.22,
         ease: 'power2.out'
       });
     });
   }
 
   // ===========================================================================
-  // LANDING PAGE — 5 SEQUENTIAL STEPS (0..4)
-  // 0: Mở đầu nét sáng | 1: Ngày Nhà giáo 20/11 | 2: Hoa và lời tri ân |
-  // 3: Poster chính nguyên bản | 4: Thông điệp dẫn chuyện & Sẵn sàng
+  // LANDING PAGE — 1 UNIFIED STATE (All elements auto-animate in ~0.85s)
   // ===========================================================================
-  function applyLandingStep(stepIndex) {
+  function applyLandingStep(stepIndex = 0) {
     killActiveTimeline();
     const landing = document.getElementById('landing-page');
     if (!landing) return;
@@ -89,89 +86,50 @@ export function createMotionController() {
     const ctaGroup = landing.querySelector('#landing-cta-group');
     const aura = landing.querySelector('.landing-poster-aura');
 
+    if (posterImg) gsap.set(posterImg, { clearProps: 'transform' });
+
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    // Step 0: Opening calligraphic light stroke
     if (penStroke) {
       const len = penStroke.getTotalLength ? penStroke.getTotalLength() : 500;
-      if (stepIndex === 0) {
-        gsap.set(penStroke, { strokeDasharray: len, strokeDashoffset: len, autoAlpha: 1 });
-        tl.to(penStroke, { strokeDashoffset: 0, duration: dur(0.75), ease: 'softInOut' }, 0);
-      } else {
-        gsap.set(penStroke, { strokeDasharray: len, strokeDashoffset: 0, autoAlpha: 1 });
-      }
+      gsap.set(penStroke, { strokeDasharray: len, strokeDashoffset: len, autoAlpha: 1 });
+      tl.to(penStroke, { strokeDashoffset: 0, duration: dur(0.65), ease: 'softInOut' }, 0);
     }
 
-    // Step 1+: 20/11 Greeting & Floating Petals
-    tl.to(
+    tl.fromTo(
       [dateBadge, eyebrow2011, petalsGroup],
-      {
-        autoAlpha: stepIndex >= 1 ? 1 : 0.08,
-        y: stepIndex >= 1 ? 0 : 12,
-        duration: dur(0.5)
-      },
-      0
-    );
-
-    // Step 2+: 20/11 Floral Bouquet & Circuit Stems
-    tl.to(
-      bouquetGroup,
-      {
-        autoAlpha: stepIndex >= 2 ? 1 : 0.14,
-        scale: stepIndex >= 2 ? 1 : 0.92,
-        transformOrigin: 'center bottom',
-        duration: dur(0.55)
-      },
-      0
-    );
-
-    // Step 3+: Full Original Poster Reveal (Always object-fit: contain, zero crop)
-    if (posterContainer && posterImg) {
-      gsap.set(posterImg, { clearProps: 'transform' });
-      tl.to(
-        aura,
-        {
-          autoAlpha: stepIndex >= 3 ? 1 : 0.25,
-          scale: stepIndex >= 3 ? 1 : 0.85,
-          duration: dur(0.55)
-        },
-        0
+      { autoAlpha: 0.2, y: 8 },
+      { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+      0.04
+    )
+      .fromTo(
+        bouquetGroup,
+        { autoAlpha: 0.25, scale: 0.95 },
+        { autoAlpha: 1, scale: 1, duration: dur(0.52), clearProps: 'transform' },
+        0.08
+      )
+      .fromTo(
+        [aura, posterContainer],
+        { autoAlpha: 0.35, scale: 0.98 },
+        { autoAlpha: 1, scale: 1, duration: dur(0.55), clearProps: 'transform' },
+        0.1
+      )
+      .fromTo(
+        [titleGroup, ctaGroup],
+        { autoAlpha: 0.3, y: 10 },
+        { autoAlpha: 1, y: 0, duration: dur(0.52), clearProps: 'transform' },
+        0.14
       );
-      tl.to(
-        posterContainer,
-        {
-          autoAlpha: stepIndex >= 3 ? 1 : 0.18,
-          scale: 1,
-          duration: dur(0.55),
-          clearProps: 'transform'
-        },
-        0
-      );
-    }
-
-    // Step 4: Main Title, Slogan, Lead Quote, Right Wing Meta & CTA Button
-    tl.to(
-      [titleGroup, ctaGroup],
-      {
-        autoAlpha: stepIndex >= 4 ? 1 : 0.14,
-        y: stepIndex >= 4 ? 0 : 12,
-        duration: dur(0.5),
-        clearProps: stepIndex >= 4 ? 'transform' : ''
-      },
-      0
-    );
 
     const btnEnter = document.getElementById('btn-enter-journey');
-    if (btnEnter) {
-      btnEnter.classList.toggle('pulse-ready', stepIndex === 4);
-    }
+    btnEnter?.classList.add('pulse-ready');
   }
 
   // ===========================================================================
-  // SLIDE 01 — 3 SEQUENTIAL STEPS (0..2)
+  // SLIDE 01 — 1 UNIFIED STATE (Title, Poster, 4 Chapters & Poem Auto-Animate)
   // ===========================================================================
-  function applySlide1Step(slideEl, stepIndex) {
+  function applySlide1Step(slideEl, stepIndex = 0) {
     killActiveTimeline();
     if (!slideEl) return;
     slideEl.setAttribute('data-active-step', String(stepIndex));
@@ -185,49 +143,30 @@ export function createMotionController() {
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    tl.to(
-      [quoteCard, posterStage, codePill],
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: dur(0.45),
-        clearProps: 'transform'
-      },
+    tl.fromTo(
+      [quoteCard, posterStage],
+      { autoAlpha: 0.35, y: 10 },
+      { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
       0
-    );
-
-    // Step 1+: 4 Chapters illuminate
-    tl.to(
-      arcCards,
-      {
-        autoAlpha: stepIndex >= 1 ? 1 : 0.22,
-        y: stepIndex >= 1 ? 0 : 10,
-        stagger: stepIndex === 1 ? dur(0.07) : 0,
-        duration: dur(0.45),
-        clearProps: stepIndex >= 1 ? 'transform' : ''
-      },
-      0
-    );
-    arcCards.forEach((c) => c.classList.toggle('step-highlighted', stepIndex === 1));
-
-    // Step 2: Poem Strip & Guiding Light
-    tl.to(
-      poemStrip,
-      {
-        autoAlpha: stepIndex >= 2 ? 1 : 0.25,
-        scale: stepIndex === 2 ? 1.01 : 1,
-        duration: dur(0.45),
-        clearProps: stepIndex < 2 ? 'transform' : ''
-      },
-      0
-    );
-    poemStrip?.classList.toggle('step-highlighted', stepIndex === 2);
+    )
+      .fromTo(
+        arcCards,
+        { autoAlpha: 0.25, y: 10 },
+        { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.45), clearProps: 'transform' },
+        0.08
+      )
+      .fromTo(
+        [poemStrip, codePill],
+        { autoAlpha: 0.3, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.45), clearProps: 'transform' },
+        0.16
+      );
   }
 
   // ===========================================================================
-  // SLIDE 02 — 4 SEQUENTIAL STEPS (0..3)
+  // SLIDE 02 — 1 UNIFIED STATE (Teacher Art, Cô Liệu Memory & 20/11 Floral Badge)
   // ===========================================================================
-  function applySlide2Step(slideEl, stepIndex) {
+  function applySlide2Step(slideEl, stepIndex = 0) {
     killActiveTimeline();
     if (!slideEl) return;
     slideEl.setAttribute('data-active-step', String(stepIndex));
@@ -242,41 +181,28 @@ export function createMotionController() {
 
     if (lightPath) {
       const len = lightPath.getTotalLength ? lightPath.getTotalLength() : 300;
-      gsap.set(lightPath, { strokeDasharray: len });
-      tl.to(lightPath, { strokeDashoffset: 0, duration: dur(0.65) }, 0);
+      gsap.set(lightPath, { strokeDasharray: len, strokeDashoffset: len });
+      tl.to(lightPath, { strokeDashoffset: 0, duration: dur(0.6) }, 0);
     }
 
-    cards.forEach((card, idx) => {
-      const isRevealed = stepIndex >= idx;
-      const isFocused = stepIndex === idx || stepIndex === 3;
-      tl.to(
-        card,
-        {
-          autoAlpha: isRevealed ? (isFocused ? 1 : 0.62) : 0.18,
-          x: isFocused && stepIndex === idx ? 6 : 0,
-          duration: dur(0.42)
-        },
-        0
-      );
-      card.classList.toggle('step-active-card', stepIndex === idx || stepIndex === 3);
-    });
-
-    if (cropCards.length === 2) {
-      tl.to(cropCards[0], { scale: stepIndex === 3 ? 1.02 : 1, duration: dur(0.42) }, 0);
-      tl.to(cropCards[1], { scale: stepIndex === 0 ? 1.02 : 1, duration: dur(0.42) }, 0);
-    }
-
-    if (floralAccent) {
-      tl.to(
+    tl.fromTo(
+      cropCards,
+      { autoAlpha: 0.4, y: 8 },
+      { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.48), clearProps: 'transform' },
+      0
+    )
+      .fromTo(
+        cards,
+        { autoAlpha: 0.25, x: 10 },
+        { autoAlpha: 1, x: 0, stagger: dur(0.07), duration: dur(0.45), clearProps: 'transform' },
+        0.08
+      )
+      .fromTo(
         floralAccent,
-        {
-          autoAlpha: stepIndex >= 3 ? 1 : 0.28,
-          scale: stepIndex === 3 ? 1.02 : 1,
-          duration: dur(0.42)
-        },
-        0
+        { autoAlpha: 0.25, y: 6 },
+        { autoAlpha: 1, y: 0, duration: dur(0.45), clearProps: 'transform' },
+        0.18
       );
-    }
   }
 
   // ===========================================================================
@@ -325,20 +251,19 @@ export function createMotionController() {
           scale: isReducedMotion ? 1 : z.camera.scale,
           xPercent: isReducedMotion ? 0 : z.camera.xPercent,
           yPercent: isReducedMotion ? 0 : z.camera.yPercent,
-          duration: dur(0.72)
+          duration: dur(0.65)
         },
         0
       );
     }
 
     if (focalInset) {
-      // Show high-res focal inset on Zones 0, 1, 2; fade out on Zone 3 (Full Panorama)
       tl.to(
         focalInset,
         {
           autoAlpha: stepIndex < 3 ? 1 : 0,
           y: stepIndex < 3 ? 0 : 10,
-          duration: dur(0.42)
+          duration: dur(0.38)
         },
         0
       );
@@ -347,17 +272,17 @@ export function createMotionController() {
     if (spotlightCard) {
       tl.fromTo(
         spotlightCard,
-        { autoAlpha: 0.45, y: 8 },
-        { autoAlpha: 1, y: 0, duration: dur(0.42), clearProps: 'transform' },
+        { autoAlpha: 0.5, y: 6 },
+        { autoAlpha: 1, y: 0, duration: dur(0.38), clearProps: 'transform' },
         0
       );
     }
   }
 
   // ===========================================================================
-  // SLIDE 04 — 7 SEQUENTIAL STEPS (0: Động lực, 1..5: 5 Tiêu chí, 6: 02 Năm Liên Tiếp)
+  // SLIDE 04 — 1 UNIFIED STATE (All 5 Criteria & 02-Year Milestone Auto-Illuminate)
   // ===========================================================================
-  function applySlide4Step(slideEl, stepIndex) {
+  function applySlide4Step(slideEl, stepIndex = 0) {
     killActiveTimeline();
     if (!slideEl) return;
     slideEl.setAttribute('data-active-step', String(stepIndex));
@@ -370,63 +295,36 @@ export function createMotionController() {
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    tl.to(
-      journeyBox,
-      {
-        autoAlpha: 1,
-        scale: stepIndex === 0 ? 1.015 : 1,
-        duration: dur(0.4)
-      },
-      0
-    );
-
     if (connectorPath) {
       const len = 1380;
-      const progress = Math.max(0, Math.min(1, (stepIndex - 1) / 4));
-      gsap.set(connectorPath, { strokeDasharray: len });
-      tl.to(
-        connectorPath,
-        {
-          strokeDashoffset: stepIndex === 0 ? len : len * (1 - progress),
-          duration: dur(0.45)
-        },
-        0
-      );
+      gsap.set(connectorPath, { strokeDasharray: len, strokeDashoffset: len });
+      tl.to(connectorPath, { strokeDashoffset: 0, duration: dur(0.65) }, 0.05);
     }
 
-    cards.forEach((card, idx) => {
-      const criterionStep = idx + 1;
-      const isReached = stepIndex >= criterionStep;
-      const isCurrent = stepIndex === criterionStep || stepIndex === 6;
+    cards.forEach((card) => card.classList.add('criteria-active'));
 
-      card.classList.toggle('criteria-active', isCurrent);
-      tl.to(
-        card,
-        {
-          autoAlpha: isReached ? (isCurrent ? 1 : 0.72) : 0.22,
-          y: stepIndex === criterionStep ? -8 : 0,
-          scale: stepIndex === criterionStep ? 1.03 : 1,
-          duration: dur(0.42)
-        },
-        0
-      );
-    });
-
-    tl.to(
-      culminationBar,
-      {
-        autoAlpha: stepIndex >= 6 ? 1 : 0.22,
-        y: stepIndex >= 6 ? 0 : 10,
-        scale: stepIndex === 6 ? 1.01 : 0.99,
-        duration: dur(0.45)
-      },
+    tl.fromTo(
+      journeyBox,
+      { autoAlpha: 0.35, y: 8 },
+      { autoAlpha: 1, y: 0, duration: dur(0.45), clearProps: 'transform' },
       0
-    );
-    culminationBar?.classList.toggle('culmination-active', stepIndex === 6);
+    )
+      .fromTo(
+        cards,
+        { autoAlpha: 0.25, y: 12 },
+        { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.48), clearProps: 'transform' },
+        0.06
+      )
+      .fromTo(
+        culminationBar,
+        { autoAlpha: 0.3, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+        0.2
+      );
   }
 
   // ===========================================================================
-  // SLIDE 05 — 5 SEQUENTIAL PHOTO STORYTELLING SCENES (0..4)
+  // SLIDE 05 — 3 CONSOLIDATED STAGES (0..2 · 4 Real Photos per Stage)
   // ===========================================================================
   function applySlide5Step(slideEl, stepIndex) {
     killActiveTimeline();
@@ -449,16 +347,6 @@ export function createMotionController() {
     const heroTitle = document.getElementById('s5-hero-title');
     const heroCap = document.getElementById('s5-hero-caption');
 
-    const s1Img = document.getElementById('s5-side1-img');
-    const s1Badge = document.getElementById('s5-side1-badge');
-    const s1Title = document.getElementById('s5-side1-title');
-    const s1Cap = document.getElementById('s5-side1-caption');
-
-    const s2Img = document.getElementById('s5-side2-img');
-    const s2Badge = document.getElementById('s5-side2-badge');
-    const s2Title = document.getElementById('s5-side2-title');
-    const s2Cap = document.getElementById('s5-side2-caption');
-
     if (eyebrow) eyebrow.textContent = scene.eyebrow;
     if (headline && scene.headline) headline.textContent = scene.headline;
     if (heroImg) {
@@ -469,25 +357,21 @@ export function createMotionController() {
     if (heroTitle) heroTitle.textContent = scene.hero.title;
     if (heroCap) heroCap.textContent = scene.hero.caption;
 
-    if (scene.sidePhotos[0]) {
-      if (s1Img) {
-        s1Img.src = scene.sidePhotos[0].src;
-        s1Img.alt = scene.sidePhotos[0].title;
+    [1, 2, 3].forEach((slotNum, idx) => {
+      const sp = scene.sidePhotos[idx];
+      if (!sp) return;
+      const sImg = document.getElementById(`s5-side${slotNum}-img`);
+      const sBadge = document.getElementById(`s5-side${slotNum}-badge`);
+      const sTitle = document.getElementById(`s5-side${slotNum}-title`);
+      const sCap = document.getElementById(`s5-side${slotNum}-caption`);
+      if (sImg) {
+        sImg.src = sp.src;
+        sImg.alt = sp.title;
       }
-      if (s1Badge) s1Badge.textContent = scene.sidePhotos[0].badge;
-      if (s1Title) s1Title.textContent = scene.sidePhotos[0].title;
-      if (s1Cap) s1Cap.textContent = scene.sidePhotos[0].caption;
-    }
-
-    if (scene.sidePhotos[1]) {
-      if (s2Img) {
-        s2Img.src = scene.sidePhotos[1].src;
-        s2Img.alt = scene.sidePhotos[1].title;
-      }
-      if (s2Badge) s2Badge.textContent = scene.sidePhotos[1].badge;
-      if (s2Title) s2Title.textContent = scene.sidePhotos[1].title;
-      if (s2Cap) s2Cap.textContent = scene.sidePhotos[1].caption;
-    }
+      if (sBadge) sBadge.textContent = sp.badge;
+      if (sTitle) sTitle.textContent = sp.title;
+      if (sCap) sCap.textContent = sp.caption;
+    });
 
     heroCard?.classList.toggle('achievement-gold-frame', !!scene.isAchievementHighlight);
 
@@ -496,13 +380,13 @@ export function createMotionController() {
       activeTimeline = tl;
       tl.fromTo(
         heroCard,
-        { autoAlpha: 0.4, y: 10 },
-        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+        { autoAlpha: 0.45, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.45), clearProps: 'transform' },
         0
       ).fromTo(
         sideCards,
-        { autoAlpha: 0.4, x: 12 },
-        { autoAlpha: 1, x: 0, stagger: dur(0.07), duration: dur(0.48), clearProps: 'transform' },
+        { autoAlpha: 0.45, x: 10 },
+        { autoAlpha: 1, x: 0, stagger: dur(0.06), duration: dur(0.45), clearProps: 'transform' },
         0.04
       );
     }
@@ -510,13 +394,7 @@ export function createMotionController() {
   }
 
   // ===========================================================================
-  // SLIDE 06 — 6 SEQUENTIAL STEPS (TEACHER-CENTERED GRAND FINALE)
-  // 0: Cảnh A (Lời cảm ơn thầy cô & Hình tượng người thầy)
-  // 1: Cảnh B (Ba lời tri ân Cô Liệu, Khoa CNTT, DNTU)
-  // 2: Cảnh B/C (Những đóa hoa tri ân 20/11 nở rộ dâng tặng thầy cô)
-  // 3: Cảnh C/D (Ánh sáng tri thức tiếp nối mở khung triển lãm)
-  // 4: Cảnh E (Toàn bộ Poster nguyên bản xuất hiện trọn vẹn - POSTER_FULLY_VISIBLE)
-  // 5: Cảnh F (Final Hold: Tri thức trao đi, tương lai tiếp nối)
+  // SLIDE 06 — 2 CLEAN STATES (0: Lời Tri Ân, 1: Toàn Bộ Poster Kết)
   // ===========================================================================
   function applySlide6Step(slideEl, stepIndex) {
     killActiveTimeline();
@@ -530,7 +408,6 @@ export function createMotionController() {
     const pillars = slideEl.querySelectorAll('.gratitude-pillar-item');
     const closingQuote = slideEl.querySelector('.final-closing-quote');
     const floralTribute = document.getElementById('slide6-floral-tribute');
-    const lightBridge = document.getElementById('slide6-light-bridge');
     const finalePosterFrame = document.getElementById('finale-poster-container');
     const finalePosterImg = document.getElementById('finale-full-poster-img');
     const finaleHoldBadge = document.getElementById('finale-hold-badge');
@@ -538,91 +415,48 @@ export function createMotionController() {
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    if (stepIndex <= 3) {
-      // Stage 1: Teacher Tribute, 20/11 Floral Gift & Light Continuity Bridge (Steps 0..3)
+    if (stepIndex === 0) {
+      // State 0: Teacher Gratitude & 20/11 Floral Gift (All auto-animate in 1 cohesive timeline)
       finaleView?.classList.remove('active');
       tributeView?.classList.remove('hidden');
 
-      if (teacherStage) {
-        tl.to(teacherStage, { autoAlpha: 1, y: 0, duration: dur(0.45) }, 0);
-      }
-
-      if (tributeList) {
-        tl.to(tributeList, { autoAlpha: stepIndex >= 1 ? 1 : 0.32, duration: dur(0.42) }, 0);
-      }
-
-      tl.to(
-        pillars,
-        {
-          autoAlpha: stepIndex >= 1 ? 1 : 0.3,
-          y: stepIndex >= 1 ? 0 : 6,
-          stagger: stepIndex === 1 ? dur(0.07) : 0,
-          duration: dur(0.42)
-        },
+      tl.fromTo(
+        [tributeList, teacherStage],
+        { autoAlpha: 0.35, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
         0
-      );
-
-      if (closingQuote) {
-        tl.to(closingQuote, { autoAlpha: stepIndex >= 1 ? 1 : 0.35, duration: dur(0.42) }, 0);
-      }
-
-      if (floralTribute) {
-        tl.to(
-          floralTribute,
-          {
-            autoAlpha: stepIndex >= 2 ? 1 : 0.16,
-            scale: stepIndex === 2 ? 1.015 : 1,
-            duration: dur(0.48)
-          },
-          0
+      )
+        .fromTo(
+          pillars,
+          { autoAlpha: 0.3, y: 6 },
+          { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.45), clearProps: 'transform' },
+          0.05
+        )
+        .fromTo(
+          [closingQuote, floralTribute],
+          { autoAlpha: 0.3, y: 6 },
+          { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+          0.12
         );
-        floralTribute.classList.toggle('floral-bloom-active', stepIndex >= 2);
-      }
-
-      if (lightBridge) {
-        tl.to(
-          lightBridge,
-          {
-            autoAlpha: stepIndex >= 3 ? 1 : 0.15,
-            y: stepIndex >= 3 ? 0 : 6,
-            duration: dur(0.45)
-          },
-          0
-        );
-        lightBridge.classList.toggle('bridge-active', stepIndex === 3);
-      }
     } else {
-      // Stage 2: Full Uncropped Poster Reveal (Step 4) & Final Hold State (Step 5)
+      // State 1: Full Uncropped Poster Finale & Final Hold Message (All settle automatically in 1 timeline)
       tributeView?.classList.add('hidden');
       finaleView?.classList.add('active');
 
-      // Guarantee zero crop / zero zoom transform on the final poster
       if (finalePosterImg) gsap.set(finalePosterImg, { clearProps: 'transform' });
       if (finalePosterFrame) gsap.set(finalePosterFrame, { clearProps: 'transform' });
 
-      if (stepIndex === 4) {
-        tl.fromTo(
-          finaleView,
-          { autoAlpha: 0.25 },
-          { autoAlpha: 1, duration: dur(0.55), clearProps: 'transform' },
-          0
-        );
-      } else {
-        gsap.set(finaleView, { autoAlpha: 1, clearProps: 'transform' });
-      }
-
-      if (finaleHoldBadge) {
-        tl.to(
-          finaleHoldBadge,
-          {
-            autoAlpha: stepIndex === 5 ? 1 : 0.55,
-            scale: stepIndex === 5 ? 1.015 : 1,
-            duration: dur(0.45)
-          },
-          0
-        );
-        finaleHoldBadge.classList.toggle('final-hold-active', stepIndex === 5);
-      }
+      tl.fromTo(
+        finaleView,
+        { autoAlpha: 0.25 },
+        { autoAlpha: 1, duration: dur(0.55), clearProps: 'transform' },
+        0
+      ).fromTo(
+        finaleHoldBadge,
+        { autoAlpha: 0.35, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.5), clearProps: 'transform' },
+        0.08
+      );
     }
   }
 
