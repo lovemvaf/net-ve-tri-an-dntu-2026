@@ -1,0 +1,1433 @@
+/* ==========================================================================
+   CINEMATIC EDITORIAL × ACADEMIC LUXURY DESIGN SYSTEM
+   Tác phẩm: NÉT VẼ TRI ÂN — MỘT DÒNG CODE, VẠN CHÂN TRỜI (DNTU 2026)
+   ========================================================================== */
+
+:root {
+  /* Fonts */
+  --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+
+  /* Official Art Direction Palette */
+  --navy-deep: #091526;
+  --navy-academic: #19365F;
+  --navy-surface: rgba(16, 36, 64, 0.78);
+  --navy-card: rgba(13, 29, 53, 0.82);
+
+  --gold-champagne: #F0CC85;
+  --gold-bright: #F7DFAC;
+  --gold-deep: #D4A853;
+  --gold-glow: rgba(240, 204, 133, 0.32);
+
+  --dntu-red: #AD1F29;
+  --dntu-red-soft: rgba(173, 31, 41, 0.22);
+
+  --ivory-warm: #F8F1E3;
+  --ivory-muted: #DFD6C3;
+  --slate-light: #B8C7DC;
+
+  --border-subtle: rgba(248, 241, 227, 0.12);
+  --border-gold: rgba(240, 204, 133, 0.38);
+
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 25%, #19365F 0%, #0D1F38 55%, #071120 100%);
+  color: var(--ivory-warm);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* WebGL Canvas & Atmospheric Layers */
+#webgl-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cinematic-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 50% 45%, transparent 45%, rgba(7, 17, 32, 0.72) 100%),
+    linear-gradient(180deg, rgba(7, 17, 32, 0.38) 0%, transparent 18%, transparent 82%, rgba(7, 17, 32, 0.78) 100%);
+}
+
+.cinematic-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.07;
+  background-size: 64px 64px;
+  background-image:
+    linear-gradient(to right, rgba(240, 204, 133, 0.2) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(240, 204, 133, 0.2) 1px, transparent 1px);
+}
+
+/* Reveal.js Stage Overrides */
+.reveal-viewport {
+  background: transparent !important;
+  z-index: 2;
+}
+
+.reveal {
+  color: var(--ivory-warm);
+  font-family: var(--font-sans);
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides section {
+  padding: 0;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   MASTER 16:9 SLIDE FRAME (1780 × 980 inside 1920 × 1080)
+   ========================================================================== */
+.slide-frame {
+  position: relative;
+  width: 1780px;
+  height: 925px;
+  margin: -24px auto 0;
+  padding: 28px 52px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(25, 54, 95, 0.68) 0%, rgba(11, 25, 46, 0.84) 65%, rgba(8, 19, 36, 0.92) 100%);
+  border: 1px solid var(--border-gold);
+  box-shadow:
+    0 30px 70px -15px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(248, 241, 227, 0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  overflow: hidden;
+}
+
+/* Top Decorative Golden Horizon Line */
+.slide-frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-champagne), transparent);
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   SLIDE HEADER & ORIGINAL LOGOS CREST
+   ========================================================================== */
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  z-index: 10;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Warm Ivory Crest Pill so dark-navy Khoa CNTT logo & red-blue DNTU logo have 100% contrast */
+.logos-crest-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 18px;
+  border-radius: 14px;
+  background: var(--ivory-warm);
+  border: 1.5px solid var(--gold-champagne);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.logos-crest-pill .logo-dntu {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.logos-crest-pill .crest-sep {
+  width: 1px;
+  height: 30px;
+  background: rgba(25, 54, 95, 0.25);
+}
+
+.logos-crest-pill .logo-khoa {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-title {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-champagne);
+  font-weight: 700;
+}
+
+.brand-sub {
+  font-size: 12.5px;
+  color: var(--ivory-muted);
+  letter-spacing: 0.04em;
+}
+
+.slide-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chapter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(240, 204, 133, 0.12);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-bright);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chapter-pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-champagne);
+  box-shadow: 0 0 10px var(--gold-champagne);
+}
+
+/* ==========================================================================
+   TYPOGRAPHY HIERARCHY
+   ========================================================================== */
+.eyebrow-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-champagne);
+  margin-bottom: 10px;
+}
+
+.eyebrow-tag::before {
+  content: '';
+  width: 28px;
+  height: 1.5px;
+  background: var(--gold-champagne);
+}
+
+.display-serif-title {
+  font-family: var(--font-serif);
+  font-size: 56px;
+  line-height: 1.12;
+  font-weight: 700;
+  color: var(--ivory-warm);
+  margin: 0 0 14px 0;
+  letter-spacing: 0.01em;
+}
+
+.split-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.editorial-quote-card {
+  position: relative;
+  background: linear-gradient(90deg, rgba(240, 204, 133, 0.14) 0%, rgba(25, 54, 95, 0.45) 100%);
+  border-left: 3.5px solid var(--gold-champagne);
+  padding: 16px 22px;
+  border-radius: 0 14px 14px 0;
+  margin-bottom: 18px;
+}
+
+.editorial-quote-card p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 23px;
+  line-height: 1.45;
+  color: var(--gold-bright);
+  margin: 0;
+}
+
+/* Slide Body & Footer */
+.slide-body {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 18px 0;
+}
+
+.slide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 13px;
+  color: var(--slate-light);
+  position: relative;
+  z-index: 10;
+}
+
+.slide-footer strong {
+  color: var(--gold-champagne);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   SLIDE 01 — KHỞI NGUỒN (HERO WITH FULL UNCROPPED POSTER)
+   ========================================================================== */
+.slide1-grid {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 48px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.hero-left-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contest-ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(173, 31, 41, 0.25);
+  border: 1px solid rgba(240, 204, 133, 0.45);
+  color: var(--ivory-warm);
+  font-size: 13px;
+  font-weight: 500;
+  width: fit-content;
+  margin-bottom: 16px;
+}
+
+.contest-ribbon .ribbon-badge {
+  background: var(--dntu-red);
+  color: var(--ivory-warm);
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.hero-main-title {
+  font-family: var(--font-serif);
+  font-size: 74px;
+  line-height: 1.04;
+  font-weight: 700;
+  color: var(--ivory-warm);
+  margin: 0 0 6px 0;
+  letter-spacing: 0.02em;
+  text-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+.hero-light-stroke-svg {
+  width: 440px;
+  height: 18px;
+  margin-bottom: 10px;
+}
+
+.hero-slogan {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-champagne);
+  margin: 0 0 20px 0;
+}
+
+.hero-lead-text {
+  font-size: 16.5px;
+  line-height: 1.68;
+  color: var(--ivory-muted);
+  margin: 0 0 20px 0;
+  max-width: 790px;
+}
+
+.hero-poem-strip {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+  background: var(--navy-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  padding: 16px 22px;
+}
+
+.hero-poem-lines {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.45;
+  color: var(--ivory-warm);
+}
+
+.hero-poem-lines span {
+  display: block;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 12.5px;
+  color: var(--gold-champagne);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.hero-code-pill {
+  background: rgba(7, 17, 32, 0.9);
+  border: 1px solid rgba(240, 204, 133, 0.35);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: var(--gold-bright);
+  white-space: nowrap;
+}
+
+/* Right Column: Full Uncropped 9:16 Poster Showcase */
+.hero-poster-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 710px;
+}
+
+.poster-museum-frame {
+  position: relative;
+  height: 700px;
+  aspect-ratio: 3000 / 5333;
+  border-radius: 20px;
+  padding: 10px;
+  background: linear-gradient(160deg, var(--gold-champagne) 0%, rgba(25, 54, 95, 0.9) 50%, var(--gold-deep) 100%);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.78),
+    0 0 45px rgba(240, 204, 133, 0.24);
+  cursor: pointer;
+  transition: transform 0.5s var(--ease-cinematic), box-shadow 0.5s var(--ease-cinematic);
+}
+
+.poster-museum-frame:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.85),
+    0 0 60px rgba(240, 204, 133, 0.38);
+}
+
+.poster-museum-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Strictly preserve 100% original aspect ratio without cropping */
+  border-radius: 13px;
+  background: var(--navy-deep);
+  display: block;
+}
+
+.poster-floating-caption {
+  position: absolute;
+  bottom: 18px;
+  left: -28px;
+  background: rgba(9, 21, 38, 0.92);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 10px 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  font-size: 12.5px;
+  color: var(--ivory-warm);
+}
+
+.poster-floating-caption strong {
+  color: var(--gold-champagne);
+  display: block;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   SLIDE 02 — NÉT VẼ ĐẦU TIÊN: NGƯỜI THẦY & CÔ LIỆU
+   ========================================================================== */
+.slide2-grid {
+  display: grid;
+  grid-template-columns: 0.86fr 1.14fr;
+  gap: 46px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.teacher-art-stage {
+  position: relative;
+  height: 695px;
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.teacher-main-crop-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-gold);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.65);
+  background: var(--navy-deep);
+  cursor: pointer;
+}
+
+.teacher-main-crop-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+  display: block;
+  transition: transform 0.6s var(--ease-cinematic);
+}
+
+.teacher-main-crop-card:hover img {
+  transform: scale(1.03);
+}
+
+.teacher-Overlay-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.teacher-crop-caption {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  padding: 18px 18px 14px;
+  background: linear-gradient(to top, rgba(9, 21, 38, 0.95) 0%, rgba(9, 21, 38, 0.65) 65%, transparent 100%);
+  font-size: 12.5px;
+  color: var(--ivory-muted);
+}
+
+.teacher-crop-caption strong {
+  color: var(--gold-champagne);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.slide2-narrative-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.memory-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.memory-card {
+  background: var(--navy-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 17px 22px;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 16px;
+  align-items: start;
+  transition: border-color 0.3s, transform 0.3s var(--ease-cinematic);
+}
+
+.memory-card:hover {
+  border-color: var(--border-gold);
+  transform: translateX(5px);
+}
+
+.memory-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(240, 204, 133, 0.12);
+  border: 1px solid var(--border-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold-champagne);
+}
+
+.memory-card h4 {
+  font-size: 17.5px;
+  font-weight: 700;
+  color: var(--ivory-warm);
+  margin: 0 0 5px 0;
+}
+
+.memory-card p {
+  font-size: 14.5px;
+  line-height: 1.58;
+  color: var(--ivory-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   SLIDE 03 — TỪ TRANG SÁCH ĐẾN CHÂN TRỜI (ARTISTIC SHOWCASE)
+   ========================================================================== */
+.slide3-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 38px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.slide3-visual-stage {
+  display: grid;
+  grid-template-columns: 0.44fr 0.56fr;
+  gap: 16px;
+  height: 695px;
+}
+
+/* Left Mini Interactive Poster Viewport */
+.poster-camera-viewport {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-gold);
+  background: var(--navy-deep);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+}
+
+.poster-camera-viewport img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+}
+
+.viewport-overlay-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Right High-Res Focal Detail Card */
+.focal-detail-panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-gold);
+  background: var(--navy-card);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+}
+
+.focal-detail-img-wrap {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: var(--navy-deep);
+  cursor: pointer;
+}
+
+.focal-detail-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.focal-detail-info {
+  padding: 16px 20px;
+  background: rgba(9, 21, 38, 0.94);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.focal-detail-info h4 {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--gold-champagne);
+  margin: 0 0 6px 0;
+}
+
+.focal-detail-info p {
+  font-size: 13.5px;
+  line-height: 1.52;
+  color: var(--ivory-muted);
+  margin: 0;
+}
+
+.zone-tabs-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.zone-tab-btn {
+  background: rgba(16, 36, 64, 0.75);
+  border: 1px solid var(--border-subtle);
+  color: var(--ivory-muted);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.zone-tab-btn:hover,
+.zone-tab-btn.active {
+  background: rgba(240, 204, 133, 0.18);
+  border-color: var(--gold-champagne);
+  color: var(--gold-bright);
+}
+
+.symbolism-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.symbol-item {
+  background: var(--navy-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 13px 18px;
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.symbol-item:hover {
+  border-color: var(--border-gold);
+  background: rgba(25, 54, 95, 0.72);
+}
+
+.symbol-item h5 {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--gold-champagne);
+  margin: 0 0 4px 0;
+}
+
+.symbol-item p {
+  font-size: 13.8px;
+  line-height: 1.5;
+  color: var(--ivory-muted);
+  margin: 0;
+}
+
+/* ==========================================================================
+   SLIDE 04 — NĂM TIÊU CHÍ, MỘT HÀNH TRÌNH (SINH VIÊN 5 TỐT)
+   ========================================================================== */
+.slide4-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.slide4-top-row {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.personal-journey-box {
+  background: var(--navy-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 18px;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: 165px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.journey-thumb {
+  width: 165px;
+  height: 125px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border-gold);
+  cursor: pointer;
+}
+
+.journey-story-text h4 {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  color: var(--gold-champagne);
+  margin: 0 0 6px 0;
+}
+
+.journey-story-text p {
+  font-size: 13.8px;
+  line-height: 1.54;
+  color: var(--ivory-muted);
+  margin: 0;
+}
+
+.five-criteria-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.criteria-pillar-card {
+  background: var(--navy-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  transition: transform 0.35s var(--ease-cinematic), border-color 0.35s;
+}
+
+.criteria-pillar-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--gold-champagne);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.45);
+}
+
+.pillar-icon-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(240, 204, 133, 0.14);
+  border: 1.5px solid var(--gold-champagne);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-champagne);
+  margin-bottom: 12px;
+}
+
+.criteria-pillar-card h5 {
+  font-family: var(--font-serif);
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--ivory-warm);
+  margin: 0 0 8px 0;
+}
+
+.criteria-pillar-card p {
+  font-size: 14px;
+  line-height: 1.52;
+  color: var(--ivory-muted);
+  margin: 0;
+}
+
+.milestone-culmination-bar {
+  background: linear-gradient(90deg, rgba(173, 31, 41, 0.28) 0%, rgba(240, 204, 133, 0.22) 50%, rgba(25, 54, 95, 0.65) 100%);
+  border: 1.5px solid var(--gold-champagne);
+  border-radius: 16px;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.culmination-headline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.culmination-headline .medal-emblem {
+  font-size: 28px;
+}
+
+.culmination-headline .milestone-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gold-bright);
+}
+
+.culmination-headline .milestone-note {
+  font-size: 13.5px;
+  color: var(--ivory-muted);
+  margin-left: 12px;
+}
+
+.btn-gold-action {
+  background: linear-gradient(135deg, var(--gold-champagne) 0%, var(--gold-deep) 100%);
+  color: var(--navy-deep);
+  border: none;
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-gold-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(240, 204, 133, 0.4);
+}
+
+/* ==========================================================================
+   SLIDE 05 — HÀNH TRÌNH THỰC TẾ (PHOTO STORYTELLING GALLERY)
+   ========================================================================== */
+.slide5-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.slide5-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.gallery-Editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 250px);
+  gap: 16px;
+  width: 100%;
+}
+
+.story-photo-slot {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--navy-card);
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.35s var(--ease-cinematic), border-color 0.35s;
+}
+
+.story-photo-slot.drag-over {
+  border: 2px dashed var(--gold-bright);
+  transform: scale(1.02);
+}
+
+.story-photo-slot:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold-bright);
+}
+
+.story-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+}
+
+.story-photo-caption-bar {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  padding: 12px 16px;
+  background: linear-gradient(to top, rgba(9, 21, 38, 0.96) 0%, rgba(9, 21, 38, 0.72) 70%, transparent 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.story-photo-caption-bar h6 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ivory-warm);
+  margin: 0 0 2px 0;
+}
+
+.story-photo-caption-bar span {
+  font-size: 11.5px;
+  color: var(--gold-champagne);
+}
+
+.slot-replace-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(9, 21, 38, 0.88);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-champagne);
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  z-index: 5;
+}
+
+.slot-replace-btn:hover {
+  background: var(--gold-champagne);
+  color: var(--navy-deep);
+}
+
+/* ==========================================================================
+   SLIDE 06 — TRI ÂN VÀ TIẾP NỐI (LỜI KẾT & CHÂN DUNG BÊN PHẢI)
+   ========================================================================== */
+.slide6-grid {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 44px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.gratitude-left-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gratitude-main-title {
+  font-family: var(--font-serif);
+  font-size: 64px;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--ivory-warm);
+  margin: 0 0 8px 0;
+}
+
+.gratitude-sub-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 25px;
+  color: var(--gold-champagne);
+  margin: 0 0 20px 0;
+}
+
+.gratitude-letter-card {
+  background: var(--navy-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 18px;
+  padding: 22px 28px;
+  margin-bottom: 18px;
+}
+
+.gratitude-pillars-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.gratitude-pillar-item {
+  background: rgba(25, 54, 95, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.gratitude-pillar-item strong {
+  display: block;
+  font-size: 14px;
+  color: var(--gold-champagne);
+  margin-bottom: 4px;
+}
+
+.gratitude-pillar-item span {
+  font-size: 12.8px;
+  line-height: 1.45;
+  color: var(--ivory-muted);
+  display: block;
+}
+
+.final-closing-quote {
+  background: linear-gradient(90deg, rgba(240, 204, 133, 0.16) 0%, rgba(173, 31, 41, 0.16) 100%);
+  border-left: 4px solid var(--gold-champagne);
+  padding: 14px 20px;
+  border-radius: 0 12px 12px 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20.5px;
+  line-height: 1.48;
+  color: var(--ivory-warm);
+}
+
+.poem-closing-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: rgba(9, 21, 38, 0.78);
+  border: 1px solid var(--border-subtle);
+}
+
+.poem-closing-banner .poem-verse {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18.5px;
+  color: var(--gold-bright);
+}
+
+.poem-closing-banner .continuing-msg {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ivory-warm);
+}
+
+/* Right Column: Personal Portrait Frame + Original Poster Poem Backdrop */
+.portrait-right-col {
+  position: relative;
+  height: 690px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.author-portrait-frame {
+  position: relative;
+  flex: 1;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1.5px solid var(--gold-champagne);
+  background: var(--navy-deep);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.7);
+}
+
+.author-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+}
+
+.poster-poem-crop-strip {
+  height: 155px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-gold);
+  background: #0D213F;
+  position: relative;
+  cursor: pointer;
+}
+
+.poster-poem-crop-strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ==========================================================================
+   HUD CONTROLS & PRESENTER VIEW DRAWER
+   ========================================================================== */
+.hud-bar {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: rgba(9, 21, 38, 0.94);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px);
+  white-space: nowrap;
+}
+
+.hud-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ivory-muted);
+  height: 32px;
+  padding: 0 11px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.hud-btn:hover,
+.hud-btn.active {
+  background: rgba(240, 204, 133, 0.16);
+  border-color: var(--border-gold);
+  color: var(--gold-champagne);
+}
+
+.hud-slide-indicator {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gold-champagne);
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.hud-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-subtle);
+}
+
+/* Presenter View & Speaker Notes Drawer */
+#notes-drawer {
+  position: fixed;
+  bottom: 72px;
+  right: 24px;
+  width: 540px;
+  max-height: 78vh;
+  background: rgba(9, 21, 38, 0.97);
+  border: 1.5px solid var(--gold-champagne);
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  z-index: 120;
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#notes-drawer.active {
+  display: flex;
+}
+
+.presenter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.presenter-header h4 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--gold-champagne);
+}
+
+.presenter-timer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(25, 54, 95, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+}
+
+.timer-readout {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold-bright);
+}
+
+.presenter-cues-box {
+  background: rgba(240, 204, 133, 0.1);
+  border-left: 3px solid var(--gold-champagne);
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 12.5px;
+  color: var(--gold-bright);
+}
+
+.presenter-script-body {
+  overflow-y: auto;
+  max-height: 320px;
+  padding-right: 8px;
+  font-size: 14.5px;
+  line-height: 1.72;
+  color: var(--ivory-warm);
+  white-space: pre-line;
+}
+
+.presenter-next-bar {
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 12.5px;
+  color: var(--slate-light);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Modals (Help & Lightbox) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 12, 24, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #0D1F38;
+  border: 1.5px solid var(--gold-champagne);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 620px;
+  width: 92%;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: var(--gold-champagne);
+}
+
+.close-modal {
+  background: transparent;
+  border: none;
+  color: var(--ivory-muted);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.key-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 20px;
+  font-size: 14px;
+  align-items: center;
+}
+
+kbd {
+  background: rgba(240, 204, 133, 0.14);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--gold-bright);
+}
+
+/* Reduced Motion & Responsive Fallback */
+body.reduced-motion *,
+body.reduced-motion *::before,
+body.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (max-width: 1024px) {
+  .hud-bar {
+    padding: 6px 12px;
+    gap: 4px;
+  }
+  #notes-drawer {
+    width: 92vw;
+    right: 4vw;
+  }
+}
