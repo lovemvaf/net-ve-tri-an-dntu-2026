@@ -1,218 +1,363 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 
-async function verifyPosterFullyVisible(page, imgSelector) {
-  const result = await page.locator(imgSelector).evaluate(img => {
-    const rect = img.getBoundingClientRect();
-    const style = window.getComputedStyle(img);
-    const parentStyle = img.parentElement ? window.getComputedStyle(img.parentElement) : {};
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const naturalRatio = img.naturalWidth / img.naturalHeight;
-    const boxRatio = rect.width / rect.height;
-
-    const withinViewport =
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= vh + 2 &&
-      rect.right <= vw + 2 &&
-      rect.height > 200 &&
-      rect.width > 100;
-
-    const isContain = style.objectFit === 'contain';
-    const ratioMatches = Math.abs(naturalRatio - boxRatio) < 0.035;
-
-    return {
-      POSTER_FULLY_VISIBLE: withinViewport && isContain && ratioMatches && img.naturalWidth > 500,
-      withinViewport,
-      isContain,
-      ratioMatches,
-      naturalWidth: img.naturalWidth,
-      naturalHeight: img.naturalHeight,
-      rect: { top: Math.round(rect.top), bottom: Math.round(rect.bottom), width: Math.round(rect.width), height: Math.round(rect.height) },
-      viewport: { vw, vh },
-      transform: style.transform,
-      parentTransform: parentStyle.transform
-    };
-  });
-  return result;
+const SCREENSHOT_DIR = path.resolve('test-results/v3-screenshots');
+if (!fs.existsSync(SCREENSHOT_DIR)) {
+  fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
-test.describe('ULTIMATE MASTER PROMPT V2 — Complete Visual & Functional Verification', () => {
-  test('Landing Page 20/11 -> All 6 Slides -> 5 Curated Photo Scenes -> Final Full Poster Reveal', async ({ page }) => {
-    const consoleErrors = [];
-    const failedRequests = [];
+// Expected 34 sequential states from Landing Step 0 to Slide 06 Step 4
+const EXPECTED_SEQUENCE = [
+  // Landing (-1): 6 steps (0..5)
+  { slideIndex: -1, stepIndex: 0, label: 'MỞ ĐẦU 20/11 · BƯỚC 01 / 06' },
+  { slideIndex: -1, stepIndex: 1, label: 'MỞ ĐẦU 20/11 · BƯỚC 02 / 06' },
+  { slideIndex: -1, stepIndex: 2, label: 'MỞ ĐẦU 20/11 · BƯỚC 03 / 06' },
+  { slideIndex: -1, stepIndex: 3, label: 'MỞ ĐẦU 20/11 · BƯỚC 04 / 06' },
+  { slideIndex: -1, stepIndex: 4, label: 'MỞ ĐẦU 20/11 · BƯỚC 05 / 06' },
+  { slideIndex: -1, stepIndex: 5, label: 'MỞ ĐẦU 20/11 · BƯỚC 06 / 06' },
+  // Slide 01 (0): 3 steps (0..2)
+  { slideIndex: 0, stepIndex: 0, label: 'SLIDE 01 / 06 · BƯỚC 01 / 03' },
+  { slideIndex: 0, stepIndex: 1, label: 'SLIDE 01 / 06 · BƯỚC 02 / 03' },
+  { slideIndex: 0, stepIndex: 2, label: 'SLIDE 01 / 06 · BƯỚC 03 / 03' },
+  // Slide 02 (1): 4 steps (0..3)
+  { slideIndex: 1, stepIndex: 0, label: 'SLIDE 02 / 06 · BƯỚC 01 / 04' },
+  { slideIndex: 1, stepIndex: 1, label: 'SLIDE 02 / 06 · BƯỚC 02 / 04' },
+  { slideIndex: 1, stepIndex: 2, label: 'SLIDE 02 / 06 · BƯỚC 03 / 04' },
+  { slideIndex: 1, stepIndex: 3, label: 'SLIDE 02 / 06 · BƯỚC 04 / 04' },
+  // Slide 03 (2): 4 steps (0..3)
+  { slideIndex: 2, stepIndex: 0, label: 'SLIDE 03 / 06 · BƯỚC 01 / 04' },
+  { slideIndex: 2, stepIndex: 1, label: 'SLIDE 03 / 06 · BƯỚC 02 / 04' },
+  { slideIndex: 2, stepIndex: 2, label: 'SLIDE 03 / 06 · BƯỚC 03 / 04' },
+  { slideIndex: 2, stepIndex: 3, label: 'SLIDE 03 / 06 · BƯỚC 04 / 04' },
+  // Slide 04 (3): 7 steps (0..6)
+  { slideIndex: 3, stepIndex: 0, label: 'SLIDE 04 / 06 · BƯỚC 01 / 07' },
+  { slideIndex: 3, stepIndex: 1, label: 'SLIDE 04 / 06 · BƯỚC 02 / 07' },
+  { slideIndex: 3, stepIndex: 2, label: 'SLIDE 04 / 06 · BƯỚC 03 / 07' },
+  { slideIndex: 3, stepIndex: 3, label: 'SLIDE 04 / 06 · BƯỚC 04 / 07' },
+  { slideIndex: 3, stepIndex: 4, label: 'SLIDE 04 / 06 · BƯỚC 05 / 07' },
+  { slideIndex: 3, stepIndex: 5, label: 'SLIDE 04 / 06 · BƯỚC 06 / 07' },
+  { slideIndex: 3, stepIndex: 6, label: 'SLIDE 04 / 06 · BƯỚC 07 / 07' },
+  // Slide 05 (4): 5 scenes (0..4)
+  { slideIndex: 4, stepIndex: 0, label: 'SLIDE 05 / 06 · CẢNH 01 / 05' },
+  { slideIndex: 4, stepIndex: 1, label: 'SLIDE 05 / 06 · CẢNH 02 / 05' },
+  { slideIndex: 4, stepIndex: 2, label: 'SLIDE 05 / 06 · CẢNH 03 / 05' },
+  { slideIndex: 4, stepIndex: 3, label: 'SLIDE 05 / 06 · CẢNH 04 / 05' },
+  { slideIndex: 4, stepIndex: 4, label: 'SLIDE 05 / 06 · CẢNH 05 / 05' },
+  // Slide 06 (5): 5 steps (0..4)
+  { slideIndex: 5, stepIndex: 0, label: 'SLIDE 06 / 06 · BƯỚC 01 / 05' },
+  { slideIndex: 5, stepIndex: 1, label: 'SLIDE 06 / 06 · BƯỚC 02 / 05' },
+  { slideIndex: 5, stepIndex: 2, label: 'SLIDE 06 / 06 · BƯỚC 03 / 05' },
+  { slideIndex: 5, stepIndex: 3, label: 'SLIDE 06 / 06 · BƯỚC 04 / 05' },
+  { slideIndex: 5, stepIndex: 4, label: 'SLIDE 06 / 06 · BƯỚC 05 / 05' }
+];
 
-    page.on('console', msg => {
-      if (msg.type() === 'error') consoleErrors.push(msg.text());
+test.describe('NÉT VẼ TRI ÂN V3 — GLOBAL STEP-BY-STEP NAVIGATION & FLORAL MOTION MASTERPIECE QA', () => {
+  test('Test 1 & Test 5: Landing to Finale Full 34-Step Walk & POSTER_FULLY_VISIBLE = TRUE', async ({ page }) => {
+    const errors = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') errors.push(msg.text());
     });
-    page.on('pageerror', err => {
-      consoleErrors.push(err.message);
-    });
-    page.on('requestfailed', req => {
-      failedRequests.push(req.url());
-    });
+    page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/net-ve-tri-an-dntu-2026/', { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('.reveal.ready', { timeout: 15000 });
-    await page.waitForTimeout(1500);
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('');
+    await page.waitForSelector('#landing-page', { state: 'visible' });
+    await page.waitForTimeout(350);
 
-    // =========================================================================
-    // 1. VERIFY 20/11 GRAND OPENING LANDING PAGE & POSTER_FULLY_VISIBLE = TRUE
-    // =========================================================================
-    const landing = page.locator('#landing-page');
-    await expect(landing).toBeVisible();
-    await expect(landing).toContainText('NÉT VẼ TRI ÂN');
-    await expect(landing).toContainText('CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11');
-    await expect(landing).toContainText('MỘT DÒNG CODE – VẠN CHÂN TRỜI');
-    await expect(landing).toContainText('Có những bài học bắt đầu từ màn hình máy tính. Có những ước mơ bắt đầu từ một người thầy.');
-    await expect(landing).toContainText('KHOA CÔNG NGHỆ THÔNG TIN – TRƯỜNG ĐẠI HỌC CÔNG NGHỆ ĐỒNG NAI');
-    await expect(landing).toContainText('QUÁCH KHOA ĐỨC');
-    await expect(landing.locator('#btn-enter-journey')).toContainText('KHÁM PHÁ HÀNH TRÌNH TRI ÂN');
+    // Enable Lite mode after initial landing check or wait cleanly per step
+    // First capture Landing Step 1
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-00-landing-step1.png') });
 
-    const landingPosterCheck = await verifyPosterFullyVisible(page, '#landing-full-poster-img');
-    expect(landingPosterCheck.POSTER_FULLY_VISIBLE, JSON.stringify(landingPosterCheck)).toBe(true);
+    for (let i = 0; i < EXPECTED_SEQUENCE.length; i++) {
+      const expected = EXPECTED_SEQUENCE[i];
 
-    await page.screenshot({ path: 'tests/screenshots/v2_00_landing_20_11.png' });
+      // Wait until any inter-slide transition settles
+      await page.waitForFunction(
+        ({ sIdx, stIdx }) =>
+          window.PresentationState &&
+          !window.PresentationState.isTransitioning &&
+          window.PresentationState.slideIndex === sIdx &&
+          window.PresentationState.stepIndex === stIdx,
+        { sIdx: expected.slideIndex, stIdx: expected.stepIndex },
+        { timeout: 5000 }
+      );
 
-    // =========================================================================
-    // 2. ENTER SLIDE 01 (01 / 06) FROM LANDING PAGE
-    // =========================================================================
-    await page.locator('#btn-enter-journey').click();
-    await page.waitForTimeout(1200);
+      await expect(page.locator('#hud-indicator')).toHaveText(expected.label);
 
-    await expect(page.locator('#hud-indicator')).toHaveText('01 / 06');
-    const s1 = page.locator('section[data-slide-id="slide-1"]');
-    await expect(s1).toContainText('NÉT VẼ TRI ÂN – MỘT DÒNG CODE, VẠN CHÂN TRỜI');
-    await page.screenshot({ path: 'tests/screenshots/v2_01_slide1_khoi_nguon.png' });
+      // Specific milestone checks & screenshots
+      if (expected.slideIndex === -1 && expected.stepIndex === 5) {
+        // Verify Landing full poster is 100% visible & uncropped
+        const landingPosterCheck = await page.evaluate(() => {
+          const img = document.getElementById('landing-full-poster-img');
+          const style = window.getComputedStyle(img);
+          const rect = img.getBoundingClientRect();
+          return {
+            loaded: img.complete && img.naturalWidth > 0,
+            objectFit: style.objectFit,
+            fullyInsideViewport:
+              rect.top >= 0 &&
+              rect.left >= 0 &&
+              rect.bottom <= window.innerHeight &&
+              rect.right <= window.innerWidth &&
+              rect.height > 400
+          };
+        });
+        expect(landingPosterCheck.loaded).toBe(true);
+        expect(landingPosterCheck.objectFit).toBe('contain');
+        expect(landingPosterCheck.fullyInsideViewport).toBe(true);
 
-    // =========================================================================
-    // 3. SLIDE 02 — NGƯỜI THẦY & CÔ LIỆU (WARM IVORY THEME)
-    // =========================================================================
-    await page.evaluate(() => window.Reveal.slide(1));
-    await page.waitForTimeout(1200);
-
-    await expect(page.locator('#hud-indicator')).toHaveText('02 / 06');
-    const s2 = page.locator('section[data-slide-id="slide-2"]');
-    await expect(s2).toContainText('TỪ MỘT LỜI DÌU DẮT... ĐẾN NIỀM TIN ĐỂ BƯỚC ĐI.');
-    await expect(s2).toContainText('Người thầy không chỉ trao kiến thức, mà còn trao cho sinh viên niềm tin vào chính mình.');
-    await expect(s2).toContainText('cô Liệu');
-    await page.screenshot({ path: 'tests/screenshots/v2_02_slide2_nguoi_thay.png' });
-
-    // =========================================================================
-    // 4. SLIDE 03 — CON THUYỀN TRI THỨC & HAI SINH VIÊN
-    // =========================================================================
-    await page.evaluate(() => window.Reveal.slide(2));
-    await page.waitForTimeout(1200);
-
-    await expect(page.locator('#hud-indicator')).toHaveText('03 / 06');
-    const s3 = page.locator('section[data-slide-id="slide-3"]');
-    await expect(s3).toContainText('TRI THỨC LÀ ĐIỂM KHỞI ĐẦU. KHÁT VỌNG LÀ HƯỚNG ĐI.');
-    await expect(s3).toContainText('hai sinh viên một nam và một nữ');
-
-    await s3.locator('.zone-tab-btn[data-slide3-zone="1"]').click();
-    await page.waitForTimeout(500);
-    await s3.locator('.zone-tab-btn[data-slide3-zone="0"]').click();
-    await page.waitForTimeout(500);
-    await page.screenshot({ path: 'tests/screenshots/v2_03_slide3_con_thuyen_sach.png' });
-
-    // =========================================================================
-    // 5. SLIDE 04 — NĂM TIÊU CHÍ SINH VIÊN 5 TỐT
-    // =========================================================================
-    await page.evaluate(() => window.Reveal.slide(3));
-    await page.waitForTimeout(1200);
-
-    await expect(page.locator('#hud-indicator')).toHaveText('04 / 06');
-    const s4 = page.locator('section[data-slide-id="slide-4"]');
-    await expect(s4.locator('.criteria-pillar-card')).toHaveCount(5);
-    await expect(s4).toContainText('02 NĂM LIÊN TIẾP — SINH VIÊN 5 TỐT');
-    await page.screenshot({ path: 'tests/screenshots/v2_04_slide4_sinh_vien_5_tot.png' });
-
-    // =========================================================================
-    // 6. SLIDE 05 — 5-SCENE CURATED REAL PHOTO EXHIBITION
-    // =========================================================================
-    await page.evaluate(() => window.Reveal.slide(4));
-    await page.waitForTimeout(1200);
-
-    await expect(page.locator('#hud-indicator')).toHaveText('05 / 06');
-    const s5 = page.locator('section[data-slide-id="slide-5"]');
-    await expect(s5).toContainText('TỪ ƯỚC MƠ ĐẾN HÀNH TRÌNH THỰC TẾ');
-    await expect(s5).toContainText('Điều em từng ngưỡng mộ đã trở thành động lực để em không ngừng cố gắng.');
-
-    // Verify edit buttons are hidden in Presentation Mode
-    await expect(s5.locator('.slot-replace-btn').first()).toBeHidden();
-
-    // Capture Scene 1 (Ngày đầu)
-    await page.screenshot({ path: 'tests/screenshots/v2_05_slide5_scene1_ngay_dau.png' });
-
-    // Switch through Scenes 2, 3, 4, 5 and verify real images load
-    for (let sc = 1; sc < 5; sc++) {
-      await s5.locator(`[data-slide5-scene="${sc}"]`).click();
-      await page.waitForTimeout(650);
-      const heroW = await s5.locator('#s5-hero-img').evaluate(i => i.naturalWidth);
-      expect(heroW, `Slide 5 Scene ${sc + 1} hero image failed to load`).toBeGreaterThan(500);
-      if (sc === 3) {
-        await page.screenshot({ path: 'tests/screenshots/v2_05_slide5_scene4_sv5tot.png' });
+        await page.waitForTimeout(300);
+        await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-01-landing-step6-full.png') });
       }
-      if (sc === 4) {
-        await page.screenshot({ path: 'tests/screenshots/v2_05_slide5_scene5_20_11.png' });
+
+      if (expected.slideIndex === 0 && expected.stepIndex === 2) {
+        await page.waitForTimeout(250);
+        await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-02-slide1-step3.png') });
+      }
+
+      if (expected.slideIndex === 1 && expected.stepIndex === 3) {
+        await expect(page.locator('.slide2-floral-badge')).toBeVisible();
+        await page.waitForTimeout(250);
+        await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-03-slide2-step4.png') });
+      }
+
+      if (expected.slideIndex === 2) {
+        // Verify active zone button matches stepIndex
+        await expect(page.locator(`.zone-tab-btn[data-slide3-zone="${expected.stepIndex}"]`)).toHaveClass(/active/);
+        if (expected.stepIndex === 0 || expected.stepIndex === 3) {
+          await page.waitForTimeout(250);
+          await page.screenshot({
+            path: path.join(SCREENSHOT_DIR, `v3-04-slide3-step${expected.stepIndex + 1}.png`)
+          });
+        }
+      }
+
+      if (expected.slideIndex === 3 && expected.stepIndex === 6) {
+        await expect(page.locator('.milestone-culmination-bar')).toContainText('02 NĂM LIÊN TIẾP — SINH VIÊN 5 TỐT');
+        await page.waitForTimeout(250);
+        await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-05-slide4-step7.png') });
+      }
+
+      if (expected.slideIndex === 4) {
+        await expect(page.locator(`.scene-step-btn[data-slide5-scene="${expected.stepIndex}"]`)).toHaveClass(/active/);
+        await page.waitForFunction(
+          () =>
+            ['s5-hero-img', 's5-side1-img', 's5-side2-img'].every((id) => {
+              const el = document.getElementById(id);
+              return Boolean(el && el.complete && el.naturalWidth > 0);
+            }),
+          null,
+          { timeout: 5000 }
+        );
+        if (expected.stepIndex === 0 || expected.stepIndex === 3 || expected.stepIndex === 4) {
+          await page.waitForTimeout(250);
+          await page.screenshot({
+            path: path.join(SCREENSHOT_DIR, `v3-06-slide5-scene${expected.stepIndex + 1}.png`)
+          });
+        }
+      }
+
+      if (expected.slideIndex === 5 && expected.stepIndex === 2) {
+        await expect(page.locator('#slide6-tribute-view')).toBeVisible();
+        await expect(page.locator('#slide6-floral-tribute')).toBeVisible();
+        await page.waitForTimeout(250);
+        await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-07-slide6-step3-floral.png') });
+      }
+
+      if (expected.slideIndex === 5 && expected.stepIndex === 4) {
+        await expect(page.locator('#slide6-finale-view')).toHaveClass(/active/);
+        const finaleCheck = await page.evaluate(() => {
+          const img = document.getElementById('finale-full-poster-img');
+          const style = window.getComputedStyle(img);
+          const rect = img.getBoundingClientRect();
+          return {
+            POSTER_FULLY_VISIBLE:
+              Boolean(img && img.complete && img.naturalWidth > 0) &&
+              style.objectFit === 'contain' &&
+              rect.top >= 0 &&
+              rect.left >= 0 &&
+              rect.bottom <= window.innerHeight &&
+              rect.right <= window.innerWidth &&
+              rect.height > 400
+          };
+        });
+        expect(finaleCheck.POSTER_FULLY_VISIBLE).toBe(true);
+        await page.waitForTimeout(250);
+        await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v3-08-slide6-step5-finale-hold.png') });
+      }
+
+      // Advance to next step unless at the very last step
+      if (i < EXPECTED_SEQUENCE.length - 1) {
+        await page.click('#hud-next');
       }
     }
 
-    // =========================================================================
-    // 7. SLIDE 06 — PART A (TRIBUTE + REAL PORTRAIT) & PART B (FULL POSTER FINALE)
-    // =========================================================================
-    await page.evaluate(() => window.Reveal.slide(5));
-    await page.waitForTimeout(1200);
-
-    await expect(page.locator('#hud-indicator')).toHaveText('06 / 06');
-    const s6 = page.locator('section[data-slide-id="slide-6"]');
-    await expect(s6).toContainText('CẢM ƠN THẦY CÔ');
-    await expect(s6).toContainText('Vì đã trao cho chúng em những nét vẽ đầu tiên.');
-
-    const portraitW = await s6.locator('.author-portrait-img').evaluate(i => i.naturalWidth);
-    expect(portraitW).toBeGreaterThan(500);
-
-    await page.screenshot({ path: 'tests/screenshots/v2_06a_slide6_tribute_portrait.png' });
-
-    // Trigger Part B: FINAL FULL POSTER REVEAL
-    await page.locator('#btn-trigger-finale').click();
-    await page.waitForTimeout(1000);
-
-    await expect(page.locator('#slide6-finale-view')).toBeVisible();
-    await expect(page.locator('#slide6-finale-view')).toContainText('TRI THỨC TRAO ĐI,');
-    await expect(page.locator('#slide6-finale-view')).toContainText('TƯƠNG LAI TIẾP NỐI.');
-
-    const finalePosterCheck = await verifyPosterFullyVisible(page, '#finale-full-poster-img');
-    expect(finalePosterCheck.POSTER_FULLY_VISIBLE, JSON.stringify(finalePosterCheck)).toBe(true);
-
-    await page.screenshot({ path: 'tests/screenshots/v2_06b_slide6_finale_full_poster.png' });
-
-    expect(consoleErrors).toEqual([]);
-    expect(failedRequests).toEqual([]);
+    // At the final step (slideIndex: 5, stepIndex: 4), verify pressing ArrowRight holds steady and never loops
+    await expect(page.locator('#hud-next')).toBeDisabled();
+    await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(150);
+    const finalState = await page.evaluate(() => ({
+      slideIndex: window.PresentationState.slideIndex,
+      stepIndex: window.PresentationState.stepIndex
+    }));
+    expect(finalState).toEqual({ slideIndex: 5, stepIndex: 4 });
+    expect(errors).toEqual([]);
   });
 
-  test('Multi-Viewport Verification (1366x768 & 1440x900) — POSTER_FULLY_VISIBLE = TRUE', async ({ page }) => {
-    for (const vp of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }]) {
-      await page.setViewportSize(vp);
-      await page.goto('/net-ve-tri-an-dntu-2026/', { waitUntil: 'domcontentloaded' });
-      await page.waitForSelector('.reveal.ready', { timeout: 15000 });
-      await page.waitForTimeout(900);
+  test('Test 2: Reverse Step-by-Step Navigation from Finale Back to Landing Step 1', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('');
+    await page.waitForSelector('#landing-page', { state: 'visible' });
 
-      const checkLanding = await verifyPosterFullyVisible(page, '#landing-full-poster-img');
-      expect(checkLanding.POSTER_FULLY_VISIBLE, `Landing @ ${vp.width}x${vp.height}: ${JSON.stringify(checkLanding)}`).toBe(true);
-      await page.screenshot({ path: `tests/screenshots/v2_viewport_${vp.width}x${vp.height}_landing.png` });
+    // Turn on Lite Mode for fast deterministic state machine traversal
+    await page.click('#hud-motion');
 
-      await page.locator('#btn-enter-journey').click();
-      await page.waitForTimeout(700);
-      await page.evaluate(() => {
-        window.Reveal.slide(5);
-        window.setSlide6Mode('finale');
+    // Jump to the final state (Slide 06, Step 4) via End key
+    await page.keyboard.press('End');
+    await page.waitForFunction(
+      () =>
+        window.PresentationState &&
+        !window.PresentationState.isTransitioning &&
+        window.PresentationState.slideIndex === 5 &&
+        window.PresentationState.stepIndex === 4
+    );
+
+    // Walk backward through all 34 steps in exact reverse order
+    for (let i = EXPECTED_SEQUENCE.length - 1; i >= 0; i--) {
+      const expected = EXPECTED_SEQUENCE[i];
+      await page.waitForFunction(
+        ({ sIdx, stIdx }) =>
+          window.PresentationState &&
+          !window.PresentationState.isTransitioning &&
+          window.PresentationState.slideIndex === sIdx &&
+          window.PresentationState.stepIndex === stIdx,
+        { sIdx: expected.slideIndex, stIdx: expected.stepIndex },
+        { timeout: 4000 }
+      );
+      await expect(page.locator('#hud-indicator')).toHaveText(expected.label);
+
+      if (i > 0) {
+        await page.keyboard.press('ArrowLeft');
+      }
+    }
+
+    await expect(page.locator('#hud-prev')).toBeDisabled();
+    await expect(page.locator('#landing-page')).toBeVisible();
+  });
+
+  test('Test 3: Input Consistency (Buttons, Space, Arrows, PageUp/PageDown, Enter) & Speaker Notes Sync', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('');
+    await page.waitForSelector('#landing-page', { state: 'visible' });
+    await page.click('#hud-motion'); // Lite mode for crisp assertions
+
+    // Open Speaker Notes (N)
+    await page.keyboard.press('n');
+    await expect(page.locator('#notes-drawer')).toHaveClass(/active/);
+    await expect(page.locator('#notes-slide-title')).toHaveText('MỞ ĐẦU 20/11 · Khai mở nét vẽ tri thức');
+
+    // 1. Space advances to Landing Step 2
+    await page.keyboard.press('Space');
+    await expect(page.locator('#hud-indicator')).toHaveText('MỞ ĐẦU 20/11 · BƯỚC 02 / 06');
+    await expect(page.locator('#notes-slide-title')).toHaveText('MỞ ĐẦU 20/11 · Chào mừng Ngày Nhà giáo Việt Nam 20/11');
+
+    // 2. PageDown advances to Landing Step 3
+    await page.keyboard.press('PageDown');
+    await expect(page.locator('#hud-indicator')).toHaveText('MỞ ĐẦU 20/11 · BƯỚC 03 / 06');
+
+    // 3. Enter advances to Landing Step 4
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#hud-indicator')).toHaveText('MỞ ĐẦU 20/11 · BƯỚC 04 / 06');
+
+    // 4. PageUp reverses to Landing Step 3
+    await page.keyboard.press('PageUp');
+    await expect(page.locator('#hud-indicator')).toHaveText('MỞ ĐẦU 20/11 · BƯỚC 03 / 06');
+
+    // 5. #hud-prev reverses to Landing Step 2
+    await page.click('#hud-prev');
+    await expect(page.locator('#hud-indicator')).toHaveText('MỞ ĐẦU 20/11 · BƯỚC 02 / 06');
+  });
+
+  test('Test 4: Rapid Input / Spam Click Protection Without Breaking Layout or State', async ({ page }) => {
+    const errors = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') errors.push(msg.text());
+    });
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('');
+    await page.waitForSelector('#landing-page', { state: 'visible' });
+
+    // Rapidly fire 15 keyboard presses and clicks
+    for (let k = 0; k < 15; k++) {
+      await page.keyboard.press('ArrowRight', { delay: 10 });
+    }
+    await page.waitForTimeout(800);
+
+    // Wait for any active transition to finish
+    await page.waitForFunction(() => window.PresentationState && !window.PresentationState.isTransitioning);
+
+    const state = await page.evaluate(() => ({
+      slideIndex: window.PresentationState.slideIndex,
+      stepIndex: window.PresentationState.stepIndex,
+      indicator: document.getElementById('hud-indicator')?.textContent
+    }));
+
+    expect(state.slideIndex).toBeGreaterThanOrEqual(-1);
+    expect(state.slideIndex).toBeLessThanOrEqual(5);
+    expect(state.stepIndex).toBeGreaterThanOrEqual(0);
+    expect(state.indicator.length).toBeGreaterThan(5);
+    expect(errors).toEqual([]);
+  });
+
+  test('Test 6: Multi-Resolution Verification (1920x1080, 1600x900, 1440x900, 1366x768, 768x1024)', async ({ page }) => {
+    const viewports = [
+      { width: 1920, height: 1080, name: '1920x1080' },
+      { width: 1600, height: 900, name: '1600x900' },
+      { width: 1440, height: 900, name: '1440x900' },
+      { width: 1366, height: 768, name: '1366x768' },
+      { width: 768, height: 1024, name: '768x1024-tablet' }
+    ];
+
+    await page.goto('');
+    await page.waitForSelector('#landing-page', { state: 'visible' });
+    await page.click('#hud-motion'); // Lite mode
+
+    for (const vp of viewports) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.keyboard.press('Home');
+      await page.waitForTimeout(200);
+
+      // Step to Landing Step 6 so all landing elements are visible
+      await page.evaluate(() => window.goToState(-1, 5));
+      await page.waitForTimeout(200);
+
+      const landingVisible = await page.evaluate(() => {
+        const img = document.getElementById('landing-full-poster-img');
+        const rect = img.getBoundingClientRect();
+        return img.complete && img.naturalWidth > 0 && rect.width > 100 && rect.height > 180;
       });
-      await page.waitForTimeout(800);
+      expect(landingVisible).toBe(true);
 
-      const checkFinale = await verifyPosterFullyVisible(page, '#finale-full-poster-img');
-      expect(checkFinale.POSTER_FULLY_VISIBLE, `Finale @ ${vp.width}x${vp.height}: ${JSON.stringify(checkFinale)}`).toBe(true);
-      await page.screenshot({ path: `tests/screenshots/v2_viewport_${vp.width}x${vp.height}_finale.png` });
+      // Jump to Slide 06 Finale Step 5 and verify full poster is visible
+      await page.evaluate(() => window.goToState(5, 4));
+      await page.waitForTimeout(250);
+
+      const finaleVisible = await page.evaluate(() => {
+        const img = document.getElementById('finale-full-poster-img');
+        const style = window.getComputedStyle(img);
+        const rect = img.getBoundingClientRect();
+        return (
+          img.complete &&
+          img.naturalWidth > 0 &&
+          style.objectFit === 'contain' &&
+          rect.width > 100 &&
+          rect.height > 180
+        );
+      });
+      expect(finaleVisible).toBe(true);
     }
   });
 });

@@ -68,8 +68,18 @@ html, body {
 }
 
 /* ==========================================================================
-   1. INDEPENDENT 20/11 CINEMATIC GRAND OPENING LANDING PAGE
+   1. INDEPENDENT 20/11 CINEMATIC GRAND OPENING LANDING PAGE (V3 FLORAL ART)
    ========================================================================== */
+#scene-transition-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 270;
+  pointer-events: none;
+  opacity: 0;
+}
+
 #landing-page {
   position: fixed;
   inset: 0;
@@ -79,11 +89,11 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 28px 56px 24px;
+  padding: 20px 56px 58px;
   background:
-    radial-gradient(circle at 50% 50%, rgba(240, 204, 133, 0.16) 0%, rgba(25, 54, 95, 0.88) 48%, rgba(11, 25, 46, 0.97) 100%);
+    radial-gradient(circle at 50% 48%, rgba(240, 204, 133, 0.19) 0%, rgba(25, 54, 95, 0.88) 48%, rgba(11, 25, 46, 0.97) 100%);
   backdrop-filter: blur(18px);
-  transition: opacity 0.85s var(--ease-cinematic), visibility 0.85s;
+  transition: opacity 0.65s var(--ease-cinematic), visibility 0.65s;
   overflow: hidden;
 }
 
@@ -92,6 +102,37 @@ html, body {
   visibility: hidden;
   pointer-events: none;
 }
+
+/* V3 Calligraphic Pen Stroke & Floating SVG Petals Layer */
+.landing-floral-canvas-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes gentlePetalFloat {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(8px, -10px, 0) rotate(6deg);
+  }
+}
+
+.petal-drift {
+  animation: gentlePetalFloat 7s ease-in-out infinite;
+}
+
+.petal-drift.p2 { animation-delay: -1.4s; animation-duration: 8.2s; }
+.petal-drift.p3 { animation-delay: -2.8s; animation-duration: 7.6s; }
+.petal-drift.p4 { animation-delay: -4.1s; animation-duration: 8.8s; }
+.petal-drift.p5 { animation-delay: -0.9s; animation-duration: 6.9s; }
+.petal-drift.p6 { animation-delay: -3.3s; animation-duration: 9.1s; }
+.petal-drift.p7 { animation-delay: -2.1s; animation-duration: 7.4s; }
+.petal-drift.p8 { animation-delay: -5.0s; animation-duration: 8.5s; }
 
 /* Soft Blurred Aura Derived From Poster Behind Central Stage */
 .landing-poster-aura {
@@ -210,40 +251,85 @@ html, body {
 
 .landing-hero-title {
   font-family: var(--font-serif);
-  font-size: 72px;
-  line-height: 1.04;
+  font-size: 66px;
+  line-height: 1.03;
   font-weight: 700;
   color: var(--ivory-warm);
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   letter-spacing: 0.02em;
 }
 
 .landing-light-stroke {
   width: 100%;
   max-width: 420px;
-  height: 16px;
-  margin-bottom: 10px;
+  height: 14px;
+  margin-bottom: 8px;
 }
 
 .landing-hero-slogan {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--gold-champagne);
-  margin: 0 0 22px 0;
+  margin: 0 0 14px 0;
   white-space: nowrap;
+}
+
+/* V3 20/11 Artistic Floral Bouquet Card (Roses + Sunflower + IT Circuit Stems) */
+.landing-floral-bouquet-card {
+  display: grid;
+  grid-template-columns: 165px 1fr;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(25, 54, 95, 0.72) 0%, rgba(16, 36, 66, 0.85) 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: 16px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.bouquet-svg,
+.landing-bouquet-svg {
+  width: 165px;
+  height: 112px;
+  display: block;
+}
+
+.bouquet-text,
+.landing-floral-caption {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ivory-warm) !important;
+}
+
+.bouquet-text strong,
+.landing-floral-caption strong {
+  color: var(--gold-champagne) !important;
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.bouquet-text span,
+.landing-floral-caption span {
+  color: var(--ivory-muted) !important;
+  display: block;
 }
 
 .landing-lead-quote {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 25px;
-  line-height: 1.48;
+  font-size: 22.5px;
+  line-height: 1.44;
   color: var(--ivory-warm);
   background: rgba(25, 54, 95, 0.55);
   border-left: 3.5px solid var(--gold-champagne);
-  padding: 18px 24px;
+  padding: 14px 20px;
   border-radius: 0 16px 16px 0;
   margin: 0;
 }
@@ -261,7 +347,7 @@ html, body {
 
 .landing-poster-frame {
   position: relative;
-  height: min(76vh, 820px);
+  height: min(68vh, 725px);
   aspect-ratio: 3000 / 5333;
   padding: 8px;
   border-radius: 18px;
@@ -294,14 +380,14 @@ html, body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 20px;
+  gap: 16px;
 }
 
 .landing-meta-card {
   background: rgba(25, 54, 95, 0.55);
   border: 1px solid var(--gold-border);
   border-radius: 18px;
-  padding: 22px 26px;
+  padding: 18px 24px;
   width: 100%;
 }
 
@@ -311,24 +397,24 @@ html, body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold-champagne);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .landing-meta-value {
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--ivory-warm);
-  line-height: 1.45;
-  margin-bottom: 14px;
+  line-height: 1.42;
+  margin-bottom: 12px;
 }
 
 .landing-meta-poem {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 21px;
-  line-height: 1.45;
+  font-size: 20.5px;
+  line-height: 1.42;
   color: var(--gold-bright);
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid rgba(248, 241, 227, 0.14);
 }
 
@@ -338,21 +424,27 @@ html, body {
   justify-content: center;
   gap: 14px;
   width: 100%;
-  padding: 18px 28px;
+  padding: 16px 26px;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--gold-champagne) 0%, #E2B659 100%);
   color: var(--navy-deep);
   border: none;
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
   box-shadow:
     0 14px 35px rgba(240, 204, 133, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
   transition: transform 0.3s var(--ease-cinematic), box-shadow 0.3s var(--ease-cinematic);
+}
+
+.btn-explore-journey.pulse-ready {
+  box-shadow:
+    0 0 0 4px rgba(240, 204, 133, 0.25),
+    0 18px 42px rgba(240, 204, 133, 0.55);
 }
 
 .btn-explore-journey:hover {
@@ -366,12 +458,12 @@ html, body {
   width: 100%;
   max-width: 1780px;
   margin: 0 auto;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid rgba(240, 204, 133, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--slate-muted);
 }
 
@@ -801,7 +893,7 @@ html, body {
 .memory-pillars {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .memory-card-light {
@@ -809,12 +901,13 @@ html, body {
   border: 1px solid rgba(25, 54, 95, 0.14);
   border-left: 4px solid var(--navy-academic);
   border-radius: 14px;
-  padding: 15px 20px;
+  padding: 12px 18px;
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 42px 1fr;
   gap: 14px;
   align-items: start;
   box-shadow: 0 8px 24px rgba(25, 54, 95, 0.06);
+  transition: transform 0.35s var(--ease-cinematic), box-shadow 0.35s var(--ease-cinematic), border-color 0.35s;
 }
 
 .memory-card-light.highlight-co-lieu {
@@ -822,9 +915,15 @@ html, body {
   background: linear-gradient(90deg, #FFFDF9 0%, #FDF8EE 100%);
 }
 
+.memory-card-light.step-active-card,
+.symbol-item.step-active-card {
+  box-shadow: 0 12px 30px rgba(173, 31, 41, 0.14);
+  border-color: var(--gold-champagne);
+}
+
 .memory-badge-light {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   background: var(--navy-academic);
   color: var(--gold-champagne);
@@ -832,7 +931,7 @@ html, body {
   align-items: center;
   justify-content: center;
   font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
 }
 
@@ -842,17 +941,35 @@ html, body {
 }
 
 .memory-card-light h4 {
-  font-size: 17px;
+  font-size: 16.5px;
   font-weight: 700;
   color: var(--navy-academic);
-  margin: 0 0 4px 0;
+  margin: 0 0 3px 0;
 }
 
 .memory-card-light p {
-  font-size: 14px;
-  line-height: 1.54;
+  font-size: 13.5px;
+  line-height: 1.48;
   color: #334155;
   margin: 0;
+}
+
+.slide2-floral-badge {
+  margin-top: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(173, 31, 41, 0.1) 0%, rgba(240, 204, 133, 0.32) 100%);
+  border: 1px solid rgba(173, 31, 41, 0.28);
+  color: var(--navy-academic);
+  font-size: 13px;
+  line-height: 1.45;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slide2-floral-badge strong {
+  color: var(--dntu-red);
 }
 
 /* ==========================================================================
@@ -1095,7 +1212,19 @@ html, body {
   align-items: center;
   text-align: center;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-  transition: transform 0.35s var(--ease-cinematic);
+  transition: transform 0.35s var(--ease-cinematic), box-shadow 0.35s var(--ease-cinematic), border-color 0.35s;
+}
+
+.criteria-pillar-card.criteria-active {
+  border-color: var(--dntu-red);
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.35),
+    0 0 0 2px rgba(240, 204, 133, 0.55);
+}
+
+.criteria-pillar-card.criteria-active .pillar-icon-ring {
+  background: var(--dntu-red);
+  color: var(--ivory-warm);
 }
 
 .criteria-pillar-card:hover {
@@ -1231,6 +1360,14 @@ html, body {
   box-shadow: 0 18px 42px rgba(25, 54, 95, 0.2);
   display: flex;
   flex-direction: column;
+  transition: border-color 0.35s, box-shadow 0.35s;
+}
+
+.exhibition-hero-card.achievement-gold-frame {
+  border-color: var(--dntu-red);
+  box-shadow:
+    0 20px 46px rgba(173, 31, 41, 0.24),
+    0 0 0 2px var(--gold-champagne);
 }
 
 .exhibition-hero-img-wrap {
@@ -1410,19 +1547,19 @@ body.edit-mode .slot-replace-btn {
 
 .gratitude-main-title {
   font-family: var(--font-serif);
-  font-size: 60px;
-  line-height: 1.06;
+  font-size: 56px;
+  line-height: 1.05;
   font-weight: 700;
   color: var(--ivory-warm);
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
 }
 
 .gratitude-sub-quote {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 25px;
+  font-size: 23px;
   color: var(--gold-champagne);
-  margin: 0 0 18px 0;
+  margin: 0 0 14px 0;
 }
 
 .gratitude-letter-card {
@@ -1430,15 +1567,15 @@ body.edit-mode .slot-replace-btn {
   color: var(--navy-academic);
   border: 1.5px solid var(--gold-champagne);
   border-radius: 18px;
-  padding: 20px 26px;
-  margin-bottom: 16px;
+  padding: 16px 22px;
+  margin-bottom: 14px;
 }
 
 .gratitude-pillars-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .gratitude-pillar-item {
@@ -1446,7 +1583,7 @@ body.edit-mode .slot-replace-btn {
   border: 1px solid rgba(25, 54, 95, 0.14);
   border-top: 3px solid var(--navy-academic);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 11px 14px;
 }
 
 .gratitude-pillar-item strong {
@@ -1466,14 +1603,41 @@ body.edit-mode .slot-replace-btn {
 .final-closing-quote {
   background: linear-gradient(90deg, rgba(25, 54, 95, 0.08) 0%, rgba(240, 204, 133, 0.28) 100%);
   border-left: 4px solid var(--dntu-red);
-  padding: 13px 18px;
+  padding: 11px 16px;
   border-radius: 0 12px 12px 0;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 20.5px;
+  font-size: 19.5px;
   font-weight: 700;
-  line-height: 1.44;
+  line-height: 1.42;
   color: var(--navy-academic);
+}
+
+/* Step 3: Mature, Solemn 20/11 Floral Tribute Box on Slide 06 */
+.slide6-floral-tribute-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(25, 54, 95, 0.78) 0%, rgba(16, 36, 66, 0.92) 100%);
+  border: 1.5px solid var(--gold-champagne);
+  border-radius: 16px;
+  padding: 10px 18px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+}
+
+.floral-tribute-copy {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ivory-warm);
+}
+
+.floral-tribute-copy strong {
+  display: block;
+  color: var(--gold-champagne);
+  font-size: 14px;
+  margin-bottom: 2px;
 }
 
 .portrait-right-col {
@@ -1611,10 +1775,10 @@ body.edit-mode .slot-replace-btn {
    ========================================================================== */
 .hud-bar {
   position: fixed;
-  bottom: 10px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 280;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1652,11 +1816,16 @@ body.edit-mode .slot-replace-btn {
   transition: all 0.2s;
 }
 
-.hud-btn:hover,
+.hud-btn:hover:not(:disabled),
 .hud-btn.active {
   background: rgba(240, 204, 133, 0.18);
   border-color: var(--gold-border);
   color: var(--gold-champagne);
+}
+
+.hud-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
 }
 
 .hud-slide-indicator {
@@ -1674,6 +1843,26 @@ body.edit-mode .slot-replace-btn {
   background: rgba(248, 241, 227, 0.16);
 }
 
+/* Global Bottom Step Progress Bar */
+#global-progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 3px;
+  background: rgba(11, 25, 46, 0.8);
+  z-index: 290;
+  pointer-events: none;
+}
+
+#global-progress-fill {
+  height: 100%;
+  width: 3%;
+  background: linear-gradient(90deg, var(--dntu-red) 0%, var(--gold-champagne) 55%, var(--ivory-warm) 100%);
+  box-shadow: 0 0 10px rgba(240, 204, 133, 0.55);
+  transition: width 0.35s var(--ease-cinematic);
+}
+
 /* Presenter View Drawer */
 #notes-drawer {
   position: fixed;
@@ -1687,7 +1876,7 @@ body.edit-mode .slot-replace-btn {
   padding: 22px 24px;
   box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(20px);
-  z-index: 260;
+  z-index: 295;
   display: none;
   flex-direction: column;
   gap: 14px;
@@ -1837,26 +2026,35 @@ body.reduced-motion *::after {
 
 @media (max-width: 1440px), (max-height: 820px) {
   #landing-page {
-    padding: 18px 32px 16px;
+    padding: 14px 32px 54px;
   }
   .landing-main-stage {
-    gap: 28px;
+    gap: 24px;
   }
   .landing-hero-title {
-    font-size: 54px;
+    font-size: 50px;
+  }
+  .landing-floral-bouquet-card {
+    grid-template-columns: 130px 1fr;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+  }
+  .landing-bouquet-svg {
+    width: 130px;
+    height: 88px;
   }
   .landing-lead-quote {
-    font-size: 20px;
-    padding: 14px 18px;
+    font-size: 18.5px;
+    padding: 12px 16px;
   }
   .landing-poster-frame {
-    height: min(72vh, 640px);
+    height: min(64vh, 560px);
   }
 }
 
 @media (max-width: 960px) {
   #landing-page {
-    padding: 14px 18px;
+    padding: 14px 18px 62px;
     overflow-y: auto;
   }
   .landing-main-stage {
@@ -1868,7 +2066,10 @@ body.reduced-motion *::after {
   .landing-right-wing {
     align-items: center;
   }
+  .landing-floral-bouquet-card {
+    text-align: left;
+  }
   .landing-poster-frame {
-    height: 52vh;
+    height: 48vh;
   }
 }

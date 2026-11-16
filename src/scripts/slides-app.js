@@ -1,8 +1,7 @@
 import Reveal from 'reveal.js';
-import gsap from 'gsap';
 import { createWebGLBackground } from './webgl-background.js';
 import { createMotionController } from './motion-controller.js';
-import { SPEAKER_NOTES, SLIDE5_SCENES } from '../content/presentation-data.js';
+import { PRESENTATION_STEPS_CONFIG, SLIDE5_SCENES } from '../content/presentation-data.js';
 
 export async function initPresentationApp() {
   const canvas = document.getElementById('webgl-canvas');
@@ -10,15 +9,42 @@ export async function initPresentationApp() {
   const motion = createMotionController();
 
   let isReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
-  let isLandingActive = true;
-  let currentSlide5Scene = 0;
-  let currentSlide6Mode = 'tribute'; // 'tribute' | 'finale'
 
-  // Presentation Timer State (6–8 minute target)
+  // Presentation Timer State (does NOT reset when moving across sub-steps)
   let timerSeconds = 0;
   let timerInterval = null;
   let timerRunning = false;
 
+  // Compute total global steps across Landing (-1) and Slides 0..5
+  const totalGlobalSteps = PRESENTATION_STEPS_CONFIG.reduce((acc, s) => acc + s.steps.length, 0);
+
+  // SINGLE SOURCE OF TRUTH: GLOBAL PRESENTATION STATE MACHINE
+  const state = {
+    slideIndex: -1, // -1 = Landing Page, 0..5 = Slide 01..06
+    stepIndex: 0,
+    isTransitioning: false,
+    mode: 'presentation',
+    overlay: null
+  };
+
+  function getSlideConfig(slideIdx) {
+    return PRESENTATION_STEPS_CONFIG.find(c => c.slideIndex === slideIdx) || PRESENTATION_STEPS_CONFIG[0];
+  }
+
+  function getGlobalStepNumber(slideIdx, stepIdx) {
+    let count = 0;
+    for (const conf of PRESENTATION_STEPS_CONFIG) {
+      if (conf.slideIndex < slideIdx) {
+        count += conf.steps.length;
+      } else if (conf.slideIndex === slideIdx) {
+        count += stepIdx + 1;
+        break;
+      }
+    }
+    return count;
+  }
+
+  // Initialize Reveal.js with internal keyboard/touch disabled so our Global State Machine is the sole controller
   const deck = new Reveal({
     width: 1920,
     height: 1080,
@@ -26,93 +52,352 @@ export async function initPresentationApp() {
     minScale: 0.15,
     maxScale: 2.0,
     controls: false,
-    progress: true,
-    history: true,
+    progress: false,
+    keyboard: false,
+    touch: false,
+    history: false,
     center: true,
-    hash: true,
+    hash: false,
     transition: 'fade',
-    backgroundTransition: 'fade',
-    keyboard: {
-      70: () => toggleFullscreen(),    // F: Fullscreen
-      78: () => toggleNotes(),         // N: Speaker Notes
-      83: () => toggleNotes(),         // S: Speaker Notes alias
-      79: () => deck.toggleOverview(), // O: Overview
-      82: () => replayCurrentView(),   // R: Replay animation
-      76: () => toggleReducedMotion(), // L: Lite mode
-      69: () => toggleEditMode(),      // E: Toggle Edit Mode for custom photos
-      36: () => showLandingPage(),     // Home: Return to 20/11 Landing Page
-      27: () => handleEscape()         // ESC: Close modals / drawers
-    }
+    backgroundTransition: 'fade'
   });
 
   await deck.initialize();
   window.Reveal = deck;
 
-  // Expose helper APIs on window for automated QA & keyboard/UI control
-  window.enterPresentation = enterPresentation;
-  window.showLandingPage = showLandingPage;
-  window.switchSlide5Scene = switchSlide5Scene;
-  window.setSlide6Mode = setSlide6Mode;
-
-  // Play Opening Choreography on the 20/11 Landing Page
-  motion.animateLandingOpening();
-
-  // Button to Enter Slide 01 from Landing Page
-  document.getElementById('btn-enter-journey')?.addEventListener('click', () => {
-    enterPresentation();
+  // Preload all curated Slide 05 exhibition photos for instant 0ms scene switching
+  SLIDE5_SCENES.forEach(sc => {
+    if (sc.hero?.src) {
+      const pHero = new Image();
+      pHero.src = sc.hero.src;
+    }
+    (sc.sidePhotos || []).forEach(sp => {
+      if (sp.src) {
+        const pSide = new Image();
+        pSide.src = sp.src;
+      }
+    });
   });
 
-  // Slide Change Listener
+  // Sync when user clicks a slide in Reveal Overview Mode
   deck.on('slidechanged', event => {
-    const idx = event.indexh;
-    webgl.setSlideMood(idx);
-    updateHUD(idx);
-    updatePresenterDrawer(idx);
-    motion.animateSlide(event.currentSlide, idx);
-    if (idx === 2) {
-      motion.focusSlide3Zone(0);
+    if (state.slideIndex !== -1 && event.indexh !== state.slideIndex && !state.isTransitioning) {
+      goToState(event.indexh, 0);
     }
   });
 
-  // Slide 03 Interactive Focal Zone Buttons
+  // Core State Transition Executor
+  function goToState(targetSlideIndex, targetStepIndex) {
+    const conf = getSlideConfig(targetSlideIndex);
+    const clampedStep = Math.max(0, Math.min(targetStepIndex, conf.steps.length - 1));
+    const prevSlideIndex = state.slideIndex;
+    const isSlideChange = prevSlideIndex !== targetSlideIndex;
+
+    state.slideIndex = targetSlideIndex;
+    state.stepIndex = clampedStep;
+
+    const landingEl = document.getElementById('landing-page');
+
+    const applyVisuals = () => {
+      if (targetSlideIndex === -1) {
+        landingEl?.classList.remove('hidden');
+        webgl.setSlideMood(0);
+        motion.applyStep(-1, clampedStep, landingEl);
+      } else {
+        landingEl?.classList.add('hidden');
+        if (deck.getState().indexh !== targetSlideIndex) {
+          deck.slide(targetSlideIndex);
+        }
+        webgl.setSlideMood(targetSlideIndex);
+        const slideEl = document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
+        motion.applyStep(targetSlideIndex, clampedStep, slideEl);
+      }
+
+      updateHUDAndProgress();
+      updatePresenterDrawer();
+    };
+
+    if (isSlideChange && !isReducedMotion) {
+      state.isTransitioning = true;
+      applyVisuals();
+      setTimeout(() => {
+        state.isTransitioning = false;
+      }, 45);
+    } else {
+      applyVisuals();
+    }
+  }
+
+  // Unified NEXT Step (PowerPoint-like sequential navigation)
+  function nextStep() {
+    if (hasActiveModal()) {
+      handleEscape();
+      return state;
+    }
+    if (deck.isOverview()) {
+      deck.toggleOverview(false);
+      return state;
+    }
+
+    const conf = getSlideConfig(state.slideIndex);
+    if (state.stepIndex < conf.steps.length - 1) {
+      goToState(state.slideIndex, state.stepIndex + 1);
+    } else if (state.slideIndex < 5) {
+      goToState(state.slideIndex + 1, 0);
+    }
+    // At Slide 06 Step 4 (Final Hold State), pressing Next holds steady and does NOT loop
+    return state;
+  }
+
+  // Unified PREVIOUS Step (PowerPoint-like reverse navigation)
+  function prevStep() {
+    if (hasActiveModal()) {
+      handleEscape();
+      return state;
+    }
+    if (deck.isOverview()) {
+      deck.toggleOverview(false);
+      return state;
+    }
+
+    if (state.stepIndex > 0) {
+      goToState(state.slideIndex, state.stepIndex - 1);
+    } else if (state.slideIndex > -1) {
+      const prevSlideIdx = state.slideIndex - 1;
+      const prevConf = getSlideConfig(prevSlideIdx);
+      goToState(prevSlideIdx, prevConf.steps.length - 1);
+    }
+    return state;
+  }
+
+  function replayCurrentStep() {
+    goToState(state.slideIndex, state.stepIndex);
+  }
+
+  function updateHUDAndProgress() {
+    const conf = getSlideConfig(state.slideIndex);
+    const stepNum = String(state.stepIndex + 1).padStart(2, '0');
+    const stepTotal = String(conf.steps.length).padStart(2, '0');
+    const indicator = document.getElementById('hud-indicator');
+
+    if (indicator) {
+      indicator.textContent = `${conf.hudPrefix} · ${conf.stepWord} ${stepNum} / ${stepTotal}`;
+    }
+
+    // Update Slide Header Badge if inside a slide
+    if (state.slideIndex >= 0) {
+      const slideEl = document.querySelector(`section[data-slide-id="slide-${state.slideIndex + 1}"]`);
+      const badgeSpan = slideEl?.querySelector('.chapter-pill span:last-child');
+      if (badgeSpan) {
+        badgeSpan.textContent = `${conf.hudPrefix} · ${conf.stepWord} ${stepNum}/${stepTotal}`;
+      }
+    }
+
+    // Update Global Bottom Progress Line
+    const globalStep = getGlobalStepNumber(state.slideIndex, state.stepIndex);
+    const pct = Math.round((globalStep / totalGlobalSteps) * 100);
+    const barFill = document.getElementById('global-progress-fill');
+    if (barFill) {
+      barFill.style.width = `${pct}%`;
+    }
+
+    // Enable/disable Prev/Next visual states at boundaries
+    const prevBtn = document.getElementById('hud-prev');
+    const nextBtn = document.getElementById('hud-next');
+    const atStart = state.slideIndex === -1 && state.stepIndex === 0;
+    const atEnd = state.slideIndex === 5 && state.stepIndex === conf.steps.length - 1;
+    if (prevBtn) prevBtn.disabled = atStart;
+    if (nextBtn) nextBtn.disabled = atEnd;
+  }
+
+  function updatePresenterDrawer() {
+    const conf = getSlideConfig(state.slideIndex);
+    const stepObj = conf.steps[state.stepIndex] || conf.steps[0];
+
+    const titleEl = document.getElementById('notes-slide-title');
+    const timeEl = document.getElementById('notes-est-time');
+    const cuesEl = document.getElementById('notes-cues');
+    const scriptEl = document.getElementById('notes-content');
+    const nextEl = document.getElementById('notes-next-slide');
+
+    if (titleEl) {
+      titleEl.textContent = `${conf.hudPrefix} · ${stepObj.label}`;
+    }
+    if (timeEl) {
+      timeEl.textContent = `Thời lượng phần này: ${conf.estimatedTime}`;
+    }
+    if (cuesEl) {
+      cuesEl.innerHTML = `<div>• <strong>Chỉ dẫn bước hiện tại:</strong> ${stepObj.cue}</div>`;
+    }
+    if (scriptEl) {
+      scriptEl.textContent = stepObj.script;
+    }
+
+    // Compute next step label
+    if (nextEl) {
+      if (state.stepIndex < conf.steps.length - 1) {
+        nextEl.textContent = `Bước tiếp: ${conf.steps[state.stepIndex + 1].label}`;
+      } else if (state.slideIndex < 5) {
+        const nextConf = getSlideConfig(state.slideIndex + 1);
+        nextEl.textContent = `Chuyển sang: ${nextConf.hudPrefix} — ${nextConf.steps[0].label}`;
+      } else {
+        nextEl.textContent = `Trạng thái cuối: Cảnh kết Toàn bộ Poster (Final Hold State)`;
+      }
+    }
+  }
+
+  // Expose State & Control APIs on window for automated Playwright verification
+  window.PresentationState = state;
+  window.nextStep = nextStep;
+  window.prevStep = prevStep;
+  window.goToState = goToState;
+  window.enterPresentation = () => goToState(0, 0);
+  window.showLandingPage = () => goToState(-1, 0);
+  window.switchSlide5Scene = idx => goToState(4, idx);
+  window.setSlide6Mode = mode => goToState(5, mode === 'finale' ? 4 : 0);
+
+  // Initial Boot at Landing Step 0
+  goToState(-1, 0);
+
+  // ===========================================================================
+  // UNIFIED KEYBOARD, BUTTON & STAGE CLICK HANDLERS
+  // ===========================================================================
+  let lastKeyTimestamp = 0;
+
+  window.addEventListener('keydown', e => {
+    const now = performance.now();
+    // Prevent rapid key-repeat flooding while allowing responsive single presses
+    if (e.repeat && now - lastKeyTimestamp < 75) {
+      e.preventDefault();
+      return;
+    }
+    lastKeyTimestamp = now;
+
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+      const tag = document.activeElement?.tagName;
+      if (tag !== 'INPUT') {
+        e.preventDefault();
+        if (tag === 'BUTTON') document.activeElement.blur();
+        nextStep();
+      }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      prevStep();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goToState(-1, 0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goToState(5, 4);
+    } else if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      replayCurrentStep();
+    } else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      toggleFullscreen();
+    } else if (e.key === 'n' || e.key === 'N' || e.key === 's' || e.key === 'S') {
+      e.preventDefault();
+      toggleNotes();
+    } else if (e.key === 'l' || e.key === 'L') {
+      e.preventDefault();
+      toggleReducedMotion();
+    } else if (e.key === 'o' || e.key === 'O') {
+      e.preventDefault();
+      if (state.slideIndex === -1) goToState(0, 0);
+      deck.toggleOverview();
+    } else if (e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
+      toggleEditMode();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleEscape();
+    }
+  });
+
+  // HUD & Interactive Buttons (All routed through Global State Machine!)
+  document.getElementById('hud-prev')?.addEventListener('click', e => {
+    e.stopPropagation();
+    prevStep();
+  });
+  document.getElementById('hud-next')?.addEventListener('click', e => {
+    e.stopPropagation();
+    nextStep();
+  });
+  document.getElementById('hud-landing')?.addEventListener('click', e => {
+    e.stopPropagation();
+    goToState(-1, 0);
+  });
+  document.getElementById('hud-replay')?.addEventListener('click', e => {
+    e.stopPropagation();
+    replayCurrentStep();
+  });
+  document.getElementById('hud-fullscreen')?.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleFullscreen();
+  });
+  document.getElementById('hud-overview')?.addEventListener('click', e => {
+    e.stopPropagation();
+    if (state.slideIndex === -1) goToState(0, 0);
+    deck.toggleOverview();
+  });
+  document.getElementById('hud-notes')?.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleNotes();
+  });
+  document.getElementById('hud-motion')?.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleReducedMotion();
+  });
+  document.getElementById('hud-help')?.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleHelpModal();
+  });
+
+  // Landing CTA button -> Advances straight to Slide 01 Step 0 via State Machine
+  document.getElementById('btn-enter-journey')?.addEventListener('click', e => {
+    e.stopPropagation();
+    goToState(0, 0);
+  });
+
+  // Slide 03 Zone Buttons -> Routed through State Machine
   document.querySelectorAll('[data-slide3-zone]').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
       const zIdx = parseInt(el.getAttribute('data-slide3-zone'), 10);
-      motion.focusSlide3Zone(zIdx);
+      goToState(2, zIdx);
     });
   });
 
-  // Slide 04 Transition Button to Slide 05 Real Photos
-  document.getElementById('btn-goto-slide5')?.addEventListener('click', () => {
-    deck.slide(4);
+  // Slide 04 Criteria Pillar Clicks & Goto Slide 05 Button
+  document.querySelectorAll('.criteria-pillar-card').forEach((card, idx) => {
+    card.addEventListener('click', e => {
+      e.stopPropagation();
+      goToState(3, idx + 1);
+    });
+  });
+  document.getElementById('btn-goto-slide5')?.addEventListener('click', e => {
+    e.stopPropagation();
+    goToState(4, 0);
   });
 
-  // Slide 05 Interactive 5-Scene Exhibition Buttons
+  // Slide 05 Scene Tab Buttons -> Routed through State Machine
   document.querySelectorAll('[data-slide5-scene]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
       const sIdx = parseInt(btn.getAttribute('data-slide5-scene'), 10);
-      switchSlide5Scene(sIdx);
+      goToState(4, sIdx);
     });
   });
 
-  // Slide 06 Finale Toggle Buttons
-  document.getElementById('btn-trigger-finale')?.addEventListener('click', () => {
-    setSlide6Mode('finale');
+  // Slide 06 Finale & Back Buttons -> Routed through State Machine
+  document.getElementById('btn-trigger-finale')?.addEventListener('click', e => {
+    e.stopPropagation();
+    goToState(5, 3);
   });
-  document.getElementById('btn-back-tribute')?.addEventListener('click', () => {
-    setSlide6Mode('tribute');
+  document.getElementById('btn-back-tribute')?.addEventListener('click', e => {
+    e.stopPropagation();
+    goToState(5, 2);
   });
-
-  // HUD Controls
-  document.getElementById('hud-landing')?.addEventListener('click', showLandingPage);
-  document.getElementById('hud-prev')?.addEventListener('click', () => deck.prev());
-  document.getElementById('hud-next')?.addEventListener('click', () => deck.next());
-  document.getElementById('hud-replay')?.addEventListener('click', replayCurrentView);
-  document.getElementById('hud-fullscreen')?.addEventListener('click', toggleFullscreen);
-  document.getElementById('hud-overview')?.addEventListener('click', () => deck.toggleOverview());
-  document.getElementById('hud-notes')?.addEventListener('click', toggleNotes);
-  document.getElementById('hud-motion')?.addEventListener('click', toggleReducedMotion);
-  document.getElementById('hud-help')?.addEventListener('click', toggleHelpModal);
 
   // Presenter Timer Controls
   document.getElementById('btn-timer-toggle')?.addEventListener('click', toggleTimer);
@@ -125,7 +410,7 @@ export async function initPresentationApp() {
     if (e.target.id === 'help-modal-overlay') toggleHelpModal();
   });
 
-  // Lightbox Delegation for All Exhibition & Poster Images
+  // Lightbox Delegation
   document.addEventListener('click', e => {
     const trigger = e.target.closest('[data-lightbox-src], .exhibition-hero-img-wrap, .exhibition-side-img-wrap, .author-portrait-img');
     if (!trigger) return;
@@ -144,181 +429,13 @@ export async function initPresentationApp() {
     if (e.target.id === 'lightbox-modal') closeLightbox();
   });
 
-  // Preload all curated Slide 05 exhibition photos for instant 0ms scene switching
-  SLIDE5_SCENES.forEach(sc => {
-    if (sc.hero?.src) {
-      const preloadHero = new Image();
-      preloadHero.src = sc.hero.src;
-    }
-    (sc.sidePhotos || []).forEach(sp => {
-      if (sp.src) {
-        const preloadSide = new Image();
-        preloadSide.src = sp.src;
-      }
-    });
-  });
-
   initReplaceablePhotos();
 
-  function enterPresentation() {
-    const landing = document.getElementById('landing-page');
-    const hud = document.getElementById('main-hud-bar');
-    isLandingActive = false;
-    landing?.classList.add('hidden');
-    hud?.classList.remove('hidden-on-landing');
-
-    const idx = deck.getState().indexh || 0;
-    webgl.setSlideMood(idx);
-    updateHUD(idx);
-    updatePresenterDrawer(idx);
-    motion.animateSlide(deck.getCurrentSlide(), idx);
-  }
-
-  function showLandingPage() {
-    const landing = document.getElementById('landing-page');
-    const hud = document.getElementById('main-hud-bar');
-    isLandingActive = true;
-    landing?.classList.remove('hidden');
-    hud?.classList.add('hidden-on-landing');
-    motion.animateLandingOpening();
-  }
-
-  function switchSlide5Scene(sceneIdx) {
-    const scene = SLIDE5_SCENES[sceneIdx] || SLIDE5_SCENES[0];
-    currentSlide5Scene = sceneIdx;
-
-    document.querySelectorAll('[data-slide5-scene]').forEach((btn, idx) => {
-      btn.classList.toggle('active', idx === sceneIdx);
-    });
-
-    const stage = document.getElementById('slide5-exhibition-stage');
-    const applyContent = () => {
-      const eyebrow = document.getElementById('s5-scene-eyebrow');
-      const heroImg = document.getElementById('s5-hero-img');
-      const heroBadge = document.getElementById('s5-hero-badge');
-      const heroTitle = document.getElementById('s5-hero-title');
-      const heroCap = document.getElementById('s5-hero-caption');
-
-      const s1Img = document.getElementById('s5-side1-img');
-      const s1Badge = document.getElementById('s5-side1-badge');
-      const s1Title = document.getElementById('s5-side1-title');
-      const s1Cap = document.getElementById('s5-side1-caption');
-
-      const s2Img = document.getElementById('s5-side2-img');
-      const s2Badge = document.getElementById('s5-side2-badge');
-      const s2Title = document.getElementById('s5-side2-title');
-      const s2Cap = document.getElementById('s5-side2-caption');
-
-      if (eyebrow) eyebrow.textContent = scene.eyebrow;
-      if (heroImg) {
-        heroImg.src = scene.hero.src;
-        heroImg.alt = scene.hero.title;
-      }
-      if (heroBadge) heroBadge.textContent = scene.hero.badge;
-      if (heroTitle) heroTitle.textContent = scene.hero.title;
-      if (heroCap) heroCap.textContent = scene.hero.caption;
-
-      if (scene.sidePhotos[0]) {
-        if (s1Img) {
-          s1Img.src = scene.sidePhotos[0].src;
-          s1Img.alt = scene.sidePhotos[0].title;
-        }
-        if (s1Badge) s1Badge.textContent = scene.sidePhotos[0].badge;
-        if (s1Title) s1Title.textContent = scene.sidePhotos[0].title;
-        if (s1Cap) s1Cap.textContent = scene.sidePhotos[0].caption;
-      }
-
-      if (scene.sidePhotos[1]) {
-        if (s2Img) {
-          s2Img.src = scene.sidePhotos[1].src;
-          s2Img.alt = scene.sidePhotos[1].title;
-        }
-        if (s2Badge) s2Badge.textContent = scene.sidePhotos[1].badge;
-        if (s2Title) s2Title.textContent = scene.sidePhotos[1].title;
-        if (s2Cap) s2Cap.textContent = scene.sidePhotos[1].caption;
-      }
-    };
-
-    if (!stage || isReducedMotion) {
-      applyContent();
-      return;
-    }
-
-    gsap.to(stage, {
-      opacity: 0,
-      y: 8,
-      duration: 0.2,
-      onComplete: () => {
-        applyContent();
-        gsap.to(stage, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', clearProps: 'transform' });
-      }
-    });
-  }
-
-  function setSlide6Mode(mode) {
-    currentSlide6Mode = mode;
-    const tributeView = document.getElementById('slide6-tribute-view');
-    const finaleView = document.getElementById('slide6-finale-view');
-    const finalePosterFrame = document.querySelector('.finale-poster-frame');
-    const finalePosterImg = document.getElementById('finale-full-poster-img');
-
-    if (mode === 'finale') {
-      tributeView?.classList.add('hidden');
-      finaleView?.classList.add('active');
-      // Guarantee zero crop / zero zoom transform on the final poster reveal
-      if (finalePosterFrame) gsap.set(finalePosterFrame, { clearProps: 'transform' });
-      if (finalePosterImg) gsap.set(finalePosterImg, { clearProps: 'transform' });
-
-      if (!isReducedMotion && finaleView) {
-        gsap.fromTo(
-          finaleView,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.75, ease: 'power2.out', clearProps: 'transform' }
-        );
-      }
-    } else {
-      finaleView?.classList.remove('active');
-      tributeView?.classList.remove('hidden');
-      if (!isReducedMotion && tributeView) {
-        gsap.fromTo(
-          tributeView,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.55, ease: 'power2.out', clearProps: 'transform' }
-        );
-      }
-    }
-  }
-
-  function replayCurrentView() {
-    if (isLandingActive) {
-      motion.animateLandingOpening();
-      return;
-    }
-    const idx = deck.getState().indexh || 0;
-    motion.animateSlide(deck.getCurrentSlide(), idx);
-  }
-
-  function updateHUD(index) {
-    const total = deck.getTotalSlides();
-    const indicator = document.getElementById('hud-indicator');
-    if (indicator) {
-      indicator.textContent = `0${index + 1} / 0${total}`;
-    }
-  }
-
-  function updatePresenterDrawer(index) {
-    const noteData = SPEAKER_NOTES[index] || SPEAKER_NOTES[0];
-    const titleEl = document.getElementById('notes-slide-title');
-    const timeEl = document.getElementById('notes-est-time');
-    const cuesEl = document.getElementById('notes-cues');
-    const scriptEl = document.getElementById('notes-content');
-    const nextEl = document.getElementById('notes-next-slide');
-
-    if (titleEl) titleEl.textContent = noteData.slideTitle;
-    if (timeEl) timeEl.textContent = `Thời lượng gợi ý: ${noteData.estimatedTime}`;
-    if (cuesEl) cuesEl.innerHTML = noteData.cues.map(c => `<div>• ${c}</div>`).join('');
-    if (scriptEl) scriptEl.textContent = noteData.script;
-    if (nextEl) nextEl.textContent = `Tiếp theo: ${noteData.nextSlideTitle}`;
+  function hasActiveModal() {
+    return (
+      document.getElementById('lightbox-modal')?.classList.contains('active') ||
+      document.getElementById('help-modal-overlay')?.classList.contains('active')
+    );
   }
 
   function toggleTimer() {
@@ -394,6 +511,7 @@ export async function initPresentationApp() {
     document.getElementById('help-modal-overlay')?.classList.remove('active');
     document.getElementById('notes-drawer')?.classList.remove('active');
     document.getElementById('hud-notes')?.classList.remove('active');
+    if (deck.isOverview()) deck.toggleOverview(false);
   }
 
   function openLightbox(src, caption) {
@@ -423,7 +541,7 @@ export async function initPresentationApp() {
         const dataUrl = ev.target.result;
         imgEl.src = dataUrl;
         try {
-          localStorage.setItem('dntu_v2_photo_' + key, dataUrl);
+          localStorage.setItem('dntu_v3_photo_' + key, dataUrl);
         } catch (_) {}
       };
       reader.readAsDataURL(file);
@@ -431,7 +549,7 @@ export async function initPresentationApp() {
 
     document.querySelectorAll('[data-replace-key]').forEach(imgEl => {
       const key = imgEl.getAttribute('data-replace-key');
-      const saved = localStorage.getItem('dntu_v2_photo_' + key);
+      const saved = localStorage.getItem('dntu_v3_photo_' + key);
       if (saved) imgEl.src = saved;
 
       const container = imgEl.closest('.exhibition-hero-card, .exhibition-side-card, .author-portrait-frame');
@@ -457,6 +575,10 @@ export async function initPresentationApp() {
   return {
     deck,
     webgl,
-    motion
+    motion,
+    state,
+    nextStep,
+    prevStep,
+    goToState
   };
 }
