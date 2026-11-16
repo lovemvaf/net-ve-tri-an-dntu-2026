@@ -38,7 +38,7 @@ export const SLIDE3_ZONES = [
     description:
       'Chiếc laptop hiển thị đoạn mã def future(): learn() · create() · contribute() · return better_world() hòa quyện cùng mạch điện tử AI, điện toán đám mây và mặt trời bình minh rực rỡ phía chân trời.',
     highlightTag: 'Điểm nhấn: Hàm def future(), vi mạch AI, đám mây số & bình minh đô thị',
-    cropSrc: './assets/optimized/crop-future-ai.jpg',
+    cropSrc: './assets/optimized/crop-tech-ai.jpg',
     camera: { scale: 1.52, xPercent: -14, yPercent: 18 }
   },
   {
