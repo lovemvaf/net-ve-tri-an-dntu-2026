@@ -122,7 +122,9 @@ export async function initPresentationApp() {
     state.presentationMode = 'presentation';
   });
 
-  // Core State Transition Executor
+  // Core State Transition Executor (V10 Subscene-Aware & Promise-Synchronized)
+  let transitionToken = 0;
+
   function goToState(targetSlideIndex, targetStepIndex) {
     const conf = getSlideConfig(targetSlideIndex);
     const clampedStep = Math.max(0, Math.min(targetStepIndex, conf.steps.length - 1));
@@ -146,14 +148,20 @@ export async function initPresentationApp() {
     const applyVisuals = () => {
       if (targetSlideIndex === -1) {
         landingEl?.classList.remove('hidden');
-        webgl.setSlideMood(-1, false, prevSlideIndex);
+        webgl.setSlideMood(-1, false, prevSlideIndex, clampedStep, stepObj.id);
         motion.applyStep(-1, clampedStep, landingEl);
       } else {
         landingEl?.classList.add('hidden');
         if (deck.getState().indexh !== targetSlideIndex) {
           deck.slide(targetSlideIndex);
         }
-        webgl.setSlideMood(targetSlideIndex, targetSlideIndex === 5 && clampedStep === 1, prevSlideIndex);
+        webgl.setSlideMood(
+          targetSlideIndex,
+          targetSlideIndex === 5 && clampedStep === 1,
+          prevSlideIndex,
+          clampedStep,
+          stepObj.id
+        );
         const slideEl =
           document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
         motion.applyStep(targetSlideIndex, clampedStep, slideEl);
@@ -164,15 +172,20 @@ export async function initPresentationApp() {
     };
 
     if ((isSlideChange || isFinaleReveal) && !isReducedMotion) {
+      const myToken = ++transitionToken;
       state.isTransitioning = true;
       state.isAnimating = true;
       applyVisuals();
-      motion.playInterSlideTransition(prevSlideIndex, targetSlideIndex, clampedStep);
-      setTimeout(() => {
-        state.isTransitioning = false;
-        state.isAnimating = false;
-      }, 45);
+      motion.playInterSlideTransition(prevSlideIndex, targetSlideIndex, clampedStep).then(() => {
+        if (transitionToken === myToken) {
+          state.isTransitioning = false;
+          state.isAnimating = false;
+        }
+      });
     } else {
+      transitionToken++;
+      state.isTransitioning = false;
+      state.isAnimating = false;
       applyVisuals();
     }
     return state;
@@ -321,38 +334,39 @@ export async function initPresentationApp() {
     }
   }
 
-  // V9 VFX Showcase & Prototype Mode Controller (Development / QA Only)
+  // V10 VFX Debug Studio Controller (Development / QA Only)
   function triggerVfxShowcaseMode(mode) {
     document.querySelectorAll('.vfx-preview-btn').forEach((btn) => {
       btn.classList.toggle('active', btn.getAttribute('data-vfx-mode') === mode);
     });
-    if (mode === 'landing-sky') {
-      isReducedMotion = false;
-      webgl.setReducedMotion(false);
-      webgl.setLiteMode(false);
-      goToState(-1, 0);
-      webgl.triggerGrandMoment('landing-opening');
+    isReducedMotion = false;
+    document.body.classList.remove('reduced-motion');
+    webgl.setReducedMotion(false);
+    motion.setReducedMotion(false);
+
+    if (mode === 'soft-burst') {
+      webgl.triggerGrandMoment('soft-burst');
+    } else if (mode === 'medium-burst') {
+      webgl.triggerGrandMoment('medium-burst');
+    } else if (mode === 'grand-burst') {
+      webgl.triggerGrandMoment('grand-burst');
+    } else if (mode === 'floral-bloom') {
+      webgl.triggerGrandMoment('floral-bloom');
+    } else if (mode === 'floral-storm') {
+      webgl.triggerGrandMoment('floral-storm-only');
     } else if (mode === 'bird-flock') {
-      isReducedMotion = false;
-      webgl.setReducedMotion(false);
       if (state.slideIndex !== 2 && state.slideIndex !== -1) goToState(2, 0);
       webgl.triggerGrandMoment('bird-flock-only');
     } else if (mode === 'particle-wave') {
-      isReducedMotion = false;
-      webgl.setReducedMotion(false);
       webgl.triggerGrandMoment('particle-wave-only');
-    } else if (mode === 'floral-storm') {
-      isReducedMotion = false;
-      webgl.setReducedMotion(false);
-      webgl.triggerGrandMoment('floral-storm-only');
+    } else if (mode === 'landing-sky') {
+      webgl.setLiteMode(false);
+      goToState(-1, 0);
+      webgl.triggerGrandMoment('landing-opening');
     } else if (mode === 'grand-tribute') {
-      isReducedMotion = false;
-      webgl.setReducedMotion(false);
       goToState(5, 0);
       webgl.triggerGrandMoment('thousand-thank-yous');
     } else if (mode === 'final-poster') {
-      isReducedMotion = false;
-      webgl.setReducedMotion(false);
       goToState(5, 1);
       webgl.triggerGrandMoment('beyond-the-horizon');
     } else if (mode === 'reduced-motion') {
@@ -361,9 +375,6 @@ export async function initPresentationApp() {
       webgl.setReducedMotion(true);
       motion.setReducedMotion(true);
     } else if (mode === 'lite-mode') {
-      isReducedMotion = false;
-      document.body.classList.remove('reduced-motion');
-      webgl.setReducedMotion(false);
       webgl.setLiteMode(true);
       webgl.triggerGrandMoment('landing-opening');
     }
@@ -380,6 +391,19 @@ export async function initPresentationApp() {
       const mode = btn.getAttribute('data-vfx-mode');
       if (mode) triggerVfxShowcaseMode(mode);
     });
+  });
+
+  document.getElementById('btn-vfx-toggle-safezone')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const active = webgl.toggleSafeZonesDebug();
+    e.currentTarget.classList.toggle('active', active);
+  });
+
+  document.getElementById('btn-vfx-toggle-overlay')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const active = webgl.toggleGrandOverlay();
+    e.currentTarget.classList.toggle('active', active);
+    e.currentTarget.textContent = active ? 'Overlay: ON' : 'Overlay: OFF';
   });
 
   document.getElementById('btn-vfx-close')?.addEventListener('click', (e) => {

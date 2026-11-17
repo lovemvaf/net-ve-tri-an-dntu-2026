@@ -12,6 +12,7 @@ CustomEase.create('softInOut', '0.65, 0, 0.35, 1');
 export function createMotionController() {
   let activeTimeline = null;
   let transitionTimeline = null;
+  let transitionResolve = null;
   let isReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
 
   function killActiveTimeline() {
@@ -27,8 +28,7 @@ export function createMotionController() {
   }
 
   // ===========================================================================
-  // V8 SMOOTH & ELEGANT TRANSITION DIRECTOR (WIRE-FREE, SOFT LIGHT & CURTAINS)
-  // Only 1 active transition at a time; interruptible on rapid clicks; 60 FPS
+  // V10 SMOOTH & ELEGANT TRANSITION DIRECTOR (PROMISE-SYNCHRONIZED, WIRE-FREE)
   // ===========================================================================
   function playInterSlideTransition(fromSlide, toSlide, toStep = 0) {
     const overlay = document.getElementById('scene-transition-overlay');
@@ -38,13 +38,18 @@ export function createMotionController() {
     const curtainL = document.getElementById('transition-curtain-left');
     const curtainR = document.getElementById('transition-curtain-right');
 
-    if (!overlay || isReducedMotion) {
-      return Promise.resolve();
-    }
-
     if (transitionTimeline) {
       transitionTimeline.kill();
       transitionTimeline = null;
+    }
+    if (transitionResolve) {
+      const prevRes = transitionResolve;
+      transitionResolve = null;
+      prevRes('cancelled');
+    }
+
+    if (!overlay || isReducedMotion) {
+      return Promise.resolve('instant');
     }
 
     // Identify the thematic connection between slides (Section IX.B)
@@ -72,10 +77,12 @@ export function createMotionController() {
     gsap.set([curtainL, curtainR], { autoAlpha: 0, xPercent: 0 });
 
     return new Promise((resolve) => {
+      transitionResolve = resolve;
       const tl = gsap.timeline({
         onComplete: () => {
           gsap.set(overlay, { autoAlpha: 0 });
-          resolve();
+          if (transitionResolve === resolve) transitionResolve = null;
+          resolve('completed');
         }
       });
       transitionTimeline = tl;

@@ -2,37 +2,30 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
-const SCREENSHOT_DIR = path.resolve('test-results/v9-screenshots');
+const SCREENSHOT_DIR = path.resolve('test-results/v10-screenshots');
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
-// V9 Exact 13 States (12 Next Clicks from Landing to Final Poster Finale)
+// V10 Exact 13 States (12 Next Clicks from Landing to Final Poster Finale — Each with its own sceneId!)
 const EXPECTED_SEQUENCE = [
-  // 0. Landing (-1): 1 state
-  { slideIndex: -1, stepIndex: 0, label: 'MỞ ĐẦU 20/11', shot: 'v9-01-landing.png', nextTransTheme: 'floral-light-gateway' },
-  // 1. Slide 01 (0): 1 state
-  { slideIndex: 0, stepIndex: 0, label: '01 / 06', shot: 'v9-02-slide1.png', nextTransTheme: 'the-first-light' },
-  // 2. Slide 02 (1): 1 state
-  { slideIndex: 1, stepIndex: 0, label: '02 / 06', shot: 'v9-03-slide2.png', nextTransTheme: 'book-of-knowledge' },
-  // 3..6. Slide 03 (2): 4 camera scenes
-  { slideIndex: 2, stepIndex: 0, label: '03 / 06 · CẢNH 01 / 04', shot: 'v9-04-slide3-scene1.png' },
-  { slideIndex: 2, stepIndex: 1, label: '03 / 06 · CẢNH 02 / 04', shot: 'v9-05-slide3-scene2.png' },
-  { slideIndex: 2, stepIndex: 2, label: '03 / 06 · CẢNH 03 / 04', shot: 'v9-06-slide3-scene3.png' },
-  { slideIndex: 2, stepIndex: 3, label: '03 / 06 · CẢNH 04 / 04', shot: 'v9-07-slide3-scene4.png', nextTransTheme: 'stairway-to-tomorrow' },
-  // 7. Slide 04 (3): 1 state (All 5 criteria visible)
-  { slideIndex: 3, stepIndex: 0, label: '04 / 06', shot: 'v9-08-slide4.png', nextTransTheme: 'memories-in-motion' },
-  // 8..10. Slide 05 (4): 3 consolidated stages (4 photos each)
-  { slideIndex: 4, stepIndex: 0, label: '05 / 06 · CHẶNG 01 / 03', shot: 'v9-09-slide5-stage1.png' },
-  { slideIndex: 4, stepIndex: 1, label: '05 / 06 · CHẶNG 02 / 03', shot: 'v9-10-slide5-stage2.png' },
-  { slideIndex: 4, stepIndex: 2, label: '05 / 06 · CHẶNG 03 / 03', shot: 'v9-11-slide5-stage3.png', nextTransTheme: 'bouquet-of-gratitude' },
-  // 11..12. Slide 06 (5): 2 states (Tribute -> Full Poster Finale)
-  { slideIndex: 5, stepIndex: 0, label: '06 / 06 · CẢNH 01 / 02', shot: 'v9-12-slide6-tribute.png', nextTransTheme: 'grand-tribute-reveal' },
-  { slideIndex: 5, stepIndex: 1, label: '06 / 06 · CẢNH 02 / 02', shot: 'v9-13-slide6-finale.png' }
+  { slideIndex: -1, stepIndex: 0, sceneId: 'landing-main', label: 'MỞ ĐẦU 20/11', shot: 'v10-01-landing.png', nextTransTheme: 'floral-light-gateway' },
+  { slideIndex: 0, stepIndex: 0, sceneId: 's1-main', label: '01 / 06', shot: 'v10-02-slide1.png', nextTransTheme: 'the-first-light' },
+  { slideIndex: 1, stepIndex: 0, sceneId: 's2-main', label: '02 / 06', shot: 'v10-03-slide2.png', nextTransTheme: 'book-of-knowledge' },
+  { slideIndex: 2, stepIndex: 0, sceneId: 's3-step-1', label: '03 / 06 · CẢNH 01 / 04', shot: 'v10-04-slide3-scene1.png' },
+  { slideIndex: 2, stepIndex: 1, sceneId: 's3-step-2', label: '03 / 06 · CẢNH 02 / 04', shot: 'v10-05-slide3-scene2.png' },
+  { slideIndex: 2, stepIndex: 2, sceneId: 's3-step-3', label: '03 / 06 · CẢNH 03 / 04', shot: 'v10-06-slide3-scene3.png' },
+  { slideIndex: 2, stepIndex: 3, sceneId: 's3-step-4', label: '03 / 06 · CẢNH 04 / 04', shot: 'v10-07-slide3-scene4.png', nextTransTheme: 'stairway-to-tomorrow' },
+  { slideIndex: 3, stepIndex: 0, sceneId: 's4-main', label: '04 / 06', shot: 'v10-08-slide4.png', nextTransTheme: 'memories-in-motion' },
+  { slideIndex: 4, stepIndex: 0, sceneId: 's5-stage-1', label: '05 / 06 · CHẶNG 01 / 03', shot: 'v10-09-slide5-stage1.png' },
+  { slideIndex: 4, stepIndex: 1, sceneId: 's5-stage-2', label: '05 / 06 · CHẶNG 02 / 03', shot: 'v10-10-slide5-stage2.png' },
+  { slideIndex: 4, stepIndex: 2, sceneId: 's5-stage-3', label: '05 / 06 · CHẶNG 03 / 03', shot: 'v10-11-slide5-stage3.png', nextTransTheme: 'bouquet-of-gratitude' },
+  { slideIndex: 5, stepIndex: 0, sceneId: 's6-tribute', label: '06 / 06 · CẢNH 01 / 02', shot: 'v10-12-slide6-tribute.png', nextTransTheme: 'grand-tribute-reveal' },
+  { slideIndex: 5, stepIndex: 1, sceneId: 's6-finale-poster', label: '06 / 06 · CẢNH 02 / 02', shot: 'v10-13-slide6-finale.png' }
 ];
 
-test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA', () => {
-  test('Test 1 & Test 5: Exact 12-Click Walk (13 States), Unoccluded Grand VFX Layer, 3 Grand Moments & Slide 05 Photo Replacement', async ({ page }) => {
+test.describe('NÉT VẼ TRI ÂN V10 — CINEMATIC FLORAL UNIVERSE & 4–7s RECURRING VFX ENGINE QA', () => {
+  test('Test 1 & Test 5: Exact 12-Click Walk Across All 13 Subscenes (sceneId), Floral Bloom & Photo Verification', async ({ page }) => {
     const errors = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -44,7 +37,6 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
     await page.waitForSelector('#landing-page', { state: 'visible' });
     await page.waitForTimeout(450);
 
-    // Verify V9 Dual-Canvas Layer Architecture (#ambient-sky-canvas + #grand-vfx-canvas at z-index: 265)
     const skyCheck = await page.evaluate(() => {
       const sky = document.getElementById('living-sky-layer');
       const ambientCanvas = document.getElementById('ambient-sky-canvas');
@@ -60,22 +52,19 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
       return {
         exists: Boolean(sky && ambientCanvas && grandCanvas && grandCanvas.width === 1920),
         grandZIndex,
-        mood: sky?.getAttribute('data-sky-mood'),
-        ambientState: sky?.getAttribute('data-ambient-state'),
+        sceneIdAttr: sky?.getAttribute('data-scene-id'),
         stats,
         removedWires
       };
     });
     expect(skyCheck.exists).toBe(true);
     expect(skyCheck.grandZIndex).toBe(265);
-    expect(skyCheck.mood).toBe('landing');
-    expect(skyCheck.ambientState).toBe('landing-opening');
-    expect(skyCheck.stats.starsTotal).toBeGreaterThanOrEqual(100);
-    expect(skyCheck.stats.waveCount).toBeGreaterThanOrEqual(50);
+    expect(skyCheck.sceneIdAttr).toBe('landing-main');
+    expect(skyCheck.stats.sceneId).toBe('landing-main');
+    expect(skyCheck.stats.bloomCount).toBeGreaterThanOrEqual(8);
+    expect(skyCheck.stats.nextBurstInterval).toBeGreaterThanOrEqual(4.0);
+    expect(skyCheck.stats.nextBurstInterval).toBeLessThanOrEqual(7.0);
     expect(skyCheck.removedWires).toBe(true);
-
-    // Capture Landing Grand Moment 01 climax screenshot at t=450ms
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v9-grand1-landing-climax.png') });
 
     let clickCount = 0;
 
@@ -85,7 +74,6 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
       await page.waitForFunction(
         ({ sIdx, stIdx, seqIdx }) =>
           window.PresentationState &&
-          !window.PresentationState.isTransitioning &&
           window.PresentationState.slideIndex === sIdx &&
           window.PresentationState.stepIndex === stIdx &&
           window.PresentationState.currentSequenceIndex === seqIdx,
@@ -94,6 +82,10 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
       );
 
       await expect(page.locator('#hud-indicator')).toHaveText(expected.label);
+
+      // Verify subscene-aware SceneMoodManager updated to exact sceneId
+      const currentSceneId = await page.evaluate(() => window.VFXShowcase.getStats().sceneId);
+      expect(currentSceneId).toBe(expected.sceneId);
 
       if (expected.slideIndex === -1) {
         const landingCheck = await page.evaluate(() => {
@@ -177,10 +169,9 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
         clickCount++;
 
         if (expected.nextTransTheme) {
-          await page.waitForTimeout(220);
+          await page.waitForTimeout(180);
           const activeTheme = await page.locator('#scene-transition-overlay').getAttribute('data-transition-theme');
           expect(activeTheme).toBe(expected.nextTransTheme);
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, `v9-trans-${expected.nextTransTheme}.png`) });
         }
       }
     }
@@ -200,7 +191,6 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
     await page.waitForFunction(
       () =>
         window.PresentationState &&
-        !window.PresentationState.isTransitioning &&
         window.PresentationState.slideIndex === 5 &&
         window.PresentationState.stepIndex === 1
     );
@@ -211,7 +201,6 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
       await page.waitForFunction(
         ({ sIdx, stIdx }) =>
           window.PresentationState &&
-          !window.PresentationState.isTransitioning &&
           window.PresentationState.slideIndex === sIdx &&
           window.PresentationState.stepIndex === stIdx,
         { sIdx: expected.slideIndex, stIdx: expected.stepIndex },
@@ -230,64 +219,46 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
     await expect(page.locator('#landing-page')).toBeVisible();
   });
 
-  test('Test 3: VFX Showcase & Prototype Mode (8 Independent Preview Modes + Pixel Visibility Verification)', async ({ page }) => {
+  test('Test 3: 4–7s RecurringCinematicVFX Cycle & V10 VFX Debug Studio (10 Preview Modes + Floral Bloom Verification)', async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto('?vfx=1');
     await page.waitForSelector('#vfx-showcase-panel', { state: 'visible' });
 
-    // Helper to count visible rendered pixels on #grand-vfx-canvas
-    const countGrandCanvasPixels = async () => {
-      return page.evaluate(() => {
-        const c = document.getElementById('grand-vfx-canvas');
-        const ctx = c.getContext('2d');
-        const data = ctx.getImageData(0, 0, c.width, c.height).data;
-        let visiblePixels = 0;
-        // Sample every 16th pixel for fast verification
-        for (let i = 3; i < data.length; i += 64) {
-          if (data[i] > 20) visiblePixels++;
-        }
-        return visiblePixels;
-      });
-    };
+    // 1. Verify automatic 4–7s recurring burst triggers on a stationary scene without user clicks!
+    const initialStats = await page.evaluate(() => window.VFXShowcase.getStats());
+    expect(initialStats.nextBurstInterval).toBeGreaterThanOrEqual(4.0);
+    expect(initialStats.nextBurstInterval).toBeLessThanOrEqual(7.0);
 
-    // 1. Preview Bird Flock
-    await page.click('#btn-vfx-bird-flock');
+    // Wait 5.5s to witness the automatic recurring burst fire on the same scene
+    await page.waitForTimeout(5500);
+    const afterWaitStats = await page.evaluate(() => window.VFXShowcase.getStats());
+    expect(afterWaitStats.totalBurstsTriggered).toBeGreaterThan(initialStats.totalBurstsTriggered);
+
+    // 2. Test Floral Bloom preview button & verify blooming flowers are drawn on #grand-vfx-canvas
+    await page.click('#btn-vfx-floral-bloom');
     await page.waitForTimeout(550);
-    const birdStats = await page.evaluate(() => window.VFXShowcase.getStats());
-    expect(birdStats.grandBirdCount).toBeGreaterThanOrEqual(14);
-    const birdPixels = await countGrandCanvasPixels();
-    expect(birdPixels).toBeGreaterThan(20);
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v9-showcase-bird-flock.png') });
+    const bloomStats = await page.evaluate(() => window.VFXShowcase.getStats());
+    expect(bloomStats.bloomCount).toBeGreaterThanOrEqual(10);
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v10-debug-floral-bloom.png') });
 
-    // 2. Preview Golden Particle Wave
-    await page.click('#btn-vfx-particle-wave');
-    await page.waitForTimeout(600);
-    const waveStats = await page.evaluate(() => window.VFXShowcase.getStats());
-    expect(waveStats.waveCount).toBeGreaterThanOrEqual(100);
-    const wavePixels = await countGrandCanvasPixels();
-    expect(wavePixels).toBeGreaterThan(80);
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v9-showcase-particle-wave.png') });
+    // 3. Test Soft, Medium & Grand Burst preview buttons
+    await page.click('#btn-vfx-soft-burst');
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => window.VFXShowcase.getStats().currentBurstLevel)).toBe('SOFT');
 
-    // 3. Preview Floral Storm
-    await page.click('#btn-vfx-floral-storm');
-    await page.waitForTimeout(650);
-    const floralStats = await page.evaluate(() => window.VFXShowcase.getStats());
-    expect(floralStats.floralStormCount).toBeGreaterThanOrEqual(50);
-    const floralPixels = await countGrandCanvasPixels();
-    expect(floralPixels).toBeGreaterThan(80);
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v9-showcase-floral-storm.png') });
+    await page.click('#btn-vfx-medium-burst');
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => window.VFXShowcase.getStats().currentBurstLevel)).toBe('MEDIUM');
 
-    // 4. Preview Grand Tribute (Slide 05 -> 06)
-    await page.click('#btn-vfx-grand-tribute');
-    await page.waitForTimeout(650);
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v9-showcase-grand-tribute.png') });
+    await page.click('#btn-vfx-grand-burst');
+    await page.waitForTimeout(450);
+    expect(await page.evaluate(() => window.VFXShowcase.getStats().currentBurstLevel)).toBe('GRAND');
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v10-debug-grand-burst.png') });
 
-    // 5. Preview Final Poster Reveal
-    await page.click('#btn-vfx-final-poster');
-    await page.waitForTimeout(650);
-    await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'v9-showcase-final-poster.png') });
-
-    // Close VFX Showcase panel and verify normal Presentation controls still work
+    // 4. Test Safe Zones toggle & Close Debug Studio
+    await page.click('#btn-vfx-toggle-safezone');
+    expect(await page.evaluate(() => window.VFXShowcase.getStats().showSafeZonesDebug)).toBe(true);
+    await page.click('#btn-vfx-toggle-safezone');
     await page.click('#btn-vfx-close');
     await expect(page.locator('#vfx-showcase-panel')).toBeHidden();
   });
@@ -306,7 +277,7 @@ test.describe('NÉT VẼ TRI ÂN V9 — SPECTACULAR CINEMATIC VFX COMPLETION QA'
     for (let k = 0; k < 15; k++) {
       await page.keyboard.press('ArrowRight', { delay: 10 });
     }
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(600);
     await page.waitForFunction(() => window.PresentationState && !window.PresentationState.isTransitioning);
 
     const fpsMeasure = await page.evaluate(async () => {

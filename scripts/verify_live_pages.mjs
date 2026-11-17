@@ -69,12 +69,12 @@ async function verifyLiveGitHubPages() {
       wireFree
     };
   });
-  console.log('Live V9 Initial HUD Indicator:', initHud?.trim(), '| V9 VFX Check:', JSON.stringify(v9Check));
+  console.log('Live V10 Initial HUD Indicator:', initHud?.trim(), '| V10 VFX Check:', JSON.stringify(v9Check));
   if (initHud?.trim() !== 'MỞ ĐẦU 20/11') {
     throw new Error('Expected MỞ ĐẦU 20/11 on Landing, got: ' + initHud);
   }
-  if (!v9Check.canvasReady || v9Check.grandZ !== 265 || !v9Check.wireFree) {
-    throw new Error('Live V9 dual-canvas VFX check failed: ' + JSON.stringify(v9Check));
+  if (!v9Check.canvasReady || v9Check.grandZ !== 265 || !v9Check.wireFree || v9Check.stats?.sceneId !== 'landing-main') {
+    throw new Error('Live V10 dual-canvas VFX check failed: ' + JSON.stringify(v9Check));
   }
 
   // Verify Landing Page Poster is immediately visible without extra clicks
