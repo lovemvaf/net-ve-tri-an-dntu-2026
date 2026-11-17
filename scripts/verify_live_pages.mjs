@@ -42,8 +42,8 @@ async function verifyLiveGitHubPages() {
   if (res.status() !== 200) throw new Error('Expected HTTP 200, got ' + res.status());
 
   await page.waitForSelector('#landing-page', { timeout: 15000 });
-  await page.waitForSelector('#living-sky-layer', { timeout: 15000 });
-  await page.waitForSelector('.reveal.ready', { timeout: 15000 });
+  await page.waitForSelector('#living-sky-layer', { state: 'attached', timeout: 15000 });
+  await page.waitForSelector('.reveal.ready', { state: 'attached', timeout: 15000 });
   await page.waitForTimeout(500);
 
   // 1. Verify V6 Initial HUD indicator & Living Sky
