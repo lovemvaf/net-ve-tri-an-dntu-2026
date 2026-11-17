@@ -13,7 +13,6 @@ export function createMotionController() {
   let activeTimeline = null;
   let transitionTimeline = null;
   let isReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
-  let lastSlide5Scene = -1;
 
   function killActiveTimeline() {
     if (activeTimeline) {
@@ -28,24 +27,18 @@ export function createMotionController() {
   }
 
   // ===========================================================================
-  // V6 GRAND CINEMATIC INTER-SLIDE TRANSITIONS (7 SIGNATURE CHOREOGRAPHIES)
-  // Non-blocking, cancellable on rapid click, 60fps GPU-friendly SVG & CSS
+  // V8 SMOOTH & ELEGANT TRANSITION DIRECTOR (WIRE-FREE, SOFT LIGHT & CURTAINS)
+  // Only 1 active transition at a time; interruptible on rapid clicks; 60 FPS
   // ===========================================================================
   function playInterSlideTransition(fromSlide, toSlide, toStep = 0) {
     const overlay = document.getElementById('scene-transition-overlay');
-    const pathEl = document.getElementById('transition-light-path');
-    const secPathEl = document.getElementById('transition-secondary-path');
-    const beamEl = document.getElementById('transition-light-beam');
-    const stairsEl = document.getElementById('transition-stair-steps');
-    const birdsEl = document.getElementById('transition-birds-group');
-    const nodesEl = document.getElementById('transition-criteria-nodes');
-    const ribbonEl = document.getElementById('transition-silk-ribbon');
-    const petalsEl = document.getElementById('transition-petals-group');
+    const veilBackdrop = document.getElementById('transition-veil-backdrop');
+    const dawnBloom = document.getElementById('transition-dawn-bloom');
+    const pageWave = document.getElementById('transition-page-wave');
     const curtainL = document.getElementById('transition-curtain-left');
     const curtainR = document.getElementById('transition-curtain-right');
-    const veilBackdrop = document.getElementById('transition-veil-backdrop');
 
-    if (!overlay || !pathEl || isReducedMotion) {
+    if (!overlay || isReducedMotion) {
       return Promise.resolve();
     }
 
@@ -54,8 +47,8 @@ export function createMotionController() {
       transitionTimeline = null;
     }
 
-    // Determine which of the 7 signature transitions is playing
-    let theme = 'gateway';
+    // Identify the thematic connection between slides (Section IX.B)
+    let theme = 'floral-light-gateway';
     if (fromSlide === -1 && toSlide === 0) {
       theme = 'floral-light-gateway'; // 1. Landing -> Slide 01
     } else if (fromSlide === 0 && toSlide === 1) {
@@ -67,29 +60,16 @@ export function createMotionController() {
     } else if (fromSlide === 3 && toSlide === 4) {
       theme = 'memories-in-motion';   // 5. Slide 04 -> Slide 05
     } else if (fromSlide === 4 && toSlide === 5) {
-      theme = 'bouquet-of-gratitude'; // 6. Slide 05 -> Slide 06
+      theme = 'bouquet-of-gratitude'; // 6. Slide 05 -> Slide 06 (Grand Moment 02)
     } else if (fromSlide === 5 && toSlide === 5 && toStep === 1) {
-      theme = 'grand-tribute-reveal'; // 7. Slide 06 Tribute -> Full Poster Finale
+      theme = 'grand-tribute-reveal'; // 7. Slide 06 -> Finale (Grand Moment 03)
     }
 
     overlay.setAttribute('data-transition-theme', theme);
 
-    // Reset all sub-elements before starting specific choreography
-    gsap.set([beamEl, stairsEl, birdsEl, nodesEl, ribbonEl, petalsEl], {
-      autoAlpha: 0,
-      x: 0,
-      y: 0,
-      scale: 1
-    });
+    // Reset all soft transition layers
+    gsap.set([veilBackdrop, dawnBloom, pageWave], { autoAlpha: 0, xPercent: 0, yPercent: 0, scale: 1 });
     gsap.set([curtainL, curtainR], { autoAlpha: 0, xPercent: 0 });
-    gsap.set(veilBackdrop, { autoAlpha: 0.45 });
-
-    const len = pathEl.getTotalLength ? pathEl.getTotalLength() : 2200;
-    const secLen = secPathEl?.getTotalLength ? secPathEl.getTotalLength() : 2100;
-    gsap.set(pathEl, { strokeDasharray: len, strokeDashoffset: len, autoAlpha: 1 });
-    if (secPathEl) {
-      gsap.set(secPathEl, { strokeDasharray: secLen, strokeDashoffset: secLen, autoAlpha: 0.75 });
-    }
 
     return new Promise((resolve) => {
       const tl = gsap.timeline({
@@ -102,118 +82,67 @@ export function createMotionController() {
 
       gsap.set(overlay, { autoAlpha: 1 });
 
-      // Base golden light ribbon sweep across all transitions
-      tl.to(
-        pathEl,
-        {
-          strokeDashoffset: 0,
-          duration: 0.44,
-          ease: 'softInOut'
-        },
-        0
-      );
-      if (secPathEl) {
-        tl.to(
-          secPathEl,
-          {
-            strokeDashoffset: 0,
-            duration: 0.48,
-            ease: 'softInOut'
-          },
-          0.03
-        );
-      }
-
-      // Theme-specific visual choreography
-      if (theme === 'floral-light-gateway') {
-        // 1. Landing -> Slide 01: Floral Light Gateway (20/11 petals + silk ribbon arc)
-        tl.fromTo(
-          [petalsEl, ribbonEl],
-          { autoAlpha: 0, x: -60, y: 24, scale: 0.92 },
-          { autoAlpha: 0.95, x: 50, y: -18, scale: 1.04, duration: 0.48, ease: 'cinematicOut' },
-          0
-        );
-      } else if (theme === 'the-first-light') {
-        // 2. Slide 01 -> Slide 02: The First Light (Warm diagonal beam from poster to Teacher)
-        tl.fromTo(
-          beamEl,
-          { autoAlpha: 0, x: 140 },
-          { autoAlpha: 0.92, x: -80, duration: 0.46, ease: 'cinematicOut' },
-          0
-        );
-      } else if (theme === 'book-of-knowledge') {
-        // 3. Slide 02 -> Slide 03: Book of Knowledge (Curved book-wing light wave + rising birds)
-        tl.fromTo(
-          [beamEl, birdsEl],
-          { autoAlpha: 0, y: 45, scale: 0.94 },
-          { autoAlpha: 0.88, y: -25, scale: 1.03, duration: 0.46, ease: 'cinematicOut' },
-          0
-        );
-      } else if (theme === 'stairway-to-tomorrow') {
-        // 4. Slide 03 -> Slide 04: Stairway to Tomorrow (Ascending steps + bird flock crossing horizon)
-        tl.fromTo(
-          stairsEl,
-          { autoAlpha: 0, y: 36 },
-          { autoAlpha: 0.95, y: 0, duration: 0.45, ease: 'cinematicOut' },
-          0
-        ).fromTo(
-          birdsEl,
-          { autoAlpha: 0, x: -90, y: 28 },
-          { autoAlpha: 0.96, x: 120, y: -22, duration: 0.52, ease: 'cinematicOut' },
-          0.02
-        );
-      } else if (theme === 'memories-in-motion') {
-        // 5. Slide 04 -> Slide 05: Memories in Motion (5 golden criteria nodes flowing into gallery)
-        tl.fromTo(
-          nodesEl,
-          { autoAlpha: 0, scale: 0.7, y: 24 },
-          { autoAlpha: 0.95, scale: 1.08, y: -12, duration: 0.45, ease: 'cinematicOut' },
-          0
-        );
-      } else if (theme === 'bouquet-of-gratitude') {
-        // 6. Slide 05 -> Slide 06: A Bouquet of Gratitude (Silk ribbon + 20/11 rose/chrysanthemum petals)
-        tl.fromTo(
-          [ribbonEl, petalsEl],
-          { autoAlpha: 0, x: -50, y: 30, scale: 0.9 },
-          { autoAlpha: 0.98, x: 40, y: -20, scale: 1.06, duration: 0.48, ease: 'cinematicOut' },
-          0
-        );
-      } else if (theme === 'grand-tribute-reveal') {
-        // 7. Slide 06 Tribute -> Full Poster Finale: Grand Exhibition Curtains Part + Horizon Bird Flock + Petals
-        gsap.set([curtainL, curtainR], { autoAlpha: 0.88, xPercent: 0 });
+      if (theme === 'grand-tribute-reveal') {
+        // GRAND MOMENT 03 — Full Poster Finale: Soft Dawn Curtains Part + Sunrise Horizon Bloom
+        gsap.set([curtainL, curtainR], { autoAlpha: 0.78, xPercent: 0 });
+        gsap.set(dawnBloom, { autoAlpha: 0.65, scale: 0.92 });
         tl.to(
           curtainL,
-          { xPercent: -100, autoAlpha: 0, duration: 0.58, ease: 'cinematicOut' },
+          { xPercent: -100, autoAlpha: 0, duration: 0.52, ease: 'cinematicOut' },
           0
         )
           .to(
             curtainR,
-            { xPercent: 100, autoAlpha: 0, duration: 0.58, ease: 'cinematicOut' },
+            { xPercent: 100, autoAlpha: 0, duration: 0.52, ease: 'cinematicOut' },
             0
           )
-          .fromTo(
-            [birdsEl, petalsEl],
-            { autoAlpha: 0, x: -70, y: 25, scale: 0.92 },
-            { autoAlpha: 0.98, x: 95, y: -24, scale: 1.06, duration: 0.54, ease: 'cinematicOut' },
-            0.02
+          .to(
+            dawnBloom,
+            { autoAlpha: 0, scale: 1.08, duration: 0.54, ease: 'power2.out' },
+            0
           );
+      } else if (theme === 'bouquet-of-gratitude') {
+        // GRAND MOMENT 02 — Slide 05 -> Slide 06: Warm Golden-Blush Tribute Glow
+        gsap.set(dawnBloom, { autoAlpha: 0.62, scale: 0.94 });
+        gsap.set(veilBackdrop, { autoAlpha: 0.42 });
+        tl.to(
+          [dawnBloom, veilBackdrop],
+          { autoAlpha: 0, scale: 1.04, duration: 0.50, ease: 'power2.out' },
+          0
+        );
+      } else if (theme === 'book-of-knowledge') {
+        // Slide 02 -> Slide 03: Soft Page-Light Wave Opening From Left to Right
+        gsap.set(pageWave, { autoAlpha: 0.58, xPercent: -35 });
+        tl.to(
+          pageWave,
+          { xPercent: 35, autoAlpha: 0, duration: 0.46, ease: 'cinematicOut' },
+          0
+        );
+      } else {
+        // Standard Soft Atmospheric Dissolve Veil (Calm, comfortable, zero visual noise)
+        gsap.set(veilBackdrop, { autoAlpha: 0.45 });
+        gsap.set(dawnBloom, { autoAlpha: 0.35, yPercent: theme === 'stairway-to-tomorrow' ? 12 : 0 });
+        tl.to(
+          [veilBackdrop, dawnBloom],
+          { autoAlpha: 0, yPercent: 0, duration: 0.42, ease: 'power2.out' },
+          0
+        );
       }
 
-      // Smooth fade-out of the transition overlay
       tl.to(
         overlay,
         {
           autoAlpha: 0,
-          duration: 0.18,
+          duration: 0.14,
           ease: 'power2.out'
         },
-        0.28
+        0.32
       );
     });
   }
 
   // ===========================================================================
-  // LANDING PAGE — 1 UNIFIED STATE (All elements auto-animate in ~0.85s)
+  // LANDING PAGE — GRAND MOMENT 01: THE SKY OF GRATITUDE (1 Unified State)
   // ===========================================================================
   function applyLandingStep(stepIndex = 0) {
     killActiveTimeline();
@@ -222,10 +151,8 @@ export function createMotionController() {
 
     landing.setAttribute('data-active-step', String(stepIndex));
 
-    const penStroke = landing.querySelector('#landing-pen-stroke');
     const dateBadge = landing.querySelector('#landing-date-badge');
     const eyebrow2011 = landing.querySelector('#landing-2011-eyebrow');
-    const petalsGroup = landing.querySelector('#landing-floating-petals');
     const bouquetGroup = landing.querySelector('#landing-floral-bouquet');
     const posterContainer = landing.querySelector('#landing-poster-container');
     const posterImg = landing.querySelector('#landing-full-poster-img');
@@ -238,35 +165,29 @@ export function createMotionController() {
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    if (penStroke) {
-      const len = penStroke.getTotalLength ? penStroke.getTotalLength() : 500;
-      gsap.set(penStroke, { strokeDasharray: len, strokeDashoffset: len, autoAlpha: 1 });
-      tl.to(penStroke, { strokeDashoffset: 0, duration: dur(0.65), ease: 'softInOut' }, 0);
-    }
-
     tl.fromTo(
-      [dateBadge, eyebrow2011, petalsGroup],
-      { autoAlpha: 0.25, y: 8 },
-      { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
-      0.03
+      [dateBadge, eyebrow2011],
+      { autoAlpha: 0.3, y: 8 },
+      { autoAlpha: 1, y: 0, duration: dur(0.52), clearProps: 'transform' },
+      0
     )
       .fromTo(
         bouquetGroup,
-        { autoAlpha: 0.3, scale: 0.95 },
-        { autoAlpha: 1, scale: 1, duration: dur(0.52), clearProps: 'transform' },
-        0.07
+        { autoAlpha: 0.35, scale: 0.96 },
+        { autoAlpha: 1, scale: 1, duration: dur(0.56), clearProps: 'transform' },
+        0.05
       )
       .fromTo(
         [aura, posterContainer],
-        { autoAlpha: 0.4, scale: 0.98 },
-        { autoAlpha: 1, scale: 1, duration: dur(0.55), clearProps: 'transform' },
-        0.09
+        { autoAlpha: 0.4, scale: 0.985 },
+        { autoAlpha: 1, scale: 1, duration: dur(0.62), clearProps: 'transform' },
+        0.08
       )
       .fromTo(
         [titleGroup, ctaGroup],
         { autoAlpha: 0.35, y: 10 },
-        { autoAlpha: 1, y: 0, duration: dur(0.52), clearProps: 'transform' },
-        0.13
+        { autoAlpha: 1, y: 0, duration: dur(0.56), clearProps: 'transform' },
+        0.12
       );
 
     const btnEnter = document.getElementById('btn-enter-journey');
@@ -274,7 +195,7 @@ export function createMotionController() {
   }
 
   // ===========================================================================
-  // SLIDE 01 — 1 UNIFIED STATE (Title, Poster, 4 Chapters & Poem Auto-Animate)
+  // SLIDE 01 — KHỞI NGUỒN (1 Unified State)
   // ===========================================================================
   function applySlide1Step(slideEl, stepIndex = 0) {
     killActiveTimeline();
@@ -293,26 +214,26 @@ export function createMotionController() {
 
     tl.fromTo(
       [titleEl, quoteCard, posterStage],
-      { autoAlpha: 0.38, y: 10 },
-      { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+      { autoAlpha: 0.4, y: 10 },
+      { autoAlpha: 1, y: 0, duration: dur(0.52), clearProps: 'transform' },
       0
     )
       .fromTo(
         arcCards,
-        { autoAlpha: 0.28, y: 12 },
-        { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.46), clearProps: 'transform' },
-        0.07
+        { autoAlpha: 0.3, y: 10 },
+        { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.48), clearProps: 'transform' },
+        0.06
       )
       .fromTo(
         [poemStrip, codePill],
-        { autoAlpha: 0.32, y: 8 },
-        { autoAlpha: 1, y: 0, duration: dur(0.45), clearProps: 'transform' },
-        0.15
+        { autoAlpha: 0.35, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+        0.14
       );
   }
 
   // ===========================================================================
-  // SLIDE 02 — 1 UNIFIED STATE (Teacher Art, Cô Liệu Memory & 20/11 Floral Badge)
+  // SLIDE 02 — NGƯỜI THẦY (1 Unified State — Warm, Emotional, Dignified)
   // ===========================================================================
   function applySlide2Step(slideEl, stepIndex = 0) {
     killActiveTimeline();
@@ -330,32 +251,32 @@ export function createMotionController() {
 
     if (lightPath) {
       const len = lightPath.getTotalLength ? lightPath.getTotalLength() : 300;
-      gsap.set(lightPath, { strokeDasharray: len, strokeDashoffset: len });
-      tl.to(lightPath, { strokeDashoffset: 0, duration: dur(0.62) }, 0);
+      gsap.set(lightPath, { strokeDasharray: len, strokeDashoffset: len, opacity: 0.65 });
+      tl.to(lightPath, { strokeDashoffset: 0, duration: dur(0.65) }, 0);
     }
 
     tl.fromTo(
       [titleEl, ...cropCards],
-      { autoAlpha: 0.42, y: 10 },
-      { autoAlpha: 1, y: 0, stagger: dur(0.05), duration: dur(0.48), clearProps: 'transform' },
+      { autoAlpha: 0.45, y: 8 },
+      { autoAlpha: 1, y: 0, stagger: dur(0.05), duration: dur(0.5), clearProps: 'transform' },
       0
     )
       .fromTo(
         cards,
-        { autoAlpha: 0.28, x: 12 },
-        { autoAlpha: 1, x: 0, stagger: dur(0.07), duration: dur(0.46), clearProps: 'transform' },
-        0.08
+        { autoAlpha: 0.3, x: 10 },
+        { autoAlpha: 1, x: 0, stagger: dur(0.07), duration: dur(0.48), clearProps: 'transform' },
+        0.07
       )
       .fromTo(
         floralAccent,
-        { autoAlpha: 0.3, y: 8 },
-        { autoAlpha: 1, y: 0, duration: dur(0.45), clearProps: 'transform' },
-        0.16
+        { autoAlpha: 0.35, y: 6 },
+        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+        0.15
       );
   }
 
   // ===========================================================================
-  // SLIDE 03 — 4 SEQUENTIAL CAMERA ZONES (0..3)
+  // SLIDE 03 — CON THUYỀN TRI THỨC (4 Camera Zones — Clean Artwork, No Wires)
   // ===========================================================================
   function applySlide3Step(slideEl, stepIndex) {
     killActiveTimeline();
@@ -371,7 +292,6 @@ export function createMotionController() {
     const detailSub = document.getElementById('slide3-detail-sub');
     const detailTag = document.getElementById('slide3-detail-tag');
     const spotlightCard = document.getElementById('slide3-active-spotlight');
-    const cameraSvgPath = slideEl.querySelector('#slide3-camera-svg .svg-draw-path');
     const tabs = slideEl.querySelectorAll('.zone-tab-btn');
 
     const z = SLIDE3_ZONES[stepIndex] || SLIDE3_ZONES[0];
@@ -394,12 +314,6 @@ export function createMotionController() {
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    if (cameraSvgPath && stepIndex === 0) {
-      const len = cameraSvgPath.getTotalLength ? cameraSvgPath.getTotalLength() : 620;
-      gsap.set(cameraSvgPath, { strokeDasharray: len, strokeDashoffset: len });
-      tl.to(cameraSvgPath, { strokeDashoffset: 0, duration: dur(0.7) }, 0);
-    }
-
     if (stage) {
       tl.to(
         stage,
@@ -407,7 +321,7 @@ export function createMotionController() {
           scale: isReducedMotion ? 1 : z.camera.scale,
           xPercent: isReducedMotion ? 0 : z.camera.xPercent,
           yPercent: isReducedMotion ? 0 : z.camera.yPercent,
-          duration: dur(0.65)
+          duration: dur(0.75)
         },
         0
       );
@@ -418,8 +332,8 @@ export function createMotionController() {
         focalInset,
         {
           autoAlpha: stepIndex < 3 ? 1 : 0,
-          y: stepIndex < 3 ? 0 : 10,
-          duration: dur(0.38)
+          y: stepIndex < 3 ? 0 : 8,
+          duration: dur(0.4)
         },
         0
       );
@@ -428,7 +342,7 @@ export function createMotionController() {
     if (spotlightCard) {
       tl.fromTo(
         spotlightCard,
-        { autoAlpha: 0.52, y: 8 },
+        { autoAlpha: 0.55, y: 6 },
         { autoAlpha: 1, y: 0, duration: dur(0.42), clearProps: 'transform' },
         0
       );
@@ -436,7 +350,7 @@ export function createMotionController() {
   }
 
   // ===========================================================================
-  // SLIDE 04 — 1 UNIFIED STATE (All 5 Criteria & 02-Year Milestone Auto-Illuminate)
+  // SLIDE 04 — SINH VIÊN 5 TỐT (1 Unified State — Clean, Dignified, No Dashed Wire)
   // ===========================================================================
   function applySlide4Step(slideEl, stepIndex = 0) {
     killActiveTimeline();
@@ -446,42 +360,35 @@ export function createMotionController() {
     const titleEl = slideEl.querySelector('.display-serif-title');
     const journeyBox = slideEl.querySelector('.personal-journey-box');
     const cards = slideEl.querySelectorAll('.criteria-pillar-card');
-    const connectorPath = slideEl.querySelector('.criteria-connector-svg .svg-draw-path');
     const culminationBar = slideEl.querySelector('.milestone-culmination-bar');
 
     const tl = gsap.timeline({ defaults: { ease: 'cinematicOut' } });
     activeTimeline = tl;
 
-    if (connectorPath) {
-      const len = 1380;
-      gsap.set(connectorPath, { strokeDasharray: len, strokeDashoffset: len });
-      tl.to(connectorPath, { strokeDashoffset: 0, duration: dur(0.68) }, 0.04);
-    }
-
     cards.forEach((card) => card.classList.add('criteria-active'));
 
     tl.fromTo(
       [titleEl, journeyBox],
-      { autoAlpha: 0.38, y: 8 },
-      { autoAlpha: 1, y: 0, duration: dur(0.46), clearProps: 'transform' },
+      { autoAlpha: 0.4, y: 8 },
+      { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
       0
     )
       .fromTo(
         cards,
-        { autoAlpha: 0.28, y: 12 },
-        { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.48), clearProps: 'transform' },
-        0.06
+        { autoAlpha: 0.3, y: 10 },
+        { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.5), clearProps: 'transform' },
+        0.05
       )
       .fromTo(
         culminationBar,
-        { autoAlpha: 0.32, y: 8 },
+        { autoAlpha: 0.35, y: 8 },
         { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
-        0.18
+        0.16
       );
   }
 
   // ===========================================================================
-  // SLIDE 05 — 3 CONSOLIDATED STAGES (0..2 · 4 Real Photos per Stage)
+  // SLIDE 05 — HÀNH TRÌNH THỰC TẾ (3 Stages — Smooth Editorial Photo Transitions)
   // ===========================================================================
   function applySlide5Step(slideEl, stepIndex) {
     killActiveTimeline();
@@ -537,21 +444,20 @@ export function createMotionController() {
       activeTimeline = tl;
       tl.fromTo(
         heroCard,
-        { autoAlpha: 0.45, y: 10 },
-        { autoAlpha: 1, y: 0, duration: dur(0.46), clearProps: 'transform' },
+        { autoAlpha: 0.48, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
         0
       ).fromTo(
         sideCards,
-        { autoAlpha: 0.42, x: 12 },
-        { autoAlpha: 1, x: 0, stagger: dur(0.06), duration: dur(0.46), clearProps: 'transform' },
+        { autoAlpha: 0.45, x: 10 },
+        { autoAlpha: 1, x: 0, stagger: dur(0.06), duration: dur(0.48), clearProps: 'transform' },
         0.04
       );
     }
-    lastSlide5Scene = stepIndex;
   }
 
   // ===========================================================================
-  // SLIDE 06 — 2 CLEAN STATES (0: Lời Tri Ân, 1: Toàn Bộ Poster Kết)
+  // SLIDE 06 — GRAND MOMENT 02 (TRIBUTE) & GRAND MOMENT 03 (FULL POSTER FINALE)
   // ===========================================================================
   function applySlide6Step(slideEl, stepIndex) {
     killActiveTimeline();
@@ -574,46 +480,51 @@ export function createMotionController() {
     activeTimeline = tl;
 
     if (stepIndex === 0) {
-      // State 0: Teacher Gratitude & 20/11 Floral Gift (All auto-animate in 1 cohesive timeline)
+      // GRAND MOMENT 02 — A Thousand Thank-Yous (Teacher Gratitude & 20/11 Floral Gift)
       finaleView?.classList.remove('active');
       tributeView?.classList.remove('hidden');
 
       tl.fromTo(
         [tributeList, teacherStage],
-        { autoAlpha: 0.38, y: 10 },
-        { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+        { autoAlpha: 0.4, y: 8 },
+        { autoAlpha: 1, y: 0, duration: dur(0.52), clearProps: 'transform' },
         0
       )
         .fromTo(
           pillars,
-          { autoAlpha: 0.32, y: 8 },
-          { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.46), clearProps: 'transform' },
+          { autoAlpha: 0.35, y: 6 },
+          { autoAlpha: 1, y: 0, stagger: dur(0.06), duration: dur(0.48), clearProps: 'transform' },
           0.05
         )
         .fromTo(
           [closingQuote, floralTribute],
-          { autoAlpha: 0.32, y: 8 },
-          { autoAlpha: 1, y: 0, duration: dur(0.48), clearProps: 'transform' },
+          { autoAlpha: 0.35, y: 6 },
+          { autoAlpha: 1, y: 0, duration: dur(0.5), clearProps: 'transform' },
           0.12
         );
     } else {
-      // State 1: Full Uncropped Poster Finale & Final Hold Message (All settle automatically in 1 timeline)
+      // GRAND MOMENT 03 — Beyond the Horizon (Full Uncropped Poster Reveal -> Calm Final Hold)
       tributeView?.classList.add('hidden');
       finaleView?.classList.add('active');
 
       if (finalePosterImg) gsap.set(finalePosterImg, { clearProps: 'transform' });
-      if (finalePosterFrame) gsap.set(finalePosterFrame, { clearProps: 'transform' });
 
       tl.fromTo(
         finaleView,
-        { autoAlpha: 0.3 },
-        { autoAlpha: 1, duration: dur(0.55), clearProps: 'transform' },
+        { autoAlpha: 0.35 },
+        { autoAlpha: 1, duration: dur(0.58), clearProps: 'transform' },
         0
       )
         .fromTo(
+          finalePosterFrame,
+          { scale: 1.025 },
+          { scale: 1, duration: dur(0.68), clearProps: 'transform' },
+          0
+        )
+        .fromTo(
           [finaleLeftWing, finaleHoldBadge],
-          { autoAlpha: 0.35, y: 10 },
-          { autoAlpha: 1, y: 0, duration: dur(0.5), clearProps: 'transform' },
+          { autoAlpha: 0.38, y: 8 },
+          { autoAlpha: 1, y: 0, duration: dur(0.54), clearProps: 'transform' },
           0.08
         );
     }

@@ -2,37 +2,37 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
-const SCREENSHOT_DIR = path.resolve('test-results/v6-screenshots');
+const SCREENSHOT_DIR = path.resolve('test-results/v8-screenshots');
 if (!fs.existsSync(SCREENSHOT_DIR)) {
   fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 }
 
-// V6 Exact 13 States (12 Next Clicks from Landing to Final Poster Finale)
+// V8 Exact 13 States (12 Next Clicks from Landing to Final Poster Finale)
 const EXPECTED_SEQUENCE = [
   // 0. Landing (-1): 1 state
-  { slideIndex: -1, stepIndex: 0, label: 'MỞ ĐẦU 20/11', shot: 'v6-01-landing.png', nextTransTheme: 'floral-light-gateway' },
+  { slideIndex: -1, stepIndex: 0, label: 'MỞ ĐẦU 20/11', shot: 'v8-01-landing.png', nextTransTheme: 'floral-light-gateway' },
   // 1. Slide 01 (0): 1 state
-  { slideIndex: 0, stepIndex: 0, label: '01 / 06', shot: 'v6-02-slide1.png', nextTransTheme: 'the-first-light' },
+  { slideIndex: 0, stepIndex: 0, label: '01 / 06', shot: 'v8-02-slide1.png', nextTransTheme: 'the-first-light' },
   // 2. Slide 02 (1): 1 state
-  { slideIndex: 1, stepIndex: 0, label: '02 / 06', shot: 'v6-03-slide2.png', nextTransTheme: 'book-of-knowledge' },
+  { slideIndex: 1, stepIndex: 0, label: '02 / 06', shot: 'v8-03-slide2.png', nextTransTheme: 'book-of-knowledge' },
   // 3..6. Slide 03 (2): 4 camera scenes
-  { slideIndex: 2, stepIndex: 0, label: '03 / 06 · CẢNH 01 / 04', shot: 'v6-04-slide3-scene1.png' },
-  { slideIndex: 2, stepIndex: 1, label: '03 / 06 · CẢNH 02 / 04', shot: 'v6-05-slide3-scene2.png' },
-  { slideIndex: 2, stepIndex: 2, label: '03 / 06 · CẢNH 03 / 04', shot: 'v6-06-slide3-scene3.png' },
-  { slideIndex: 2, stepIndex: 3, label: '03 / 06 · CẢNH 04 / 04', shot: 'v6-07-slide3-scene4.png', nextTransTheme: 'stairway-to-tomorrow' },
+  { slideIndex: 2, stepIndex: 0, label: '03 / 06 · CẢNH 01 / 04', shot: 'v8-04-slide3-scene1.png' },
+  { slideIndex: 2, stepIndex: 1, label: '03 / 06 · CẢNH 02 / 04', shot: 'v8-05-slide3-scene2.png' },
+  { slideIndex: 2, stepIndex: 2, label: '03 / 06 · CẢNH 03 / 04', shot: 'v8-06-slide3-scene3.png' },
+  { slideIndex: 2, stepIndex: 3, label: '03 / 06 · CẢNH 04 / 04', shot: 'v8-07-slide3-scene4.png', nextTransTheme: 'stairway-to-tomorrow' },
   // 7. Slide 04 (3): 1 state (All 5 criteria visible)
-  { slideIndex: 3, stepIndex: 0, label: '04 / 06', shot: 'v6-08-slide4.png', nextTransTheme: 'memories-in-motion' },
+  { slideIndex: 3, stepIndex: 0, label: '04 / 06', shot: 'v8-08-slide4.png', nextTransTheme: 'memories-in-motion' },
   // 8..10. Slide 05 (4): 3 consolidated stages (4 photos each)
-  { slideIndex: 4, stepIndex: 0, label: '05 / 06 · CHẶNG 01 / 03', shot: 'v6-09-slide5-stage1.png' },
-  { slideIndex: 4, stepIndex: 1, label: '05 / 06 · CHẶNG 02 / 03', shot: 'v6-10-slide5-stage2.png' },
-  { slideIndex: 4, stepIndex: 2, label: '05 / 06 · CHẶNG 03 / 03', shot: 'v6-11-slide5-stage3.png', nextTransTheme: 'bouquet-of-gratitude' },
+  { slideIndex: 4, stepIndex: 0, label: '05 / 06 · CHẶNG 01 / 03', shot: 'v8-09-slide5-stage1.png' },
+  { slideIndex: 4, stepIndex: 1, label: '05 / 06 · CHẶNG 02 / 03', shot: 'v8-10-slide5-stage2.png' },
+  { slideIndex: 4, stepIndex: 2, label: '05 / 06 · CHẶNG 03 / 03', shot: 'v8-11-slide5-stage3.png', nextTransTheme: 'bouquet-of-gratitude' },
   // 11..12. Slide 06 (5): 2 states (Tribute -> Full Poster Finale)
-  { slideIndex: 5, stepIndex: 0, label: '06 / 06 · CẢNH 01 / 02', shot: 'v6-12-slide6-tribute.png', nextTransTheme: 'grand-tribute-reveal' },
-  { slideIndex: 5, stepIndex: 1, label: '06 / 06 · CẢNH 02 / 02', shot: 'v6-13-slide6-finale.png' }
+  { slideIndex: 5, stepIndex: 0, label: '06 / 06 · CẢNH 01 / 02', shot: 'v8-12-slide6-tribute.png', nextTransTheme: 'grand-tribute-reveal' },
+  { slideIndex: 5, stepIndex: 1, label: '06 / 06 · CẢNH 02 / 02', shot: 'v8-13-slide6-finale.png' }
 ];
 
-test.describe('NÉT VẼ TRI ÂN V6 — CINEMATIC LIVING SKY, 7 GRAND TRANSITIONS & PHOTO REPLACEMENT QA', () => {
-  test('Test 1 & Test 5: Exact 12-Click Walk (13 States), 7 Grand Transitions, Living Sky & Slide 05 Photo Replacement', async ({ page }) => {
+test.describe('NÉT VẼ TRI ÂN V8 — ULTIMATE CINEMATIC AMBIENT MASTERPIECE QA', () => {
+  test('Test 1 & Test 5: Exact 12-Click Walk (13 States), Wire-Free Ambient Sky, 3 Grand Moments & Slide 05 Photo Replacement', async ({ page }) => {
     const errors = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') errors.push(msg.text());
@@ -44,25 +44,36 @@ test.describe('NÉT VẼ TRI ÂN V6 — CINEMATIC LIVING SKY, 7 GRAND TRANSITION
     await page.waitForSelector('#landing-page', { state: 'visible' });
     await page.waitForTimeout(450);
 
-    // Verify Living Sky Layer is present with flying birds, horizon ribbons, and 20/11 petals
+    // Verify V8 Ambient Sky Canvas & Wire-Free Cleanliness (Section III.A)
     const skyCheck = await page.evaluate(() => {
       const sky = document.getElementById('living-sky-layer');
+      const ambientCanvas = document.getElementById('ambient-sky-canvas');
       const farBirds = document.querySelectorAll('#sky-birds-far .sky-bird-flight').length;
       const nearBirds = document.querySelectorAll('#sky-birds-near .sky-bird-flight').length;
       const petals = document.querySelectorAll('#sky-tribute-petals .sky-petal').length;
+      const removedWires =
+        !document.getElementById('landing-pen-stroke') &&
+        !document.getElementById('sky-horizon-ribbons') &&
+        !document.getElementById('transition-light-path') &&
+        !document.getElementById('slide3-camera-svg') &&
+        !document.querySelector('.criteria-connector-svg');
       return {
-        exists: Boolean(sky),
+        exists: Boolean(sky && ambientCanvas && ambientCanvas.width > 0),
         mood: sky?.getAttribute('data-sky-mood'),
+        ambientState: sky?.getAttribute('data-ambient-state'),
         farBirds,
         nearBirds,
-        petals
+        petals,
+        removedWires
       };
     });
     expect(skyCheck.exists).toBe(true);
     expect(skyCheck.mood).toBe('landing');
+    expect(skyCheck.ambientState).toBe('landing-opening');
     expect(skyCheck.farBirds).toBeGreaterThanOrEqual(6);
     expect(skyCheck.nearBirds).toBeGreaterThanOrEqual(5);
     expect(skyCheck.petals).toBeGreaterThanOrEqual(6);
+    expect(skyCheck.removedWires).toBe(true);
 
     let clickCount = 0;
 
@@ -174,7 +185,7 @@ test.describe('NÉT VẼ TRI ÂN V6 — CINEMATIC LIVING SKY, 7 GRAND TRANSITION
           await page.waitForTimeout(160);
           const activeTheme = await page.locator('#scene-transition-overlay').getAttribute('data-transition-theme');
           expect(activeTheme).toBe(expected.nextTransTheme);
-          await page.screenshot({ path: path.join(SCREENSHOT_DIR, `v6-trans-${expected.nextTransTheme}.png`) });
+          await page.screenshot({ path: path.join(SCREENSHOT_DIR, `v8-trans-${expected.nextTransTheme}.png`) });
         }
       }
     }

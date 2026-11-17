@@ -13,170 +13,44 @@
 </head>
 <body>
 
-  <!-- WebGL 3D Atmospheric Canvas -->
+  <!-- WebGL 3D Atmospheric Depth Canvas -->
   <canvas id="webgl-canvas"></canvas>
-  <div class="cinematic-vignette"></div>
 
-  <!-- V6 Cinematic Living Sky Layer (Outer Sky Horizon: Flying Birds, Dawn Clouds, Golden Shimmer & 20/11 Petals) -->
-  <div id="living-sky-layer" data-sky-mood="landing" aria-hidden="true">
-    <svg class="living-sky-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="skyDawnRibbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#F0CC85" stop-opacity="0"/>
-          <stop offset="35%" stop-color="#F0CC85" stop-opacity="0.28"/>
-          <stop offset="70%" stop-color="#F8F1E3" stop-opacity="0.34"/>
-          <stop offset="100%" stop-color="#F4B8C4" stop-opacity="0"/>
-        </linearGradient>
-        <radialGradient id="skyHorizonSunGlow" cx="78%" cy="12%" r="42%">
-          <stop offset="0%" stop-color="#F7E0AE" stop-opacity="0.26"/>
-          <stop offset="50%" stop-color="#F0CC85" stop-opacity="0.10"/>
-          <stop offset="100%" stop-color="#0B192E" stop-opacity="0"/>
-        </radialGradient>
-        <!-- Stylized Bird Silhouette Template (Graceful curved wings) -->
-        <g id="bird-silhouette-near">
-          <path class="bird-wing-path" d="M-16 2 Q -8 -7, 0 0 Q 8 -7, 16 2 Q 8 -3, 0 2.5 Q -8 -3, -16 2 Z" fill="#F8F1E3" fill-opacity="0.72"/>
-        </g>
-        <g id="bird-silhouette-far">
-          <path class="bird-wing-path" d="M-10 1.5 Q -5 -4.5, 0 0 Q 5 -4.5, 10 1.5 Q 5 -1.8, 0 1.6 Q -5 -1.8, -10 1.5 Z" fill="#F0CC85" fill-opacity="0.48"/>
-        </g>
-      </defs>
-
-      <!-- Soft Dawn Horizon Glow & Knowledge Light Streams -->
-      <rect x="0" y="0" width="1920" height="420" fill="url(#skyHorizonSunGlow)" class="sky-dawn-glow"/>
-      <g id="sky-horizon-ribbons" class="sky-horizon-ribbons">
-        <path class="sky-ribbon r1" d="M-120 118 C 360 42, 920 156, 1520 68 C 1720 38, 1890 74, 2040 52" stroke="url(#skyDawnRibbonGrad)" stroke-width="2.2" stroke-linecap="round"/>
-        <path class="sky-ribbon r2" d="M-80 74 C 480 128, 1080 28, 1660 96 C 1810 112, 1940 82, 2040 66" stroke="url(#skyDawnRibbonGrad)" stroke-width="1.4" stroke-dasharray="10 8" stroke-linecap="round"/>
-      </g>
-
-      <!-- Distant Bird Flock (Upper Sky Horizon y=18..38, Never overlapping slide frame or header) -->
-      <g id="sky-birds-far" class="sky-bird-flock far-flock">
-        <g class="sky-bird-flight bf-1"><use href="#bird-silhouette-far" transform="translate(210, 26) scale(0.72)"/></g>
-        <g class="sky-bird-flight bf-2"><use href="#bird-silhouette-far" transform="translate(246, 18) scale(0.60)"/></g>
-        <g class="sky-bird-flight bf-3"><use href="#bird-silhouette-far" transform="translate(278, 24) scale(0.52)"/></g>
-        <g class="sky-bird-flight bf-4"><use href="#bird-silhouette-far" transform="translate(1360, 24) scale(0.70)"/></g>
-        <g class="sky-bird-flight bf-5"><use href="#bird-silhouette-far" transform="translate(1396, 16) scale(0.58)"/></g>
-        <g class="sky-bird-flight bf-6"><use href="#bird-silhouette-far" transform="translate(1428, 22) scale(0.50)"/></g>
-      </g>
-
-      <!-- Near Graceful Bird Flock (Upper Outer Sky Wings y=20..36 & Outer Margins) -->
-      <g id="sky-birds-near" class="sky-bird-flock near-flock">
-        <g class="sky-bird-flight bn-1"><use href="#bird-silhouette-near" transform="translate(520, 28) scale(0.88) rotate(-5)"/></g>
-        <g class="sky-bird-flight bn-2"><use href="#bird-silhouette-near" transform="translate(562, 18) scale(0.76) rotate(-7)"/></g>
-        <g class="sky-bird-flight bn-3"><use href="#bird-silhouette-near" transform="translate(600, 25) scale(0.68) rotate(-4)"/></g>
-        <g class="sky-bird-flight bn-4"><use href="#bird-silhouette-near" transform="translate(1580, 26) scale(0.86) rotate(-6)"/></g>
-        <g class="sky-bird-flight bn-5"><use href="#bird-silhouette-near" transform="translate(1622, 18) scale(0.74) rotate(-8)"/></g>
-      </g>
-
-      <!-- 20/11 Tribute Floating Petals (Strictly Outer Left/Right/Top Margins — Never overlapping cards/text) -->
-      <g id="sky-tribute-petals" class="sky-tribute-petals">
-        <path class="sky-petal sp-1" d="M36 180 C46 168, 62 172, 56 186 C48 198, 30 192, 36 180 Z" fill="#F4B8C4" fill-opacity="0.68"/>
-        <path class="sky-petal sp-2" d="M44 340 C52 328, 66 334, 60 346 C54 356, 38 350, 44 340 Z" fill="#F0CC85" fill-opacity="0.72"/>
-        <path class="sky-petal sp-3" d="M1862 165 C1872 152, 1888 158, 1880 172 C1874 182, 1856 176, 1862 165 Z" fill="#F4B8C4" fill-opacity="0.66"/>
-        <path class="sky-petal sp-4" d="M1856 360 C1866 348, 1882 354, 1874 366 C1868 376, 1850 370, 1856 360 Z" fill="#F0CC85" fill-opacity="0.68"/>
-        <path class="sky-petal sp-5" d="M38 865 C48 852, 64 858, 58 870 C50 880, 32 874, 38 865 Z" fill="#F8F1E3" fill-opacity="0.58"/>
-        <path class="sky-petal sp-6" d="M1858 845 C1868 832, 1884 838, 1876 850 C1870 860, 1852 854, 1858 845 Z" fill="#F4B8C4" fill-opacity="0.62"/>
-      </g>
-    </svg>
+  <!-- V8 Cinematic Living Sky & Ambient Masterpiece Layer (Starfield, Dawn Clouds, Golden Dust, BirdSystem & FloralSystem) -->
+  <div id="living-sky-layer" data-sky-mood="landing" data-ambient-state="grand-opening" aria-hidden="true">
+    <canvas id="ambient-sky-canvas"></canvas>
+    <!-- Semantic system hooks for inspection & orchestration -->
+    <div id="sky-birds-far" class="sky-system-node" data-count="6">
+      <span class="sky-bird-flight"></span><span class="sky-bird-flight"></span><span class="sky-bird-flight"></span>
+      <span class="sky-bird-flight"></span><span class="sky-bird-flight"></span><span class="sky-bird-flight"></span>
+    </div>
+    <div id="sky-birds-near" class="sky-system-node" data-count="5">
+      <span class="sky-bird-flight"></span><span class="sky-bird-flight"></span><span class="sky-bird-flight"></span>
+      <span class="sky-bird-flight"></span><span class="sky-bird-flight"></span>
+    </div>
+    <div id="sky-tribute-petals" class="sky-system-node" data-count="12">
+      <span class="sky-petal"></span><span class="sky-petal"></span><span class="sky-petal"></span>
+      <span class="sky-petal"></span><span class="sky-petal"></span><span class="sky-petal"></span>
+    </div>
   </div>
 
-  <!-- V6 Grand Cinematic Inter-Slide Transition Stage (7 Signature Choreographies) -->
-  <div id="scene-transition-overlay" data-transition-theme="gateway" aria-hidden="true">
+  <div class="cinematic-vignette"></div>
+
+  <!-- V8 Smooth & Elegant Transition Director Stage (Wire-Free Soft Light Veils & Parting Dawn Curtains) -->
+  <div id="scene-transition-overlay" data-transition-theme="floral-light-gateway" aria-hidden="true">
     <div class="transition-veil-backdrop" id="transition-veil-backdrop"></div>
-    <svg class="transition-stage-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="transGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#F0CC85" stop-opacity="0"/>
-          <stop offset="35%" stop-color="#F7E0AE" stop-opacity="0.96"/>
-          <stop offset="70%" stop-color="#F0CC85" stop-opacity="0.92"/>
-          <stop offset="100%" stop-color="#F4B8C4" stop-opacity="0"/>
-        </linearGradient>
-        <linearGradient id="transBeamGrad" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#F7E0AE" stop-opacity="0.55"/>
-          <stop offset="50%" stop-color="#F0CC85" stop-opacity="0.28"/>
-          <stop offset="100%" stop-color="#19365F" stop-opacity="0"/>
-        </linearGradient>
-        <linearGradient id="transSilkGrad" x1="0%" y1="50%" x2="100%" y2="50%">
-          <stop offset="0%" stop-color="#AD1F29" stop-opacity="0"/>
-          <stop offset="40%" stop-color="#AD1F29" stop-opacity="0.88"/>
-          <stop offset="75%" stop-color="#F0CC85" stop-opacity="0.95"/>
-          <stop offset="100%" stop-color="#F4B8C4" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Primary Signature Light Arc (Used across all transitions + customized per theme) -->
-      <path id="transition-light-path" d="M-80 680 C 480 340, 1320 760, 2000 320" fill="none" stroke="url(#transGrad)" stroke-width="4.5" stroke-linecap="round"/>
-      <path id="transition-secondary-path" d="M-60 420 C 560 720, 1280 260, 1980 540" fill="none" stroke="url(#transGrad)" stroke-width="2.5" stroke-dasharray="14 10" stroke-linecap="round"/>
-
-      <!-- Theme 2 & 3: Warm Teacher Guiding Light Sweep & Book Wave -->
-      <polygon id="transition-light-beam" points="1920,0 1280,0 380,1080 1180,1080" fill="url(#transBeamGrad)" opacity="0"/>
-
-      <!-- Theme 4 & 7: Ascending Stairway Beams & Horizon Bird Flock Sweep -->
-      <g id="transition-stair-steps" opacity="0">
-        <line x1="260" y1="860" x2="540" y2="860" stroke="#F0CC85" stroke-width="4" stroke-linecap="round"/>
-        <line x1="500" y1="710" x2="800" y2="710" stroke="#F7E0AE" stroke-width="4" stroke-linecap="round"/>
-        <line x1="760" y1="560" x2="1080" y2="560" stroke="#F0CC85" stroke-width="4" stroke-linecap="round"/>
-        <line x1="1040" y1="410" x2="1360" y2="410" stroke="#F7E0AE" stroke-width="4" stroke-linecap="round"/>
-        <line x1="1320" y1="260" x2="1660" y2="260" stroke="#F8F1E3" stroke-width="4.5" stroke-linecap="round"/>
-      </g>
-
-      <g id="transition-birds-group" opacity="0">
-        <path d="M280 210 Q 294 194, 308 206 Q 322 194, 336 210 Q 322 201, 308 211 Q 294 201, 280 210 Z" fill="#F8F1E3"/>
-        <path d="M350 175 Q 362 162, 374 172 Q 386 162, 398 175 Q 386 167, 374 176 Q 362 167, 350 175 Z" fill="#F0CC85"/>
-        <path d="M418 192 Q 428 180, 438 189 Q 448 180, 458 192 Q 448 185, 438 193 Q 428 185, 418 192 Z" fill="#F8F1E3" fill-opacity="0.85"/>
-        <path d="M480 156 Q 490 145, 500 153 Q 510 145, 520 156 Q 510 149, 500 157 Q 490 149, 480 156 Z" fill="#F0CC85" fill-opacity="0.78"/>
-      </g>
-
-      <!-- Theme 5: 5 Golden Criteria Nodes Flowing Into Memories -->
-      <g id="transition-criteria-nodes" opacity="0">
-        <circle class="trans-node" cx="360" cy="540" r="9" fill="#F0CC85"/>
-        <circle class="trans-node" cx="660" cy="500" r="9" fill="#F8F1E3"/>
-        <circle class="trans-node" cx="960" cy="540" r="10" fill="#F0CC85"/>
-        <circle class="trans-node" cx="1260" cy="500" r="9" fill="#F4B8C4"/>
-        <circle class="trans-node" cx="1560" cy="540" r="9" fill="#F0CC85"/>
-      </g>
-
-      <!-- Theme 1, 6 & 7: 20/11 Silk Ribbon & Floral Petals Burst -->
-      <path id="transition-silk-ribbon" d="M-100 760 C 420 520, 1080 840, 2020 360" fill="none" stroke="url(#transSilkGrad)" stroke-width="6" stroke-linecap="round" opacity="0"/>
-      <g id="transition-petals-group" opacity="0">
-        <path class="trans-petal" d="M320 620 C338 598, 366 606, 354 630 C342 648, 310 638, 320 620 Z" fill="#F4B8C4"/>
-        <path class="trans-petal" d="M680 460 C696 440, 722 448, 710 470 C698 486, 670 476, 680 460 Z" fill="#F0CC85"/>
-        <path class="trans-petal" d="M1040 580 C1058 558, 1086 566, 1074 590 C1062 608, 1030 598, 1040 580 Z" fill="#F8F1E3"/>
-        <path class="trans-petal" d="M1380 410 C1396 390, 1422 398, 1410 420 C1398 436, 1370 426, 1380 410 Z" fill="#F4B8C4"/>
-        <path class="trans-petal" d="M1640 330 C1656 310, 1682 318, 1670 340 C1658 356, 1630 346, 1640 330 Z" fill="#F0CC85"/>
-      </g>
-    </svg>
-    <!-- Theme 7: Grand Exhibition Light Curtains for Finale Poster Reveal -->
+    <div class="transition-dawn-bloom" id="transition-dawn-bloom"></div>
+    <div class="transition-page-wave" id="transition-page-wave"></div>
     <div class="transition-curtain-left" id="transition-curtain-left"></div>
     <div class="transition-curtain-right" id="transition-curtain-right"></div>
   </div>
 
   <!-- =====================================================================
        INDEPENDENT 20/11 FLORAL CINEMATIC GRAND OPENING LANDING PAGE
-       Concept: “NHỮNG ĐÓA HOA CỦA TRI THỨC” (6 Sequential Steps: 01/06 -> 06/06)
+       Concept: “THE SKY OF GRATITUDE — NHỮNG ĐÓA HOA CỦA TRI THỨC”
        ===================================================================== -->
   <section id="landing-page" data-active-step="0" aria-label="Trang mở đầu Chào mừng Ngày Nhà giáo Việt Nam 20/11">
     <div class="landing-poster-aura"></div>
-
-    <!-- Step 1 & Step 2 Decorative Calligraphic Pen Stroke & Floating Bezier Petals (Outer Periphery Only) -->
-    <svg class="landing-floral-canvas-svg" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- Step 1: Teacher's Calligraphic Golden Pen Stroke -->
-      <path id="landing-pen-stroke" d="M 90 610 C 260 510, 420 650, 620 530 C 740 460, 820 490, 910 470" stroke="url(#penGoldGrad)" stroke-width="2.6" stroke-linecap="round"/>
-      <!-- Step 2: Graceful Floating Petals Along Bezier Curves (Never overlapping center poster) -->
-      <g id="landing-floating-petals">
-        <path class="petal-drift p1" d="M180 230 C192 218, 212 222, 204 238 C196 250, 174 244, 180 230 Z" fill="#F4B8C4" fill-opacity="0.72"/>
-        <path class="petal-drift p2" d="M340 175 C350 165, 366 170, 360 184 C354 195, 334 188, 340 175 Z" fill="#F0CC85" fill-opacity="0.78"/>
-        <path class="petal-drift p3" d="M1540 205 C1552 192, 1570 198, 1562 214 C1554 226, 1532 218, 1540 205 Z" fill="#F4B8C4" fill-opacity="0.68"/>
-        <path class="petal-drift p4" d="M1710 310 C1720 298, 1738 304, 1730 318 C1722 330, 1702 322, 1710 310 Z" fill="#F0CC85" fill-opacity="0.72"/>
-        <path class="petal-drift p5" d="M1480 820 C1492 808, 1508 814, 1500 828 C1492 838, 1472 832, 1480 820 Z" fill="#F8F1E3" fill-opacity="0.65"/>
-      </g>
-      <defs>
-        <linearGradient id="penGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#F4B8C4" stop-opacity="0.2"/>
-          <stop offset="45%" stop-color="#F0CC85" stop-opacity="0.95"/>
-          <stop offset="100%" stop-color="#F8F1E3" stop-opacity="0.9"/>
-        </linearGradient>
-      </defs>
-    </svg>
 
     <!-- Top Exhibition Branding Bar -->
     <header class="landing-top-bar">
@@ -203,18 +77,9 @@
       <div class="landing-left-wing">
         <div class="landing-2011-eyebrow" id="landing-2011-eyebrow">CHÀO MỪNG NGÀY NHÀ GIÁO VIỆT NAM 20/11</div>
 
-        <!-- Step 3: Layered Artistic Floral Bouquet (“Những đóa hoa của tri thức”) + IT Circuit Filaments -->
+        <!-- Layered Artistic Floral Bouquet (“Những đóa hoa của tri thức”) -->
         <div class="landing-floral-bouquet-card" id="landing-floral-bouquet">
           <svg class="bouquet-svg" viewBox="0 0 210 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- IT Circuit Golden Filaments Blending Into Flower Stems -->
-            <g id="landing-circuit-stem" stroke="#F0CC85" stroke-width="1.5" opacity="0.85">
-              <path d="M15 95 L55 95 L78 72"/>
-              <circle cx="15" cy="95" r="3" fill="#F0CC85"/>
-              <path d="M28 108 L70 108 L92 82"/>
-              <circle cx="28" cy="108" r="2.5" fill="#F4B8C4"/>
-              <path d="M195 92 L155 92 L132 72"/>
-              <circle cx="195" cy="92" r="3" fill="#F0CC85"/>
-            </g>
             <!-- Flowing Silk Ribbon (Dải ruy băng tri ân) -->
             <path id="landing-silk-ribbon" d="M62 94 C 85 78, 125 110, 148 90 C 162 78, 176 92, 184 98" stroke="#AD1F29" stroke-width="4" stroke-linecap="round"/>
             <path d="M72 96 C 95 84, 120 106, 144 92" stroke="#F4B8C4" stroke-width="1.5" stroke-linecap="round"/>
@@ -539,12 +404,6 @@
               <div class="slide3-master-stage" id="slide3-master-stage">
                 <div class="poster-camera-viewport" title="Khung camera nghệ thuật di chuyển qua 4 vùng trọng tâm của poster gốc">
                   <img id="slide3-camera-target" src="./assets/optimized/poster-full.jpg" alt="Toàn cảnh poster Nét vẽ tri ân">
-                  <svg class="viewport-overlay-svg" id="slide3-camera-svg" viewBox="0 0 600 685" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path class="svg-draw-path" d="M145 520 Q 280 480, 345 365 T 470 120" stroke="#F0CC85" stroke-width="2.5" stroke-dasharray="7 5" stroke-linecap="round"/>
-                    <circle cx="265" cy="465" r="6" fill="#F0CC85"/>
-                    <circle cx="355" cy="315" r="6" fill="#F0CC85"/>
-                    <circle cx="470" cy="120" r="7" fill="#F8F1E3"/>
-                  </svg>
                 </div>
 
                 <!-- Floating High-Res Focal Detail Lens (Auto-fades on Step 4 Full Panorama) -->
@@ -649,10 +508,6 @@
 
               <!-- Connected 5 Criteria Pillars (Auto-illuminated in 1 unified timeline) -->
               <div class="five-criteria-wrapper">
-                <svg class="criteria-connector-svg" viewBox="0 0 1400 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path class="svg-draw-path" d="M10 4 L1390 4" stroke="#F0CC85" stroke-width="3" stroke-dasharray="8 6" stroke-linecap="round"/>
-                </svg>
-
                 <div class="five-criteria-stage">
                   <div class="criteria-pillar-card criteria-active" data-criterion-idx="0">
                     <span class="pillar-step-num">TIÊU CHÍ 01</span>

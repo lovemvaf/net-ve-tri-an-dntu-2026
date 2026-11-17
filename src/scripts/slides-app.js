@@ -146,16 +146,14 @@ export async function initPresentationApp() {
     const applyVisuals = () => {
       if (targetSlideIndex === -1) {
         landingEl?.classList.remove('hidden');
-        webgl.setSlideMood(0, false);
-        const skyEl = document.getElementById('living-sky-layer');
-        skyEl?.setAttribute('data-sky-mood', 'landing');
+        webgl.setSlideMood(-1, false, prevSlideIndex);
         motion.applyStep(-1, clampedStep, landingEl);
       } else {
         landingEl?.classList.add('hidden');
         if (deck.getState().indexh !== targetSlideIndex) {
           deck.slide(targetSlideIndex);
         }
-        webgl.setSlideMood(targetSlideIndex, targetSlideIndex === 5 && clampedStep === 1);
+        webgl.setSlideMood(targetSlideIndex, targetSlideIndex === 5 && clampedStep === 1, prevSlideIndex);
         const slideEl =
           document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
         motion.applyStep(targetSlideIndex, clampedStep, slideEl);
@@ -325,6 +323,7 @@ export async function initPresentationApp() {
 
   // Expose State & Control APIs on window for automated Playwright verification
   window.PresentationState = state;
+  window.AmbientEngine = webgl;
   window.nextStep = nextStep;
   window.previousStep = previousStep;
   window.prevStep = previousStep;

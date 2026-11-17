@@ -27,7 +27,7 @@ async function verifyPoster(page, selector) {
 
 async function verifyLiveGitHubPages() {
   const url = 'https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/';
-  console.log('Launching Chromium to verify live V6 URL (Living Sky + 7 Grand Transitions + 12 Clicks):', url);
+  console.log('Launching Chromium to verify live V8 URL (Ultimate Cinematic Ambient Masterpiece + 12 Clicks):', url);
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
 
@@ -42,16 +42,34 @@ async function verifyLiveGitHubPages() {
   if (res.status() !== 200) throw new Error('Expected HTTP 200, got ' + res.status());
 
   await page.waitForSelector('#landing-page', { timeout: 15000 });
-  await page.waitForSelector('#living-sky-layer', { state: 'attached', timeout: 15000 });
+  await page.waitForSelector('#ambient-sky-canvas', { state: 'attached', timeout: 15000 });
   await page.waitForSelector('.reveal.ready', { state: 'attached', timeout: 15000 });
   await page.waitForTimeout(500);
 
-  // 1. Verify V6 Initial HUD indicator & Living Sky
+  // 1. Verify V8 Initial HUD indicator, Ambient Sky Canvas & Wire-Free Cleanliness
   const initHud = await page.locator('#hud-indicator').textContent();
-  const skyMood = await page.locator('#living-sky-layer').getAttribute('data-sky-mood');
-  console.log('Live V6 Initial HUD Indicator:', initHud?.trim(), '| Sky Mood:', skyMood);
+  const v8Check = await page.evaluate(() => {
+    const sky = document.getElementById('living-sky-layer');
+    const canvas = document.getElementById('ambient-sky-canvas');
+    const wireFree =
+      !document.getElementById('landing-pen-stroke') &&
+      !document.getElementById('sky-horizon-ribbons') &&
+      !document.getElementById('transition-light-path') &&
+      !document.getElementById('slide3-camera-svg') &&
+      !document.querySelector('.criteria-connector-svg');
+    return {
+      skyMood: sky?.getAttribute('data-sky-mood'),
+      ambientState: sky?.getAttribute('data-ambient-state'),
+      canvasReady: Boolean(canvas && canvas.width > 0 && canvas.height > 0),
+      wireFree
+    };
+  });
+  console.log('Live V8 Initial HUD Indicator:', initHud?.trim(), '| V8 Sky Check:', JSON.stringify(v8Check));
   if (initHud?.trim() !== 'MỞ ĐẦU 20/11') {
     throw new Error('Expected MỞ ĐẦU 20/11 on Landing, got: ' + initHud);
+  }
+  if (!v8Check.canvasReady || !v8Check.wireFree) {
+    throw new Error('Live V8 wire-free ambient sky check failed: ' + JSON.stringify(v8Check));
   }
 
   // Verify Landing Page Poster is immediately visible without extra clicks
