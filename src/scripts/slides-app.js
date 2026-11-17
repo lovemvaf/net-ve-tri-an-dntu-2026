@@ -127,7 +127,10 @@ export async function initPresentationApp() {
     const conf = getSlideConfig(targetSlideIndex);
     const clampedStep = Math.max(0, Math.min(targetStepIndex, conf.steps.length - 1));
     const prevSlideIndex = state.slideIndex;
+    const prevStepIndex = state.stepIndex;
     const isSlideChange = prevSlideIndex !== targetSlideIndex;
+    const isFinaleReveal =
+      prevSlideIndex === 5 && prevStepIndex === 0 && targetSlideIndex === 5 && clampedStep === 1;
 
     const stepObj = conf.steps[clampedStep] || conf.steps[0];
     const seqIdx = getGlobalStepNumber(targetSlideIndex, clampedStep) - 1;
@@ -143,14 +146,16 @@ export async function initPresentationApp() {
     const applyVisuals = () => {
       if (targetSlideIndex === -1) {
         landingEl?.classList.remove('hidden');
-        webgl.setSlideMood(0);
+        webgl.setSlideMood(0, false);
+        const skyEl = document.getElementById('living-sky-layer');
+        skyEl?.setAttribute('data-sky-mood', 'landing');
         motion.applyStep(-1, clampedStep, landingEl);
       } else {
         landingEl?.classList.add('hidden');
         if (deck.getState().indexh !== targetSlideIndex) {
           deck.slide(targetSlideIndex);
         }
-        webgl.setSlideMood(targetSlideIndex);
+        webgl.setSlideMood(targetSlideIndex, targetSlideIndex === 5 && clampedStep === 1);
         const slideEl =
           document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
         motion.applyStep(targetSlideIndex, clampedStep, slideEl);
@@ -160,10 +165,11 @@ export async function initPresentationApp() {
       updatePresenterDrawer();
     };
 
-    if (isSlideChange && !isReducedMotion) {
+    if ((isSlideChange || isFinaleReveal) && !isReducedMotion) {
       state.isTransitioning = true;
       state.isAnimating = true;
       applyVisuals();
+      motion.playInterSlideTransition(prevSlideIndex, targetSlideIndex, clampedStep);
       setTimeout(() => {
         state.isTransitioning = false;
         state.isAnimating = false;

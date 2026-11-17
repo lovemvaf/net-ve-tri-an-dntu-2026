@@ -68,7 +68,59 @@ html, body {
 }
 
 /* ==========================================================================
-   1. INDEPENDENT 20/11 CINEMATIC GRAND OPENING LANDING PAGE (V3 FLORAL ART)
+   0B. V6 CINEMATIC LIVING SKY LAYER & 7 GRAND SLIDE TRANSITIONS
+   ========================================================================== */
+#living-sky-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.living-sky-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Slide-aware Sky Moods: Petals shine on Landing, Slide 02 & Slide 06; Birds soar higher on Slide 03, 04 & Finale */
+#living-sky-layer .sky-tribute-petals {
+  transition: opacity 0.6s ease;
+  opacity: 0.92;
+}
+
+#living-sky-layer[data-sky-mood="slide-1"] .sky-tribute-petals,
+#living-sky-layer[data-sky-mood="slide-3"] .sky-tribute-petals,
+#living-sky-layer[data-sky-mood="slide-4"] .sky-tribute-petals,
+#living-sky-layer[data-sky-mood="slide-5"] .sky-tribute-petals {
+  opacity: 0.22;
+}
+
+#living-sky-layer[data-sky-mood="slide-2"] .sky-bird-flock,
+#living-sky-layer[data-sky-mood="slide-5"] .sky-bird-flock {
+  opacity: 0.35;
+  transition: opacity 0.6s ease;
+}
+
+#living-sky-layer[data-sky-mood="landing"] .sky-bird-flock,
+#living-sky-layer[data-sky-mood="slide-1"] .sky-bird-flock,
+#living-sky-layer[data-sky-mood="slide-3"] .sky-bird-flock,
+#living-sky-layer[data-sky-mood="slide-4"] .sky-bird-flock,
+#living-sky-layer[data-sky-mood="slide-6"] .sky-bird-flock,
+#living-sky-layer[data-sky-mood="finale"] .sky-bird-flock {
+  opacity: 0.95;
+  transition: opacity 0.6s ease;
+}
+
+body.reduced-motion #living-sky-layer * {
+  animation: none !important;
+}
+
+/* ==========================================================================
+   1. INDEPENDENT 20/11 CINEMATIC GRAND OPENING LANDING PAGE & TRANSITION STAGE
    ========================================================================== */
 #scene-transition-overlay {
   position: fixed;
@@ -78,6 +130,44 @@ html, body {
   z-index: 270;
   pointer-events: none;
   opacity: 0;
+  overflow: hidden;
+}
+
+.transition-veil-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(240, 204, 133, 0.24) 0%, rgba(25, 54, 95, 0.36) 55%, rgba(11, 25, 46, 0.55) 100%);
+}
+
+.transition-stage-svg {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.transition-curtain-left,
+.transition-curtain-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50vw;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.transition-curtain-left {
+  left: 0;
+  background: linear-gradient(90deg, rgba(11, 25, 46, 0.85) 0%, rgba(25, 54, 95, 0.65) 70%, rgba(240, 204, 133, 0.35) 100%);
+  border-right: 1.5px solid rgba(240, 204, 133, 0.65);
+}
+
+.transition-curtain-right {
+  right: 0;
+  background: linear-gradient(270deg, rgba(11, 25, 46, 0.85) 0%, rgba(25, 54, 95, 0.65) 70%, rgba(240, 204, 133, 0.35) 100%);
+  border-left: 1.5px solid rgba(240, 204, 133, 0.65);
 }
 
 #landing-page {
@@ -91,12 +181,23 @@ html, body {
   justify-content: space-between;
   padding: 20px 56px 58px;
   background:
-    radial-gradient(circle at 50% 48%, rgba(240, 204, 133, 0.19) 0%, rgba(25, 54, 95, 0.92) 48%, rgba(11, 25, 46, 0.98) 100%);
+    radial-gradient(circle at 50% 48%, rgba(240, 204, 133, 0.16) 0%, rgba(25, 54, 95, 0.45) 52%, rgba(11, 25, 46, 0.72) 100%);
   transition: opacity 0.65s var(--ease-cinematic), visibility 0.65s;
   overflow: hidden;
 }
 
 #landing-page.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#landing-page.hidden * {
+  animation: none !important;
+}
+
+/* Hide Reveal slide deck while Landing Page is active so Slide 01 never ghosts behind Landing */
+#landing-page:not(.hidden) ~ .reveal {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;

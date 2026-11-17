@@ -27,7 +27,7 @@ async function verifyPoster(page, selector) {
 
 async function verifyLiveGitHubPages() {
   const url = 'https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/';
-  console.log('Launching Chromium to verify live V5 URL (13 States / 12 Clicks):', url);
+  console.log('Launching Chromium to verify live V6 URL (Living Sky + 7 Grand Transitions + 12 Clicks):', url);
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
 
@@ -42,30 +42,41 @@ async function verifyLiveGitHubPages() {
   if (res.status() !== 200) throw new Error('Expected HTTP 200, got ' + res.status());
 
   await page.waitForSelector('#landing-page', { timeout: 15000 });
+  await page.waitForSelector('#living-sky-layer', { timeout: 15000 });
   await page.waitForSelector('.reveal.ready', { timeout: 15000 });
   await page.waitForTimeout(500);
 
-  // 1. Verify V5 Initial HUD indicator (1 unified Landing state: MỞ ĐẦU 20/11)
+  // 1. Verify V6 Initial HUD indicator & Living Sky
   const initHud = await page.locator('#hud-indicator').textContent();
-  console.log('Live V5 Initial HUD Indicator:', initHud?.trim());
+  const skyMood = await page.locator('#living-sky-layer').getAttribute('data-sky-mood');
+  console.log('Live V6 Initial HUD Indicator:', initHud?.trim(), '| Sky Mood:', skyMood);
   if (initHud?.trim() !== 'MỞ ĐẦU 20/11') {
     throw new Error('Expected MỞ ĐẦU 20/11 on Landing, got: ' + initHud);
   }
 
   // Verify Landing Page Poster is immediately visible without extra clicks
   const landingCheck = await verifyPoster(page, '#landing-full-poster-img');
-  console.log('Live V5 Landing Page Poster Check:', JSON.stringify(landingCheck));
+  console.log('Live V6 Landing Page Poster Check:', JSON.stringify(landingCheck));
   if (!landingCheck.POSTER_FULLY_VISIBLE) {
     throw new Error('Landing page poster not fully visible on live site!');
   }
 
   // 2. Step through all 12 clicks (from State 0 Landing to State 12 Slide 06 Finale)
-  await page.keyboard.press('l'); // Lite mode for crisp live walk
   for (let click = 1; click <= 12; click++) {
     await page.click('#hud-next');
     await page.waitForFunction(() => window.PresentationState && !window.PresentationState.isTransitioning);
     const hud = await page.locator('#hud-indicator').textContent();
-    console.log(`  Click ${click}/12 -> HUD: ${hud?.trim()}`);
+    const transTheme = await page.locator('#scene-transition-overlay').getAttribute('data-transition-theme');
+    console.log(`  Click ${click}/12 -> HUD: ${hud?.trim()} | Transition Theme: ${transTheme}`);
+
+    // On Click 8 (Slide 05 Stage 1), verify the new replacement photo curated-20-clb-cntt-dntu-project.jpg
+    if (click === 8) {
+      const side3Src = await page.locator('#s5-side3-img').getAttribute('src');
+      console.log('  Live V6 Slide 05 Stage 1 s5-side3-img src:', side3Src);
+      if (!side3Src?.includes('curated-20-clb-cntt-dntu-project.jpg')) {
+        throw new Error('Expected curated-20-clb-cntt-dntu-project.jpg on live Slide 05 Stage 1, got: ' + side3Src);
+      }
+    }
   }
 
   const finalHud = await page.locator('#hud-indicator').textContent();

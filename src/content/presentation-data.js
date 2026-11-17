@@ -86,10 +86,10 @@ export const SLIDE5_SCENES = [
         caption: 'Từ những lời động viên đầu tiên của thầy cô, người sinh viên dần trưởng thành trên bục phát biểu.'
       },
       {
-        src: './assets/curated/curated-02-hoc-tap-nhom.jpg',
-        badge: 'HỌC TẬP & SẺ CHIA',
-        title: 'Cùng Bạn Bè Thảo Luận Chuyên Môn Bên Chiếc Laptop',
-        caption: 'Tinh thần đồng hành, cùng nhau học tập và giải quyết bài toán công nghệ tại giảng đường.'
+        src: './assets/curated/curated-20-clb-cntt-dntu-project.jpg',
+        badge: 'KHOA CNTT · CLB KHOA HỌC MÁY TÍNH DNTU',
+        title: 'Thực Hành & Trưng Bày Dự Án Phần Mềm Cùng CLB Khoa Học Máy Tính DNTU',
+        caption: 'Cùng bạn bè Khoa CNTT giới thiệu dự án phần mềm “Fruits Collect” tại không gian học thuật và đổi mới sáng tạo DNTU.'
       }
     ]
   },
@@ -292,10 +292,10 @@ export const PRESENTATION_STEPS_CONFIG = [
       {
         stepIndex: 0,
         id: 's5-stage-1',
-        label: 'Chặng 1/3 — Khởi đầu & Được dìu dắt (Cô Liệu, Thầy cô Khoa CNTT & Giảng đường)',
-        cue: 'Chặng 1 hiển thị 4 ảnh thật: nụ cười khích lệ của cô Liệu trên giảng đường, tập thể thầy cô Khoa CNTT tại DNTU Creative Fest, đứng phát biểu tại Hội trường DNTU và học nhóm.',
+        label: 'Chặng 1/3 — Khởi đầu & Được dìu dắt (Cô Liệu, Thầy cô Khoa CNTT & Dự án CLB Khoa học Máy tính)',
+        cue: 'Chặng 1 hiển thị 4 ảnh thật: nụ cười khích lệ của cô Liệu trên giảng đường, tập thể thầy cô Khoa CNTT tại DNTU Creative Fest, tự tin đứng phát biểu tại Hội trường DNTU và trưng bày dự án phần mềm cùng CLB Khoa học Máy tính – Khoa CNTT DNTU.',
         script:
-          'Tại Slide 05, hành trình thực tế dưới mái trường DNTU được đúc kết qua 3 chặng ảnh thật. Mở đầu ở Chặng 1 — Khởi đầu và Được dìu dắt: từ nụ cười hiền hậu và tiếng vỗ tay khích lệ của cô Liệu trong giờ học, đến sự đồng hành của tập thể quý thầy cô Khoa CNTT tại các sân chơi học thuật, em đã dần vượt qua sự rụt rè để tự tin đứng trên bục phát biểu và học tập cùng bạn bè.'
+          'Tại Slide 05, hành trình thực tế dưới mái trường DNTU được đúc kết qua 3 chặng ảnh thật. Mở đầu ở Chặng 1 — Khởi đầu và Được dìu dắt: từ nụ cười hiền hậu và tiếng vỗ tay khích lệ của cô Liệu trong giờ học, đến sự đồng hành của tập thể quý thầy cô Khoa CNTT tại các sân chơi học thuật, em đã dần vượt qua sự rụt rè để tự tin đứng trên bục phát biểu và trực tiếp thực hành, trưng bày dự án phần mềm cùng CLB Khoa học Máy tính – Khoa CNTT DNTU.'
       },
       {
         stepIndex: 1,
