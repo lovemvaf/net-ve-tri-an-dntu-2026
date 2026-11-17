@@ -36,7 +36,7 @@
 
   <div class="cinematic-vignette"></div>
 
-  <!-- V8 Smooth & Elegant Transition Director Stage (Wire-Free Soft Light Veils & Parting Dawn Curtains) -->
+  <!-- V8/V9 Smooth & Elegant Transition Director Stage (Wire-Free Soft Light Veils & Parting Dawn Curtains) -->
   <div id="scene-transition-overlay" data-transition-theme="floral-light-gateway" aria-hidden="true">
     <div class="transition-veil-backdrop" id="transition-veil-backdrop"></div>
     <div class="transition-dawn-bloom" id="transition-dawn-bloom"></div>
@@ -44,6 +44,28 @@
     <div class="transition-curtain-left" id="transition-curtain-left"></div>
     <div class="transition-curtain-right" id="transition-curtain-right"></div>
   </div>
+
+  <!-- V9 Spectacular Foreground Grand VFX Canvas (z-index: 265 — Floral Storm, Golden Particle Wave & Grand Bird Flock) -->
+  <canvas id="grand-vfx-canvas" aria-hidden="true"></canvas>
+
+  <!-- V9 Developer-Only VFX Showcase & Debug Panel (Hidden in Presentation Mode; activated via ?vfx=1 or Shift+V) -->
+  <aside id="vfx-showcase-panel" aria-label="VFX Showcase & Debug Mode" aria-hidden="true">
+    <div class="vfx-panel-header">
+      <strong>✦ VFX SHOWCASE & PROTOTYPE LAB (V9)</strong>
+      <span id="vfx-telemetry-readout">FPS: 60 | Stars: 183 | Wave: 0 | Petals: 0 | Birds: 0</span>
+      <button type="button" id="btn-vfx-close" title="Đóng VFX Showcase">✕</button>
+    </div>
+    <div class="vfx-panel-grid">
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-landing-sky" data-vfx-mode="landing-sky">1. Preview Landing Sky</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-bird-flock" data-vfx-mode="bird-flock">2. Preview Bird Flock</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-particle-wave" data-vfx-mode="particle-wave">3. Preview Golden Particle Wave</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-floral-storm" data-vfx-mode="floral-storm">4. Preview Floral Storm</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-grand-tribute" data-vfx-mode="grand-tribute">5. Preview Grand Tribute (05→06)</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-final-poster" data-vfx-mode="final-poster">6. Preview Final Poster Reveal</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-reduced-motion" data-vfx-mode="reduced-motion">7. Preview Reduced Motion</button>
+      <button type="button" class="vfx-preview-btn" id="btn-vfx-lite-mode" data-vfx-mode="lite-mode">8. Preview Lite Mode</button>
+    </div>
+  </aside>
 
   <!-- =====================================================================
        INDEPENDENT 20/11 FLORAL CINEMATIC GRAND OPENING LANDING PAGE

@@ -321,9 +321,81 @@ export async function initPresentationApp() {
     }
   }
 
+  // V9 VFX Showcase & Prototype Mode Controller (Development / QA Only)
+  function triggerVfxShowcaseMode(mode) {
+    document.querySelectorAll('.vfx-preview-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-vfx-mode') === mode);
+    });
+    if (mode === 'landing-sky') {
+      isReducedMotion = false;
+      webgl.setReducedMotion(false);
+      webgl.setLiteMode(false);
+      goToState(-1, 0);
+      webgl.triggerGrandMoment('landing-opening');
+    } else if (mode === 'bird-flock') {
+      isReducedMotion = false;
+      webgl.setReducedMotion(false);
+      if (state.slideIndex !== 2 && state.slideIndex !== -1) goToState(2, 0);
+      webgl.triggerGrandMoment('bird-flock-only');
+    } else if (mode === 'particle-wave') {
+      isReducedMotion = false;
+      webgl.setReducedMotion(false);
+      webgl.triggerGrandMoment('particle-wave-only');
+    } else if (mode === 'floral-storm') {
+      isReducedMotion = false;
+      webgl.setReducedMotion(false);
+      webgl.triggerGrandMoment('floral-storm-only');
+    } else if (mode === 'grand-tribute') {
+      isReducedMotion = false;
+      webgl.setReducedMotion(false);
+      goToState(5, 0);
+      webgl.triggerGrandMoment('thousand-thank-yous');
+    } else if (mode === 'final-poster') {
+      isReducedMotion = false;
+      webgl.setReducedMotion(false);
+      goToState(5, 1);
+      webgl.triggerGrandMoment('beyond-the-horizon');
+    } else if (mode === 'reduced-motion') {
+      isReducedMotion = true;
+      document.body.classList.add('reduced-motion');
+      webgl.setReducedMotion(true);
+      motion.setReducedMotion(true);
+    } else if (mode === 'lite-mode') {
+      isReducedMotion = false;
+      document.body.classList.remove('reduced-motion');
+      webgl.setReducedMotion(false);
+      webgl.setLiteMode(true);
+      webgl.triggerGrandMoment('landing-opening');
+    }
+    return webgl.getVfxStats();
+  }
+
+  if (new URLSearchParams(window.location.search).get('vfx') === '1') {
+    document.body.classList.add('vfx-showcase-active');
+  }
+
+  document.querySelectorAll('.vfx-preview-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const mode = btn.getAttribute('data-vfx-mode');
+      if (mode) triggerVfxShowcaseMode(mode);
+    });
+  });
+
+  document.getElementById('btn-vfx-close')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.body.classList.remove('vfx-showcase-active');
+  });
+
   // Expose State & Control APIs on window for automated Playwright verification
   window.PresentationState = state;
   window.AmbientEngine = webgl;
+  window.VFXShowcase = {
+    open: () => document.body.classList.add('vfx-showcase-active'),
+    close: () => document.body.classList.remove('vfx-showcase-active'),
+    trigger: triggerVfxShowcaseMode,
+    getStats: () => webgl.getVfxStats()
+  };
   window.nextStep = nextStep;
   window.previousStep = previousStep;
   window.prevStep = previousStep;
@@ -387,6 +459,9 @@ export async function initPresentationApp() {
     } else if (e.key === 'e' || e.key === 'E') {
       e.preventDefault();
       toggleEditMode();
+    } else if (e.shiftKey && (e.key === 'V' || e.key === 'v')) {
+      e.preventDefault();
+      document.body.classList.toggle('vfx-showcase-active');
     } else if (e.key === 'Escape') {
       e.preventDefault();
       handleEscape();

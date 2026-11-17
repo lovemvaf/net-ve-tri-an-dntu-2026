@@ -46,11 +46,14 @@ async function verifyLiveGitHubPages() {
   await page.waitForSelector('.reveal.ready', { state: 'attached', timeout: 15000 });
   await page.waitForTimeout(500);
 
-  // 1. Verify V8 Initial HUD indicator, Ambient Sky Canvas & Wire-Free Cleanliness
+  // 1. Verify V9 Initial HUD indicator, Dual-Canvas VFX Layer & Wire-Free Cleanliness
   const initHud = await page.locator('#hud-indicator').textContent();
-  const v8Check = await page.evaluate(() => {
+  const v9Check = await page.evaluate(() => {
     const sky = document.getElementById('living-sky-layer');
     const canvas = document.getElementById('ambient-sky-canvas');
+    const grandCanvas = document.getElementById('grand-vfx-canvas');
+    const grandZ = grandCanvas ? Number(window.getComputedStyle(grandCanvas).zIndex) : 0;
+    const stats = window.VFXShowcase ? window.VFXShowcase.getStats() : null;
     const wireFree =
       !document.getElementById('landing-pen-stroke') &&
       !document.getElementById('sky-horizon-ribbons') &&
@@ -60,16 +63,18 @@ async function verifyLiveGitHubPages() {
     return {
       skyMood: sky?.getAttribute('data-sky-mood'),
       ambientState: sky?.getAttribute('data-ambient-state'),
-      canvasReady: Boolean(canvas && canvas.width > 0 && canvas.height > 0),
+      canvasReady: Boolean(canvas && canvas.width === 1920 && grandCanvas && grandCanvas.width === 1920),
+      grandZ,
+      stats,
       wireFree
     };
   });
-  console.log('Live V8 Initial HUD Indicator:', initHud?.trim(), '| V8 Sky Check:', JSON.stringify(v8Check));
+  console.log('Live V9 Initial HUD Indicator:', initHud?.trim(), '| V9 VFX Check:', JSON.stringify(v9Check));
   if (initHud?.trim() !== 'MỞ ĐẦU 20/11') {
     throw new Error('Expected MỞ ĐẦU 20/11 on Landing, got: ' + initHud);
   }
-  if (!v8Check.canvasReady || !v8Check.wireFree) {
-    throw new Error('Live V8 wire-free ambient sky check failed: ' + JSON.stringify(v8Check));
+  if (!v9Check.canvasReady || v9Check.grandZ !== 265 || !v9Check.wireFree) {
+    throw new Error('Live V9 dual-canvas VFX check failed: ' + JSON.stringify(v9Check));
   }
 
   // Verify Landing Page Poster is immediately visible without extra clicks
