@@ -82,7 +82,7 @@
 | Playwright E2E suite (`pnpm test`) | **PASS** | `tests/nq57_exhibition.spec.js`: **`5 passed (37.1s)`** (0 failed, 0 skipped). |
 | Kiểm tra trực quan screenshots & `CONTACT_SHEET.png` | **PASS** | Đã xem bằng mắt qua `read_file` cả 05 PNG xuất, `CONTACT_SHEET.png`, và 09 screenshot trình duyệt (`1920×1080`, `1366×768`, `390×844`). |
 | Kiểm tra quyền sử dụng repo/assets (`REPO_AUDIT_213.md`) | **PASS** | Chỉ dùng thư viện permissive/cho phép (`GSAP`, `reveal.js` MIT, `vite` MIT, `playwright` Apache-2.0, `@fontsource/be-vietnam-pro` OFL-1.1, `qrcode` MIT, `jsqr` Apache-2.0, `Pillow`/`NumPy`); loại trừ `fullPage.js` (GPL-3.0) & `react-bits` (Commons Clause). |
-| Kiểm tra triển khai URL production thật (`https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/`) | **PENDING_LIVE_DEPLOY** | Sẽ chạy push GitHub + `scripts/verify_live_nq57.mjs` và cập nhật kết quả thực tế ngay bên dưới. |
+| Kiểm tra triển khai URL production thật (`https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/`) | **PASS** | Đã đẩy nhánh backup (`backup/net-ve-tri-an-20-11-v10`), tag (`archive-net-ve-tri-an-20-11-v10`) và nhánh `main` (`ff711d5f47dc4ed696a14982fc610b2c565dcc3d`); GitHub Actions run `45842969000` đạt `completed/success` (`2026-11-26T14:50:48Z`); `node scripts/verify_live_nq57.mjs` PASS (HTTP 200, 5/5 cảnh `1080×1350 contain`, QR + link `mst.gov.vn`, `0` console/page/404 errors, `0` chuỗi 20/11). |
 
 ### Gate 6 — Bài thi & bàn giao trung thực (`I7`)
 | Hạng mục kiểm định | Trạng thái | Ghi chú trung thực |
@@ -109,4 +109,49 @@
 
 ## 3. Nhật ký triển khai & kiểm chứng Production Live (GitHub Pages)
 
-*(Đang chờ push git và chạy `node scripts/verify_live_nq57.mjs` để ghi nhận Commit SHA, trạng thái backup ref và kết quả kiểm tra URL thực tế `https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/`.)*
+- **Backup dự án cũ 20/11 (không force-push):**
+  - Branch: `backup/net-ve-tri-an-20-11-v10` → `5ecd4c1` (đã đẩy lên `origin`)
+  - Tag: `archive-net-ve-tri-an-20-11-v10` → `5ecd4c1` (đã đẩy lên `origin`)
+- **Production Deploy trên `main`:**
+  - Verified Live Build Commit SHA: `ff711d5f47dc4ed696a14982fc610b2c565dcc3d`
+  - GitHub Actions Workflow Run: `45842969000` (`Deploy Cinematic Presentation to GitHub Pages`) → `completed / success` (`2026-11-26T14:50:48Z`)
+  - Live URL: `https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/`
+  - Thời điểm kiểm chứng live (`scripts/verify_live_nq57.mjs`): `2026-11-26 21:51:44 GMT+7` (`2026-11-26T14:51:44Z`)
+- **Kết quả thực tế `node scripts/verify_live_nq57.mjs`:**
+  ```text
+  [INFO] Live URL HTTP status: 200
+  [PASS] Live site opens directly on 01 / 05 with 1080x1350 poster & Đoàn emblem
+  [PASS] Scene 02 / 05 (02_HieuDung_DeBatDau.png) verified 1080x1350 contain
+  [PASS] Scene 03 / 05 (03_CongNghe_ViConNguoi.png) verified 1080x1350 contain
+  [PASS] Scene 04 / 05 (04_ThanhNienDongNai_HanhDong.png) verified 1080x1350 contain
+  [PASS] Scene 05 / 05 (05_HieuDung_LamThat_LanToa.png) verified 1080x1350 contain
+  [PASS] Scene 05/05 #btn-next disabled and #btn-official-link matches mst.gov.vn URL
+  [PASS] LIVE VERIFICATION COMPLETE (https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/) — 0 console errors, 0 page errors, 0 failed/404 requests, 0 20/11 strings.
+  ```
+- **Ảnh chụp màn hình production live đã kiểm định trực quan:**
+  - `test-results/nq57-screenshots/live_1920x1080_scene_01.png`
+  - `test-results/nq57-screenshots/live_1920x1080_scene_05.png`
+
+---
+
+## 4. Tóm tắt tuân thủ chuẩn bàn giao (`COMPLIANCE SUMMARY`)
+
+```text
+COMPLIANCE SUMMARY
+[x] BTC-01 Chủ đề/đối tượng/địa bàn (Chủ đề 1 NQ 57-NQ/TW; địa bàn cụm chờ Phiếu đăng ký)
+[x] BTC-02 05 ảnh 1080x1350 PNG/JPG (Mục 2 hoàn tất: 01..05 PNG sRGB 1080x1350)
+[x] BTC-04 Nội dung Nghị quyết 57 chính xác (đối chiếu mst.gov.vn HTTP 200)
+[x] BTC-06 Logo/bản quyền/AI minh bạch (Huy hiệu Đoàn nguyên bản; OFL-1.1/MIT/Apache-2.0)
+[x] FACT-03 Fact check toàn bộ chữ (FACT_CHECK_NQ57.md — 0 UNVERIFIED)
+[x] ART-01 2D tự nhiên, không photoreal/3D (character-style-sheet + 01..05_raw.png)
+[x] STORY-01 05 ảnh liên kết (03 học -> 04 thực hành -> 05 hướng dẫn lại)
+[x] PROD-01 05 file export + editable (editable/01.svg..05.svg + CONTACT_SHEET.png)
+[x] PROD-03 QR hợp lệ + source (jsQR decode pixel Poster 05 khớp 100% mst.gov.vn)
+[x] WEB-02 Web 05 cảnh / 04 lần Next (Playwright local 5/5 PASS + live GitHub Pages PASS)
+[ ] QA-GATES 0–6 PASS (Gate 1–5 PASS; Gate 0 & Gate 6 ở trạng thái DRAFT_PENDING_OFFICIAL_METADATA chờ Đội số/Cụm/Xã-phường/Đội trưởng)
+
+FILES: DESIGN_CHUDE1_DRAFT/02_ThietKe/01_NghiQuyet57_GanBan.png .. 05_HieuDung_LamThat_LanToa.png, CONTACT_SHEET.png, editable/01.svg..05.svg, campaign.config.json, FACT_CHECK_NQ57.md, SOURCES.md, REPO_AUDIT_213.md, ILLUSTRATION_NOTES.md, DESIGN_QA_REPORT.md, DESIGN_CHUDE1_DRAFT/Website_TrinhChieu/README.md, tests/nq57_exhibition.spec.js, scripts/verify_live_nq57.mjs
+DEPLOYED_URL: https://lovemvaf.github.io/net-ve-tri-an-dntu-2026/ (Verified commit ff711d5f47dc4ed696a14982fc610b2c565dcc3d)
+MISSING_INPUT: doiSo (Đội số), cumDonVi (Cụm), diaBanCuThe (xã/phường), doiTruong (Đội trưởng); cùng 03 sản phẩm của thành viên khác (Mục 1 Video, Mục 3 Bài đăng Word, Mục 4 Thuyết minh) trước hạn nộp 21:00 ngày 26/11/2026.
+BLOCKERS: Không có blocker kỹ thuật cho Mục 2 & Website bổ trợ.
+```
