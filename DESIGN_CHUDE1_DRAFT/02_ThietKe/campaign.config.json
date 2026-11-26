@@ -1,0 +1,141 @@
+{
+  "status": "DRAFT_PENDING_OFFICIAL_METADATA",
+  "metadata": {
+    "doiSo": null,
+    "cumDonVi": null,
+    "diaBanCuThe": null,
+    "doiTruong": null,
+    "hanNop": "21:00 ngày 26/11/2026"
+  },
+  "competition": {
+    "name": "Trại Thanh niên số thành phố Đồng Nai năm 2026",
+    "round": "Vòng thực chiến",
+    "generalTheme": "Cán bộ Đoàn tuyên truyền trên môi trường số",
+    "selectedTopic": "Chủ đề 1 – Nghị quyết đến gần thanh niên (Tuyên truyền nghị quyết)",
+    "submissionCategory": "Mục 2 – Thiết kế (bộ 05 ấn phẩm 1080 × 1350 px)",
+    "targetAudience": "Đoàn viên, thanh niên và sinh viên tại địa bàn cụm ở thành phố Đồng Nai; minh họa lợi ích thiết thực với người dân",
+    "targetFolderPatternWhenVerified": "Doi<SO_DOI>_ChuDe1/02_ThietKe",
+    "workingDraftFolder": "DESIGN_CHUDE1_DRAFT/02_ThietKe",
+    "metadataVerificationNote": "Đã kiểm tra trực tiếp DeThi_VongThucChien_TraiThanhNienSo2026_v2_BanIn.docx và TRẠI THANH NIÊN SỐ.xlsx: không chứa Đội số, Cụm, xã/phường cụ thể hay tên Đội trưởng. Giữ null và trạng thái DRAFT_PENDING_OFFICIAL_METADATA cho đến khi đội cung cấp Phiếu đăng ký chính thức.",
+    "presentationSchedule": "Sáng 27/11/2026 (tổng tối đa 10 phút: trình bày tối đa 06 phút, phản biện 04 phút)"
+  },
+  "officialResolutionUrl": "https://mst.gov.vn/toan-van-nghi-quyet-57-nq-tw-ve-dot-pha-phat-trien-khoa-hoc-cong-nghe-doi-moi-sang-tao-va-chuyen-doi-so-quoc-gia-197250813164610621.htm",
+  "resolution": {
+    "code": "57-NQ/TW",
+    "issuedBy": "Bộ Chính trị",
+    "issuedDate": "22/12/2024",
+    "fullTitle": "Nghị quyết về đột phá phát triển khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số quốc gia"
+  },
+  "palette": {
+    "youthBlue": "#1764B0",
+    "academicNavy": "#10294B",
+    "redAccent": "#E52E37",
+    "warmIvory": "#F6F4ED",
+    "champagneGold": "#F0C76D",
+    "deepGreen": "#075837"
+  },
+  "typography": {
+    "primaryFamily": "Be Vietnam Pro",
+    "package": "@fontsource/be-vietnam-pro",
+    "license": "OFL-1.1"
+  },
+  "canvas": {
+    "width": 1080,
+    "height": 1350,
+    "aspectRatio": "4:5",
+    "colorSpace": "sRGB",
+    "safeAreaMinPx": 56,
+    "primaryExportFormat": "PNG"
+  },
+  "emblem": {
+    "sourceOriginal": "DESIGN_CHUDE1_DRAFT/02_ThietKe/identity/original/huy-hieu-doan-original.jpg",
+    "publicOriginal": "public/assets/identity/original/huy-hieu-doan-original.jpg",
+    "derivedClean": "DESIGN_CHUDE1_DRAFT/02_ThietKe/identity/derived/huy-hieu-doan-clean.png",
+    "publicDerivedClean": "public/assets/identity/derived/huy-hieu-doan-clean.png",
+    "usageRule": "Giữ nguyên hình mẫu và màu sắc gốc của Huy hiệu Đoàn Thanh niên Cộng sản Hồ Chí Minh; không dùng AI vẽ lại hay biến tấu."
+  },
+  "sharedCopy": {
+    "headerLabel": "NGHỊ QUYẾT 57-NQ/TW",
+    "footerEvent": "Trại Thanh niên số thành phố Đồng Nai 2026",
+    "sourceLine": "Nguồn: Nghị quyết 57-NQ/TW, Bộ Chính trị (22/12/2024).",
+    "aiDisclosureWeb": "Hình ảnh minh họa được tạo với sự hỗ trợ của AI."
+  },
+  "posters": [
+    {
+      "id": 1,
+      "index": "01/05",
+      "filename": "01_NghiQuyet57_GanBan.png",
+      "editableSvg": "editable/01.svg",
+      "sourceIllustration": "source_illustrations/01_raw.png",
+      "role": "Thu hút & đặt vấn đề",
+      "storyBeat": "ĐẶT CÂU HỎI",
+      "title": "NGHỊ QUYẾT 57 GẦN BẠN THẾ NÀO?",
+      "subtitle": "Từ một câu hỏi nhỏ, mở ra hành trình lớn.",
+      "microNote": null,
+      "cta": null,
+      "hasQr": false,
+      "speakerCue": "Có những nghị quyết nghe rất lớn và nhiều thuật ngữ. Nhưng với người trẻ, câu hỏi gần nhất lại là: điều đó liên quan gì đến mình?"
+    },
+    {
+      "id": 2,
+      "index": "02/05",
+      "filename": "02_HieuDung_DeBatDau.png",
+      "editableSvg": "editable/02.svg",
+      "sourceIllustration": "source_illustrations/02_raw.png",
+      "role": "Tóm tắt dễ hiểu",
+      "storyBeat": "HIỂU ĐÚNG",
+      "title": "HIỂU ĐÚNG ĐỂ BẮT ĐẦU",
+      "subtitle": "Khoa học, công nghệ · Đổi mới sáng tạo · Chuyển đổi số",
+      "microNote": "Ba nội dung gợi nhớ để dễ hiểu",
+      "cta": null,
+      "hasQr": false,
+      "speakerCue": "Khi bắt đầu tìm hiểu, chúng em nhận ra khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số không chỉ là những khái niệm. Quan trọng hơn là biết học và ứng dụng chúng đúng cách."
+    },
+    {
+      "id": 3,
+      "index": "03/05",
+      "filename": "03_CongNghe_ViConNguoi.png",
+      "editableSvg": "editable/03.svg",
+      "sourceIllustration": "source_illustrations/03_raw.png",
+      "role": "Giá trị thiết thực",
+      "storyBeat": "THẤY GIÁ TRỊ",
+      "title": "CÔNG NGHỆ VÌ CON NGƯỜI",
+      "subtitle": "Thêm một kỹ năng số, thêm một người tự tin.",
+      "microNote": null,
+      "cta": null,
+      "hasQr": false,
+      "speakerCue": "Đôi khi sự thay đổi bắt đầu rất nhỏ: thêm một người tự tin sử dụng chiếc điện thoại, thêm một việc được thực hiện thuận tiện hơn."
+    },
+    {
+      "id": 4,
+      "index": "04/05",
+      "filename": "04_ThanhNienDongNai_HanhDong.png",
+      "editableSvg": "editable/04.svg",
+      "sourceIllustration": "source_illustrations/04_raw.png",
+      "role": "Đề xuất việc làm",
+      "storyBeat": "BẮT TAY HÀNH ĐỘNG",
+      "title": "THANH NIÊN ĐỒNG NAI HÀNH ĐỘNG",
+      "subtitle": "Học kỹ năng số · Hỗ trợ người dân · Sáng tạo",
+      "microNote": "Gợi ý phần việc thanh niên tại cơ sở",
+      "cta": null,
+      "hasQr": false,
+      "speakerCue": "Và khi nhiều bạn trẻ cùng chung tay, việc nhỏ có thể trở thành hoạt động thiết thực ở cơ sở: học kỹ năng số, hỗ trợ người dân, chia sẻ điều mình biết."
+    },
+    {
+      "id": 5,
+      "index": "05/05",
+      "filename": "05_HieuDung_LamThat_LanToa.png",
+      "editableSvg": "editable/05.svg",
+      "sourceIllustration": "source_illustrations/05_raw.png",
+      "role": "CTA & kết",
+      "storyBeat": "LAN TỎA",
+      "title": "HIỂU ĐÚNG. LÀM THẬT. LAN TỎA.",
+      "subtitle": "Bắt đầu từ một việc nhỏ hôm nay.",
+      "microNote": null,
+      "cta": "QUÉT MÃ ĐỌC NGHỊ QUYẾT GỐC",
+      "hasQr": true,
+      "qrTargetUrl": "https://mst.gov.vn/toan-van-nghi-quyet-57-nq-tw-ve-dot-pha-phat-trien-khoa-hoc-cong-nghe-doi-moi-sang-tao-va-chuyen-doi-so-quoc-gia-197250813164610621.htm",
+      "speakerCue": "Đến khi người được giúp có thể tự chia sẻ lại cho người khác, chúng ta thấy kiến thức thật sự được lan tỏa. Đó là tinh thần mà bộ ấn phẩm muốn gửi gắm."
+    }
+  ]
+}

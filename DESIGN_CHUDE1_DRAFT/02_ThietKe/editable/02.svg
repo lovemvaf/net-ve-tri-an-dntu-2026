@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1350" width="1080" height="1350">
+  <defs>
+    <clipPath id="canvas-clip">
+      <rect x="0" y="0" width="1080" height="1350" />
+    </clipPath>
+    <linearGradient id="top-scrim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F6F4ED" stop-opacity="0.98" />
+      <stop offset="62%" stop-color="#F6F4ED" stop-opacity="0.93" />
+      <stop offset="86%" stop-color="#F6F4ED" stop-opacity="0.62" />
+      <stop offset="100%" stop-color="#F6F4ED" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="bottom-scrim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10294B" stop-opacity="0.0" />
+      <stop offset="32%" stop-color="#10294B" stop-opacity="0.82" />
+      <stop offset="44%" stop-color="#10294B" stop-opacity="0.97" />
+      <stop offset="64%" stop-color="#10294B" stop-opacity="0.99" />
+      <stop offset="100%" stop-color="#10294B" stop-opacity="1" />
+    </linearGradient>
+    <filter id="soft-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#10294B" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <g id="layer-background">
+    <rect x="0" y="0" width="1080" height="1350" fill="#F6F4ED" />
+  </g>
+
+  <g id="layer-illustration">
+    <g clip-path="url(#canvas-clip)">
+      <image id="source-artwork" href="../source_illustrations/02_raw.png" x="0" y="-96.43" width="1080" height="1446.43" preserveAspectRatio="xMidYMid slice" />
+      <rect x="0" y="0" width="1080" height="385" fill="url(#top-scrim)" />
+      <rect x="0" y="1214" width="1080" height="136" fill="url(#bottom-scrim)" />
+    </g>
+    
+  </g>
+
+  <g id="layer-header">
+    <rect x="64" y="56" width="100" height="108" rx="20" fill="#FFFFFF" fill-opacity="0.96" stroke="#10294B" stroke-opacity="0.14" stroke-width="1.5" filter="url(#soft-shadow)" />
+    <image id="doan-emblem" href="../identity/derived/huy-hieu-doan-clean.png" x="72" y="63.49" width="84" height="93.02" preserveAspectRatio="xMidYMid meet" />
+
+    <g id="header-resolution-badge">
+      <rect x="184" y="68" width="304" height="42" rx="21" fill="#1764B0" />
+      <circle cx="208" cy="89" r="5.5" fill="#E52E37" />
+      <text x="224" y="95" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="1.1" fill="#FFFFFF">NGHỊ QUYẾT 57-NQ/TW</text>
+    </g>
+
+    <g id="header-index-pill">
+      <rect x="904" y="68" width="112" height="42" rx="21" fill="#FFFFFF" fill-opacity="0.94" stroke="#10294B" stroke-opacity="0.18" stroke-width="1.5" />
+      <circle cx="928" cy="89" r="5" fill="#F0C76D" />
+      <text x="972" y="96" text-anchor="middle" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="19" font-weight="800" letter-spacing="0.6" fill="#10294B">02/05</text>
+    </g>
+  </g>
+
+  <g id="layer-typography">
+    
+    <g id="micro-note-pill">
+      <rect x="378" y="170" width="324" height="34" rx="17" fill="#FCF5E1" stroke="#F0C76D" stroke-width="1.5" />
+      <text x="540" y="193" text-anchor="middle" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="18" font-weight="700" fill="#10294B">Ba nội dung gợi nhớ để dễ hiểu</text>
+    </g>
+    <text id="poster-title" x="540" y="268" text-anchor="middle" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="52" font-weight="800" letter-spacing="-0.6" fill="#10294B"><tspan x="540" dy="0">HIỂU ĐÚNG ĐỂ BẮT ĐẦU</tspan></text>
+    <rect x="472" y="286" width="88" height="5" rx="2.5" fill="#E52E37" />
+    <rect x="566" y="286" width="42" height="5" rx="2.5" fill="#F0C76D" />
+    <text id="poster-subtitle" x="540" y="320" text-anchor="middle" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="24" font-weight="600" fill="#1764B0">Khoa học, công nghệ · Đổi mới sáng tạo · Chuyển đổi số</text>
+  </g>
+
+
+
+  <g id="layer-footer">
+    <rect x="0" y="1214" width="1080" height="136" fill="#10294B" />
+    <rect x="0" y="1214" width="1080" height="4" fill="#F0C76D" />
+    <text id="footer-event" x="64" y="1256" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="19" font-weight="700" fill="#F6F4ED">Trại Thanh niên số thành phố Đồng Nai 2026</text>
+    <text id="footer-source" x="64" y="1286" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="18" font-weight="500" fill="#F0C76D">Nguồn: Nghị quyết 57-NQ/TW, Bộ Chính trị (22/12/2024).</text>
+  </g>
+</svg>

@@ -1,642 +1,238 @@
 import Reveal from 'reveal.js';
+import { EXHIBITION_META, SCENES } from '../content/presentation-data.js';
 import { createWebGLBackground } from './webgl-background.js';
 import { createMotionController } from './motion-controller.js';
-import { PRESENTATION_STEPS_CONFIG, SLIDE3_ZONES, SLIDE5_SCENES } from '../content/presentation-data.js';
 
 export async function initPresentationApp() {
-  const canvas = document.getElementById('webgl-canvas');
-  const webgl = createWebGLBackground(canvas);
+  const backdropCanvas = document.getElementById('editorial-backdrop-canvas');
+  const backdrop = createWebGLBackground(backdropCanvas);
   const motion = createMotionController();
 
-  let isReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
+  const totalScenes = SCENES.length;
+  const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
 
-  // Presentation Timer State (does NOT reset when moving across sub-steps)
-  let timerSeconds = 0;
-  let timerInterval = null;
-  let timerRunning = false;
-
-  // Compute flat sequence registry across Landing (-1) and Slides 0..5
-  const flatSteps = [];
-  PRESENTATION_STEPS_CONFIG.forEach((conf) => {
-    conf.steps.forEach((st) => {
-      flatSteps.push({
-        sequenceIndex: flatSteps.length,
-        slideIndex: conf.slideIndex,
-        slideId: conf.slideId,
-        stepIndex: st.stepIndex,
-        stepId: st.id,
-        label: st.label
-      });
-    });
-  });
-  const totalGlobalSteps = flatSteps.length;
-
-  // SINGLE SOURCE OF TRUTH: V4 GLOBAL PRESENTATION STATE ENGINE
   const state = {
-    currentSequenceIndex: 0,
-    currentSlideId: 'landing',
-    currentStepId: 'landing-step-1',
-    slideIndex: -1, // -1 = Landing Page, 0..5 = Slide 01..06
-    stepIndex: 0,
-    isAnimating: false,
-    isTransitioning: false,
-    isOverviewOpen: false,
-    isLightboxOpen: false,
-    presentationMode: 'presentation',
-    mode: 'presentation',
-    overlay: null
+    sceneIndex: 0,
+    sceneNumber: 1,
+    totalScenes,
+    sceneLabel: SCENES[0].badge,
+    isFirst: true,
+    isLast: false,
+    notesOpen: true,
+    liteMode: prefersReduced,
+    zoomOpen: false,
+    isFullscreen: false
   };
 
-  function getSlideConfig(slideIdx) {
-    return PRESENTATION_STEPS_CONFIG.find((c) => c.slideIndex === slideIdx) || PRESENTATION_STEPS_CONFIG[0];
+  if (state.liteMode) {
+    document.body.classList.add('lite-mode');
+    backdrop.setReducedMotion(true);
+    motion.setDisabled(true);
   }
 
-  function getGlobalStepNumber(slideIdx, stepIdx) {
-    let count = 0;
-    for (const conf of PRESENTATION_STEPS_CONFIG) {
-      if (conf.slideIndex < slideIdx) {
-        count += conf.steps.length;
-      } else if (conf.slideIndex === slideIdx) {
-        count += stepIdx + 1;
-        break;
-      }
-    }
-    return count;
-  }
-
-  // Initialize Reveal.js with internal keyboard/touch disabled so our Global State Machine is the sole controller
-  const deck = new Reveal({
-    width: 1920,
-    height: 1080,
-    margin: 0.03,
-    minScale: 0.15,
-    maxScale: 2.0,
+  // Initialize Reveal.js with layout & native key capture disabled so our 5-scene controller stays authoritative
+  const deck = new Reveal(document.getElementById('nq57-reveal'), {
+    disableLayout: true,
     controls: false,
     progress: false,
     keyboard: false,
     touch: false,
     history: false,
-    center: true,
     hash: false,
-    transition: 'fade',
-    backgroundTransition: 'fade'
+    loop: false,
+    overview: true,
+    transition: 'none'
   });
 
   await deck.initialize();
   window.Reveal = deck;
 
-  // Preload all curated Slide 03, Slide 05 & Slide 06 images for instant 0ms scene switching
-  const preloadUrls = new Set([
-    './assets/optimized/poster-full.jpg',
-    './assets/optimized/crop-teacher.jpg',
-    './assets/optimized/crop-teacher-code.jpg',
-    './assets/curated/curated-16-co-lieu-20-11-flowers.jpg',
-    './assets/curated/curated-18-co-lieu-aibot-rose.jpg'
-  ]);
-  SLIDE3_ZONES.forEach((z) => {
-    if (z.cropSrc) preloadUrls.add(z.cropSrc);
-  });
-  SLIDE5_SCENES.forEach((sc) => {
-    if (sc.hero?.src) preloadUrls.add(sc.hero.src);
-    (sc.sidePhotos || []).forEach((sp) => {
-      if (sp.src) preloadUrls.add(sp.src);
-    });
-  });
-  preloadUrls.forEach((src) => {
+  // Preload all 5 official posters and Đoàn emblem for 0ms scene transitions
+  [EXHIBITION_META.emblemSrc, ...SCENES.map((s) => s.posterSrc)].forEach((src) => {
     const img = new Image();
     img.src = src;
   });
 
-  // Sync when user clicks a slide in Reveal Overview Mode
-  deck.on('slidechanged', (event) => {
-    if (state.slideIndex !== -1 && event.indexh !== state.slideIndex && !state.isTransitioning) {
-      goToState(event.indexh, 0);
-    }
-  });
-  deck.on('overviewshown', () => {
-    state.isOverviewOpen = true;
-    state.presentationMode = 'overview';
-  });
-  deck.on('overviewhidden', () => {
-    state.isOverviewOpen = false;
-    state.presentationMode = 'presentation';
-  });
+  // DOM references
+  const shellEl = document.getElementById('exhibition-shell');
+  const posterImg = document.getElementById('poster-stage-img');
+  const posterFrame = document.getElementById('poster-museum-frame');
+  const hudProgress = document.getElementById('hud-progress');
+  const railStepBadge = document.getElementById('rail-step-badge');
+  const railPhaseTag = document.getElementById('rail-phase-tag');
+  const railBeatHeading = document.getElementById('rail-beat-heading');
+  const railNarrativeBody = document.getElementById('rail-narrative-body');
+  const railTransitionNote = document.getElementById('rail-transition-note');
+  const speakerCuePanel = document.getElementById('speaker-cue-panel');
+  const speakerCueText = document.getElementById('speaker-cue-text');
+  const scene05Actions = document.getElementById('scene-05-actions');
+  const globalProgressFill = document.getElementById('global-progress-fill');
 
-  // Core State Transition Executor (V10 Subscene-Aware & Promise-Synchronized)
-  let transitionToken = 0;
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const btnNotes = document.getElementById('btn-notes');
+  const btnCollapseCue = document.getElementById('btn-collapse-cue');
+  const btnZoom = document.getElementById('btn-zoom');
+  const btnRestart = document.getElementById('btn-restart');
+  const btnLite = document.getElementById('btn-lite');
+  const btnFullscreen = document.getElementById('btn-fullscreen');
 
-  function goToState(targetSlideIndex, targetStepIndex) {
-    const conf = getSlideConfig(targetSlideIndex);
-    const clampedStep = Math.max(0, Math.min(targetStepIndex, conf.steps.length - 1));
-    const prevSlideIndex = state.slideIndex;
-    const prevStepIndex = state.stepIndex;
-    const isSlideChange = prevSlideIndex !== targetSlideIndex;
-    const isFinaleReveal =
-      prevSlideIndex === 5 && prevStepIndex === 0 && targetSlideIndex === 5 && clampedStep === 1;
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const closeLightboxBtn = document.getElementById('close-lightbox');
+  const pillButtons = Array.from(document.querySelectorAll('[data-scene-pill]'));
 
-    const stepObj = conf.steps[clampedStep] || conf.steps[0];
-    const seqIdx = getGlobalStepNumber(targetSlideIndex, clampedStep) - 1;
+  let isSyncingReveal = false;
 
-    state.slideIndex = targetSlideIndex;
-    state.stepIndex = clampedStep;
-    state.currentSequenceIndex = Math.max(0, seqIdx);
-    state.currentSlideId = conf.slideId;
-    state.currentStepId = stepObj.id;
+  function renderScene(targetIndex, { animate = true, fromIndex = state.sceneIndex } = {}) {
+    const scene = SCENES[targetIndex] || SCENES[0];
 
-    const landingEl = document.getElementById('landing-page');
+    state.sceneIndex = scene.index;
+    state.sceneNumber = scene.index + 1;
+    state.sceneLabel = scene.badge;
+    state.isFirst = scene.index === 0;
+    state.isLast = scene.index === totalScenes - 1;
 
-    const applyVisuals = () => {
-      if (targetSlideIndex === -1) {
-        landingEl?.classList.remove('hidden');
-        webgl.setSlideMood(-1, false, prevSlideIndex, clampedStep, stepObj.id);
-        motion.applyStep(-1, clampedStep, landingEl);
-      } else {
-        landingEl?.classList.add('hidden');
-        if (deck.getState().indexh !== targetSlideIndex) {
-          deck.slide(targetSlideIndex);
-        }
-        webgl.setSlideMood(
-          targetSlideIndex,
-          targetSlideIndex === 5 && clampedStep === 1,
-          prevSlideIndex,
-          clampedStep,
-          stepObj.id
-        );
-        const slideEl =
-          document.querySelector(`section[data-slide-id="slide-${targetSlideIndex + 1}"]`) || deck.getCurrentSlide();
-        motion.applyStep(targetSlideIndex, clampedStep, slideEl);
-      }
+    if (shellEl) shellEl.setAttribute('data-scene-index', String(scene.index));
 
-      updateHUDAndProgress();
-      updatePresenterDrawer();
-    };
-
-    if ((isSlideChange || isFinaleReveal) && !isReducedMotion) {
-      const myToken = ++transitionToken;
-      state.isTransitioning = true;
-      state.isAnimating = true;
-      applyVisuals();
-      motion.playInterSlideTransition(prevSlideIndex, targetSlideIndex, clampedStep).then(() => {
-        if (transitionToken === myToken) {
-          state.isTransitioning = false;
-          state.isAnimating = false;
-        }
-      });
-    } else {
-      transitionToken++;
-      state.isTransitioning = false;
-      state.isAnimating = false;
-      applyVisuals();
-    }
-    return state;
-  }
-
-  function goToStep(idOrIndex, optionalStepIndex) {
-    if (typeof optionalStepIndex === 'number') {
-      return goToState(idOrIndex, optionalStepIndex);
-    }
-    if (typeof idOrIndex === 'number') {
-      const target = flatSteps[Math.max(0, Math.min(idOrIndex, flatSteps.length - 1))];
-      if (target) return goToState(target.slideIndex, target.stepIndex);
-    }
-    if (typeof idOrIndex === 'string') {
-      const byStepId = flatSteps.find((s) => s.stepId === idOrIndex || s.slideId === idOrIndex);
-      if (byStepId) return goToState(byStepId.slideIndex, byStepId.stepIndex);
-    }
-    return state;
-  }
-
-  // Unified NEXT Step (PowerPoint-like sequential navigation)
-  function nextStep() {
-    if (hasActiveModal()) {
-      handleEscape();
-      return state;
-    }
-    if (deck.isOverview()) {
-      deck.toggleOverview(false);
-      return state;
+    if (posterImg) {
+      posterImg.src = scene.posterSrc;
+      posterImg.alt = scene.posterAlt;
     }
 
-    const conf = getSlideConfig(state.slideIndex);
-    if (state.stepIndex < conf.steps.length - 1) {
-      goToState(state.slideIndex, state.stepIndex + 1);
-    } else if (state.slideIndex < 5) {
-      goToState(state.slideIndex + 1, 0);
-    }
-    // At Final Hold State (Slide 06 last step), pressing Next holds steady and does NOT loop
-    return state;
-  }
+    if (hudProgress) hudProgress.textContent = scene.badge;
+    if (railStepBadge) railStepBadge.textContent = scene.badge;
+    if (railPhaseTag) railPhaseTag.textContent = scene.phaseTag;
+    if (railBeatHeading) railBeatHeading.textContent = scene.beatHeading;
+    if (railNarrativeBody) railNarrativeBody.textContent = scene.narrativePurpose;
+    if (railTransitionNote) railTransitionNote.textContent = scene.transitionNote;
+    if (speakerCueText) speakerCueText.textContent = `“${scene.speakerCue}”`;
 
-  // Unified PREVIOUS Step (PowerPoint-like reverse navigation)
-  function previousStep() {
-    if (hasActiveModal()) {
-      handleEscape();
-      return state;
-    }
-    if (deck.isOverview()) {
-      deck.toggleOverview(false);
-      return state;
+    if (scene05Actions) {
+      scene05Actions.hidden = !scene.isFinal;
     }
 
-    if (state.stepIndex > 0) {
-      goToState(state.slideIndex, state.stepIndex - 1);
-    } else if (state.slideIndex > -1) {
-      const prevSlideIdx = state.slideIndex - 1;
-      const prevConf = getSlideConfig(prevSlideIdx);
-      goToState(prevSlideIdx, prevConf.steps.length - 1);
-    }
-    return state;
-  }
-  const prevStep = previousStep;
-
-  function replayCurrentStep() {
-    goToState(state.slideIndex, state.stepIndex);
-  }
-
-  function updateHUDAndProgress() {
-    const conf = getSlideConfig(state.slideIndex);
-    const stepNum = String(state.stepIndex + 1).padStart(2, '0');
-    const stepTotal = String(conf.steps.length).padStart(2, '0');
-    const indicator = document.getElementById('hud-indicator');
-
-    if (indicator) {
-      if (state.slideIndex === -1) {
-        indicator.textContent = 'MỞ ĐẦU 20/11';
-      } else if (conf.steps.length === 1) {
-        indicator.textContent = conf.shortHud || conf.hudPrefix;
-      } else {
-        indicator.textContent = `${conf.shortHud || conf.hudPrefix} · ${conf.stepWord} ${stepNum} / ${stepTotal}`;
-      }
+    if (globalProgressFill) {
+      const pct = Math.round(((scene.index + 1) / totalScenes) * 100);
+      globalProgressFill.style.width = `${pct}%`;
     }
 
-    // Update Slide Header Badge if inside a slide
-    if (state.slideIndex >= 0) {
-      const slideEl = document.querySelector(`section[data-slide-id="slide-${state.slideIndex + 1}"]`);
-      const badgeSpan = slideEl?.querySelector('.chapter-pill span:last-child');
-      if (badgeSpan) {
-        badgeSpan.textContent =
-          conf.steps.length === 1
-            ? conf.hudPrefix
-            : `${conf.hudPrefix} · ${conf.stepWord} ${stepNum}/${stepTotal}`;
-      }
-    }
-
-    // Update Global Bottom Progress Line
-    const globalStep = getGlobalStepNumber(state.slideIndex, state.stepIndex);
-    const pct = Math.round((globalStep / totalGlobalSteps) * 100);
-    const barFill = document.getElementById('global-progress-fill');
-    if (barFill) {
-      barFill.style.width = `${pct}%`;
-    }
-
-    // Enable/disable Prev/Next visual states at boundaries
-    const prevBtn = document.getElementById('hud-prev');
-    const nextBtn = document.getElementById('hud-next');
-    const atStart = state.slideIndex === -1 && state.stepIndex === 0;
-    const atEnd = state.slideIndex === 5 && state.stepIndex === conf.steps.length - 1;
-    if (prevBtn) prevBtn.disabled = atStart;
-    if (nextBtn) nextBtn.disabled = atEnd;
-  }
-
-  function updatePresenterDrawer() {
-    const conf = getSlideConfig(state.slideIndex);
-    const stepObj = conf.steps[state.stepIndex] || conf.steps[0];
-
-    const titleEl = document.getElementById('notes-slide-title');
-    const timeEl = document.getElementById('notes-est-time');
-    const cuesEl = document.getElementById('notes-cues');
-    const scriptEl = document.getElementById('notes-content');
-    const nextEl = document.getElementById('notes-next-slide');
-
-    if (titleEl) {
-      titleEl.textContent = `${conf.hudPrefix} · ${stepObj.label}`;
-    }
-    if (timeEl) {
-      timeEl.textContent = `Thời lượng phần này: ${conf.estimatedTime}`;
-    }
-    if (cuesEl) {
-      cuesEl.innerHTML = `<div>• <strong>Chỉ dẫn:</strong> ${stepObj.cue}</div>`;
-    }
-    if (scriptEl) {
-      scriptEl.textContent = stepObj.script;
-    }
-
-    // Compute next step label
-    if (nextEl) {
-      if (state.stepIndex < conf.steps.length - 1) {
-        nextEl.textContent = `Tiếp theo: ${conf.steps[state.stepIndex + 1].label}`;
-      } else if (state.slideIndex < 5) {
-        const nextConf = getSlideConfig(state.slideIndex + 1);
-        nextEl.textContent = `Chuyển sang: ${nextConf.hudPrefix} — ${nextConf.steps[0].label}`;
-      } else {
-        nextEl.textContent = `Trạng thái cuối: Cảnh kết Toàn bộ Poster (Final Hold)`;
-      }
-    }
-  }
-
-  // V10 VFX Debug Studio Controller (Development / QA Only)
-  function triggerVfxShowcaseMode(mode) {
-    document.querySelectorAll('.vfx-preview-btn').forEach((btn) => {
-      btn.classList.toggle('active', btn.getAttribute('data-vfx-mode') === mode);
+    pillButtons.forEach((btn, idx) => {
+      const active = idx === scene.index;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
     });
-    isReducedMotion = false;
-    document.body.classList.remove('reduced-motion');
-    webgl.setReducedMotion(false);
-    motion.setReducedMotion(false);
 
-    if (mode === 'soft-burst') {
-      webgl.triggerGrandMoment('soft-burst');
-    } else if (mode === 'medium-burst') {
-      webgl.triggerGrandMoment('medium-burst');
-    } else if (mode === 'grand-burst') {
-      webgl.triggerGrandMoment('grand-burst');
-    } else if (mode === 'floral-bloom') {
-      webgl.triggerGrandMoment('floral-bloom');
-    } else if (mode === 'floral-storm') {
-      webgl.triggerGrandMoment('floral-storm-only');
-    } else if (mode === 'bird-flock') {
-      if (state.slideIndex !== 2 && state.slideIndex !== -1) goToState(2, 0);
-      webgl.triggerGrandMoment('bird-flock-only');
-    } else if (mode === 'particle-wave') {
-      webgl.triggerGrandMoment('particle-wave-only');
-    } else if (mode === 'landing-sky') {
-      webgl.setLiteMode(false);
-      goToState(-1, 0);
-      webgl.triggerGrandMoment('landing-opening');
-    } else if (mode === 'grand-tribute') {
-      goToState(5, 0);
-      webgl.triggerGrandMoment('thousand-thank-yous');
-    } else if (mode === 'final-poster') {
-      goToState(5, 1);
-      webgl.triggerGrandMoment('beyond-the-horizon');
-    } else if (mode === 'reduced-motion') {
-      isReducedMotion = true;
-      document.body.classList.add('reduced-motion');
-      webgl.setReducedMotion(true);
-      motion.setReducedMotion(true);
-    } else if (mode === 'lite-mode') {
-      webgl.setLiteMode(true);
-      webgl.triggerGrandMoment('landing-opening');
+    if (btnPrev) btnPrev.disabled = state.isFirst;
+    if (btnNext) btnNext.disabled = state.isLast;
+
+    // Keep zoom lightbox synced if user advances while zoomed
+    if (state.zoomOpen && lightboxImg) {
+      lightboxImg.src = scene.posterSrc;
+      lightboxImg.alt = scene.posterAlt;
+      if (lightboxCaption) lightboxCaption.textContent = scene.zoomCaption;
     }
-    return webgl.getVfxStats();
+
+    // Sync Reveal.js slide index without recursion
+    if (deck.getIndices().h !== scene.index) {
+      isSyncingReveal = true;
+      deck.slide(scene.index);
+      isSyncingReveal = false;
+    }
+
+    backdrop.setScene(scene.index);
+
+    if (animate && fromIndex !== scene.index) {
+      motion.playSceneTransition(fromIndex, scene.index);
+    }
+
+    return { ...state };
   }
 
-  if (new URLSearchParams(window.location.search).get('vfx') === '1') {
-    document.body.classList.add('vfx-showcase-active');
-  }
-
-  document.querySelectorAll('.vfx-preview-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const mode = btn.getAttribute('data-vfx-mode');
-      if (mode) triggerVfxShowcaseMode(mode);
-    });
-  });
-
-  document.getElementById('btn-vfx-toggle-safezone')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const active = webgl.toggleSafeZonesDebug();
-    e.currentTarget.classList.toggle('active', active);
-  });
-
-  document.getElementById('btn-vfx-toggle-overlay')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const active = webgl.toggleGrandOverlay();
-    e.currentTarget.classList.toggle('active', active);
-    e.currentTarget.textContent = active ? 'Overlay: ON' : 'Overlay: OFF';
-  });
-
-  document.getElementById('btn-vfx-close')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.body.classList.remove('vfx-showcase-active');
-  });
-
-  // Expose State & Control APIs on window for automated Playwright verification
-  window.PresentationState = state;
-  window.AmbientEngine = webgl;
-  window.VFXShowcase = {
-    open: () => document.body.classList.add('vfx-showcase-active'),
-    close: () => document.body.classList.remove('vfx-showcase-active'),
-    trigger: triggerVfxShowcaseMode,
-    getStats: () => webgl.getVfxStats()
-  };
-  window.nextStep = nextStep;
-  window.previousStep = previousStep;
-  window.prevStep = previousStep;
-  window.goToStep = goToStep;
-  window.goToState = goToState;
-  window.replayCurrentStep = replayCurrentStep;
-  window.enterPresentation = () => goToState(0, 0);
-  window.showLandingPage = () => goToState(-1, 0);
-  window.switchSlide5Scene = (idx) => goToState(4, idx);
-  window.setSlide6Mode = (mode) => goToState(5, mode === 'finale' ? 1 : 0);
-
-  // Initial Boot at Landing Step 0
-  goToState(-1, 0);
-
-  // ===========================================================================
-  // UNIFIED KEYBOARD, BUTTON & STAGE CLICK HANDLERS
-  // ===========================================================================
-  let lastKeyTimestamp = 0;
-
-  window.addEventListener('keydown', (e) => {
-    const now = performance.now();
-    // Prevent rapid key-repeat flooding while allowing responsive single presses
-    if (e.repeat && now - lastKeyTimestamp < 75) {
-      e.preventDefault();
-      return;
+  function parseSceneIndex(target) {
+    if (typeof target === 'number' && !Number.isNaN(target)) {
+      return Math.max(0, Math.min(totalScenes - 1, Math.floor(target)));
     }
-    lastKeyTimestamp = now;
-
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-      const tag = document.activeElement?.tagName;
-      if (tag !== 'INPUT') {
-        e.preventDefault();
-        if (tag === 'BUTTON') document.activeElement.blur();
-        nextStep();
+    if (typeof target === 'string') {
+      const byId = SCENES.findIndex((s) => s.sceneId === target || s.posterIndex === target);
+      if (byId !== -1) return byId;
+      const numeric = parseInt(target, 10);
+      if (!Number.isNaN(numeric)) {
+        // Support 1-based strings like "01".."05" or 0-based "0".."4"
+        const zeroBased = numeric >= 1 && numeric <= totalScenes && target.length >= 2 ? numeric - 1 : numeric;
+        return Math.max(0, Math.min(totalScenes - 1, zeroBased));
       }
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      e.preventDefault();
-      previousStep();
-    } else if (e.key === 'Home') {
-      e.preventDefault();
-      goToState(-1, 0);
-    } else if (e.key === 'End') {
-      e.preventDefault();
-      goToState(5, 1);
-    } else if (e.key === 'r' || e.key === 'R') {
-      e.preventDefault();
-      replayCurrentStep();
-    } else if (e.key === 'f' || e.key === 'F') {
-      e.preventDefault();
-      toggleFullscreen();
-    } else if (e.key === 'n' || e.key === 'N' || e.key === 's' || e.key === 'S') {
-      e.preventDefault();
-      toggleNotes();
-    } else if (e.key === 'l' || e.key === 'L') {
-      e.preventDefault();
-      toggleReducedMotion();
-    } else if (e.key === 'o' || e.key === 'O') {
-      e.preventDefault();
-      if (state.slideIndex === -1) goToState(0, 0);
-      deck.toggleOverview();
-    } else if (e.key === 'e' || e.key === 'E') {
-      e.preventDefault();
-      toggleEditMode();
-    } else if (e.shiftKey && (e.key === 'V' || e.key === 'v')) {
-      e.preventDefault();
-      document.body.classList.toggle('vfx-showcase-active');
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleEscape();
     }
-  });
-
-  // HUD & Interactive Buttons (All routed through Global State Machine!)
-  document.getElementById('hud-prev')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    previousStep();
-  });
-  document.getElementById('hud-next')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    nextStep();
-  });
-  document.getElementById('hud-tools-toggle')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.toggle('active');
-  });
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.hud-tools-wrapper')) {
-      document.getElementById('hud-tools-popover')?.classList.remove('active');
-    }
-  });
-  document.getElementById('hud-landing')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    goToState(-1, 0);
-  });
-  document.getElementById('hud-replay')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    replayCurrentStep();
-  });
-  document.getElementById('hud-fullscreen')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    toggleFullscreen();
-  });
-  document.getElementById('hud-overview')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    if (state.slideIndex === -1) goToState(0, 0);
-    deck.toggleOverview();
-  });
-  document.getElementById('hud-notes')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    toggleNotes();
-  });
-  document.getElementById('hud-motion')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    toggleReducedMotion();
-  });
-  document.getElementById('hud-help')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('hud-tools-popover')?.classList.remove('active');
-    toggleHelpModal();
-  });
-
-  // Landing CTA button -> Advances straight to Slide 01 Step 0 via State Machine
-  document.getElementById('btn-enter-journey')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    goToState(0, 0);
-  });
-
-  // Slide 03 Zone Buttons -> Routed through State Machine
-  document.querySelectorAll('[data-slide3-zone]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const zIdx = parseInt(el.getAttribute('data-slide3-zone'), 10);
-      goToState(2, zIdx);
-    });
-  });
-
-  // Slide 05 Scene Tab Buttons -> Routed through State Machine
-  document.querySelectorAll('[data-slide5-scene]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const sIdx = parseInt(btn.getAttribute('data-slide5-scene'), 10);
-      goToState(4, sIdx);
-    });
-  });
-
-  // Presenter Timer Controls
-  document.getElementById('btn-timer-toggle')?.addEventListener('click', toggleTimer);
-  document.getElementById('btn-timer-reset')?.addEventListener('click', resetTimer);
-
-  // Close Modals & Drawers
-  document.getElementById('close-notes-drawer')?.addEventListener('click', toggleNotes);
-  document.getElementById('close-help-modal')?.addEventListener('click', toggleHelpModal);
-  document.getElementById('help-modal-overlay')?.addEventListener('click', e => {
-    if (e.target.id === 'help-modal-overlay') toggleHelpModal();
-  });
-
-  // Lightbox Delegation
-  document.addEventListener('click', e => {
-    const trigger = e.target.closest('[data-lightbox-src], .exhibition-hero-img-wrap, .exhibition-side-img-wrap, .author-portrait-img');
-    if (!trigger) return;
-    if (e.target.closest('.slot-replace-btn')) return;
-
-    const imgEl = trigger.tagName === 'IMG' ? trigger : trigger.querySelector('img');
-    const src = trigger.getAttribute('data-lightbox-src') || imgEl?.src;
-    const caption = trigger.getAttribute('data-lightbox-caption') || imgEl?.getAttribute('alt') || 'Chi tiết hình ảnh';
-    if (src) {
-      openLightbox(src, caption);
-    }
-  });
-
-  document.getElementById('close-lightbox')?.addEventListener('click', closeLightbox);
-  document.getElementById('lightbox-modal')?.addEventListener('click', e => {
-    if (e.target.id === 'lightbox-modal') closeLightbox();
-  });
-
-  initReplaceablePhotos();
-
-  function hasActiveModal() {
-    return (
-      document.getElementById('lightbox-modal')?.classList.contains('active') ||
-      document.getElementById('help-modal-overlay')?.classList.contains('active')
-    );
+    return 0;
   }
 
-  function toggleTimer() {
-    const btn = document.getElementById('btn-timer-toggle');
-    if (timerRunning) {
-      clearInterval(timerInterval);
-      timerRunning = false;
-      if (btn) btn.textContent = '▶ Tiếp tục';
-    } else {
-      timerRunning = true;
-      if (btn) btn.textContent = '⏸ Tạm dừng';
-      timerInterval = setInterval(() => {
-        timerSeconds++;
-        const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-        const secs = String(timerSeconds % 60).padStart(2, '0');
-        const readout = document.getElementById('presenter-timer-display');
-        if (readout) readout.textContent = `${mins}:${secs}`;
-      }, 1000);
-    }
+  function goToScene(target) {
+    const nextIdx = parseSceneIndex(target);
+    const prevIdx = state.sceneIndex;
+    return renderScene(nextIdx, { animate: prevIdx !== nextIdx, fromIndex: prevIdx });
   }
 
-  function resetTimer() {
-    clearInterval(timerInterval);
-    timerRunning = false;
-    timerSeconds = 0;
-    const readout = document.getElementById('presenter-timer-display');
-    const btn = document.getElementById('btn-timer-toggle');
-    if (readout) readout.textContent = '00:00';
-    if (btn) btn.textContent = '▶ Bắt đầu đếm giờ';
+  function nextScene() {
+    if (state.sceneIndex < totalScenes - 1) {
+      return goToScene(state.sceneIndex + 1);
+    }
+    return { ...state };
+  }
+
+  function prevScene() {
+    if (state.sceneIndex > 0) {
+      return goToScene(state.sceneIndex - 1);
+    }
+    return { ...state };
+  }
+
+  function toggleNotes(forceOpen) {
+    state.notesOpen = typeof forceOpen === 'boolean' ? forceOpen : !state.notesOpen;
+    if (speakerCuePanel) {
+      speakerCuePanel.classList.toggle('is-collapsed', !state.notesOpen);
+      speakerCuePanel.setAttribute('aria-hidden', state.notesOpen ? 'false' : 'true');
+    }
+    if (btnNotes) {
+      btnNotes.classList.toggle('active', state.notesOpen);
+      btnNotes.setAttribute('aria-pressed', state.notesOpen ? 'true' : 'false');
+    }
+    if (btnCollapseCue) {
+      btnCollapseCue.textContent = state.notesOpen ? 'Thu gọn' : 'Mở';
+    }
+    return state.notesOpen;
+  }
+
+  function toggleLiteMode(forceLite) {
+    state.liteMode = typeof forceLite === 'boolean' ? forceLite : !state.liteMode;
+    document.body.classList.toggle('lite-mode', state.liteMode);
+    backdrop.setLiteMode(state.liteMode);
+    motion.setDisabled(state.liteMode || prefersReduced);
+    if (btnLite) {
+      btnLite.classList.toggle('active', state.liteMode);
+      btnLite.setAttribute('aria-pressed', state.liteMode ? 'true' : 'false');
+    }
+    return state.liteMode;
+  }
+
+  function toggleZoom(forceOpen) {
+    const nextOpen = typeof forceOpen === 'boolean' ? forceOpen : !state.zoomOpen;
+    state.zoomOpen = nextOpen;
+    const scene = SCENES[state.sceneIndex] || SCENES[0];
+    if (lightboxModal && lightboxImg) {
+      if (nextOpen) {
+        lightboxImg.src = scene.posterSrc;
+        lightboxImg.alt = scene.posterAlt;
+        if (lightboxCaption) lightboxCaption.textContent = scene.zoomCaption;
+      }
+      lightboxModal.classList.toggle('active', nextOpen);
+      lightboxModal.setAttribute('aria-hidden', nextOpen ? 'false' : 'true');
+    }
+    if (btnZoom) {
+      btnZoom.classList.toggle('active', nextOpen);
+      btnZoom.setAttribute('aria-pressed', nextOpen ? 'true' : 'false');
+    }
+    return state.zoomOpen;
   }
 
   function toggleFullscreen() {
@@ -647,116 +243,138 @@ export async function initPresentationApp() {
     }
   }
 
-  function toggleNotes() {
-    const drawer = document.getElementById('notes-drawer');
-    const btn = document.getElementById('hud-notes');
-    if (drawer) {
-      drawer.classList.toggle('active');
-      btn?.classList.toggle('active', drawer.classList.contains('active'));
-    }
-  }
-
-  function toggleHelpModal() {
-    const modal = document.getElementById('help-modal-overlay');
-    if (modal) modal.classList.toggle('active');
-  }
-
-  function toggleReducedMotion() {
-    isReducedMotion = !isReducedMotion;
-    document.body.classList.toggle('reduced-motion', isReducedMotion);
-    webgl.setReducedMotion(isReducedMotion);
-    motion.setReducedMotion(isReducedMotion);
-    const btn = document.getElementById('hud-motion');
-    const statusText = document.getElementById('notes-motion-status');
-    btn?.classList.toggle('active', isReducedMotion);
-    if (statusText) {
-      statusText.textContent = isReducedMotion ? 'Chế độ: Giảm hiệu ứng (Lite)' : 'Chế độ: Cinematic Đầy đủ';
-    }
-  }
-
-  function toggleEditMode() {
-    document.body.classList.toggle('edit-mode');
-  }
-
-  function handleEscape() {
-    document.getElementById('lightbox-modal')?.classList.remove('active');
-    document.getElementById('help-modal-overlay')?.classList.remove('active');
-    document.getElementById('notes-drawer')?.classList.remove('active');
-    document.getElementById('hud-notes')?.classList.remove('active');
-    state.isLightboxOpen = false;
-    state.overlay = null;
-    if (deck.isOverview()) deck.toggleOverview(false);
-  }
-
-  function openLightbox(src, caption) {
-    const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
-    const cap = document.getElementById('lightbox-caption');
-    if (modal && img) {
-      img.src = src;
-      if (cap) cap.textContent = caption;
-      modal.classList.add('active');
-      state.isLightboxOpen = true;
-      state.overlay = 'lightbox';
-    }
-  }
-
-  function closeLightbox() {
-    document.getElementById('lightbox-modal')?.classList.remove('active');
-    state.isLightboxOpen = false;
-    state.overlay = null;
-  }
-
-  function initReplaceablePhotos() {
-    const fileInput = document.getElementById('image-uploader-input');
-    let activeKey = null;
-    let activeImgEl = null;
-
-    function applyFileToElement(file, key, imgEl) {
-      if (!file || !file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const dataUrl = ev.target.result;
-        imgEl.src = dataUrl;
-        try {
-          localStorage.setItem('dntu_v3_photo_' + key, dataUrl);
-        } catch (_) {}
-      };
-      reader.readAsDataURL(file);
-    }
-
-    document.querySelectorAll('[data-replace-key]').forEach(imgEl => {
-      const key = imgEl.getAttribute('data-replace-key');
-      const saved = localStorage.getItem('dntu_v3_photo_' + key);
-      if (saved) imgEl.src = saved;
-
-      const container = imgEl.closest('.exhibition-hero-card, .exhibition-side-card, .author-portrait-frame');
-      const replaceBtn = container?.querySelector('.slot-replace-btn');
-
-      replaceBtn?.addEventListener('click', e => {
-        e.stopPropagation();
-        activeKey = key;
-        activeImgEl = imgEl;
-        fileInput.value = '';
-        fileInput.click();
+  // Reveal sync listeners (e.g., Overview mode click or programmatic Reveal.slide)
+  deck.on('slidechanged', (event) => {
+    if (!isSyncingReveal && typeof event.indexh === 'number' && event.indexh !== state.sceneIndex) {
+      renderScene(Math.max(0, Math.min(totalScenes - 1, event.indexh)), {
+        animate: true,
+        fromIndex: state.sceneIndex
       });
-    });
+    }
+  });
 
-    fileInput?.addEventListener('change', e => {
-      const file = e.target.files?.[0];
-      if (file && activeKey && activeImgEl) {
-        applyFileToElement(file, activeKey, activeImgEl);
+  deck.on('overviewshown', () => {
+    document.body.classList.add('overview-open');
+    document.getElementById('nq57-reveal')?.setAttribute('aria-hidden', 'false');
+  });
+
+  deck.on('overviewhidden', () => {
+    document.body.classList.remove('overview-open');
+    document.getElementById('nq57-reveal')?.setAttribute('aria-hidden', 'true');
+  });
+
+  // UI Event bindings
+  btnPrev?.addEventListener('click', () => prevScene());
+  btnNext?.addEventListener('click', () => nextScene());
+  btnRestart?.addEventListener('click', () => goToScene(0));
+  btnNotes?.addEventListener('click', () => toggleNotes());
+  btnCollapseCue?.addEventListener('click', () => toggleNotes());
+  btnLite?.addEventListener('click', () => toggleLiteMode());
+  btnZoom?.addEventListener('click', () => toggleZoom());
+  btnFullscreen?.addEventListener('click', () => toggleFullscreen());
+
+  posterFrame?.addEventListener('click', () => toggleZoom(true));
+  closeLightboxBtn?.addEventListener('click', () => toggleZoom(false));
+  lightboxModal?.addEventListener('click', (e) => {
+    if (e.target === lightboxModal) toggleZoom(false);
+  });
+
+  pillButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-scene-pill'), 10);
+      goToScene(idx);
+    });
+  });
+
+  document.querySelectorAll('#nq57-reveal section').forEach((sec) => {
+    sec.addEventListener('click', () => {
+      if (deck.isOverview()) {
+        const idx = parseInt(sec.getAttribute('data-scene-index'), 10);
+        deck.toggleOverview(false);
+        goToScene(idx);
       }
     });
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    state.isFullscreen = Boolean(document.fullscreenElement);
+    if (btnFullscreen) {
+      btnFullscreen.classList.toggle('active', state.isFullscreen);
+      btnFullscreen.setAttribute('aria-pressed', state.isFullscreen ? 'true' : 'false');
+    }
+  });
+
+  // Keyboard bindings (ignoring modified OS shortcuts like Ctrl+R / Ctrl+L)
+  window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const activeTag = document.activeElement?.tagName;
+    if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      if (e.key === ' ' && activeTag === 'A') return;
+      e.preventDefault();
+      if (e.key === ' ' && activeTag === 'BUTTON') {
+        document.activeElement.blur();
+      }
+      nextScene();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      prevScene();
+    } else if (e.key === 'Home' || e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      goToScene(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goToScene(totalScenes - 1);
+    } else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      toggleFullscreen();
+    } else if (e.key === 'n' || e.key === 'N') {
+      e.preventDefault();
+      toggleNotes();
+    } else if (e.key === 'l' || e.key === 'L') {
+      e.preventDefault();
+      toggleLiteMode();
+    } else if (e.key === 'z' || e.key === 'Z') {
+      e.preventDefault();
+      toggleZoom();
+    } else if (e.key === 'o' || e.key === 'O') {
+      e.preventDefault();
+      if (state.zoomOpen) toggleZoom(false);
+      deck.toggleOverview();
+    } else if (e.key === 'Escape') {
+      if (state.zoomOpen) {
+        e.preventDefault();
+        toggleZoom(false);
+      } else if (deck.isOverview()) {
+        e.preventDefault();
+        deck.toggleOverview(false);
+      }
+    }
+  });
+
+  // Sync initial UI state (Scene 01/05 immediately visible)
+  if (btnLite && state.liteMode) {
+    btnLite.classList.add('active');
+    btnLite.setAttribute('aria-pressed', 'true');
   }
+  renderScene(0, { animate: false, fromIndex: 0 });
+
+  const api = {
+    getState: () => ({ ...state }),
+    goToScene,
+    nextScene,
+    prevScene,
+    toggleNotes,
+    toggleLiteMode,
+    toggleZoom
+  };
+  window.__NQ57_DECK__ = api;
 
   return {
+    ...api,
     deck,
-    webgl,
-    motion,
-    state,
-    nextStep,
-    prevStep,
-    goToState
+    backdrop,
+    motion
   };
 }
